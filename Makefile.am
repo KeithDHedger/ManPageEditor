@@ -1,6 +1,6 @@
 
-SUBDIRS = ManPageEditor/app ManPageEditor/debug
+SUBDIRS = ManPageEditor/app
 
 remake:
-	$(shell ./remakesourcelist)
+	./remakesourcelist
 
