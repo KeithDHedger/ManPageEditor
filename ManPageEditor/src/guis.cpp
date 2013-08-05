@@ -572,12 +572,6 @@ GtkWidget*		menuformat;
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(jumpToLine),NULL);
-//find define
-	menuitem=gtk_image_menu_item_new_with_label("Search For Define");
-	image=gtk_image_new_from_stock(GTK_STOCK_FIND,GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(functionSearch),NULL);
 
 //help
 	menuhelp=gtk_menu_item_new_with_label("Help");
@@ -732,87 +726,6 @@ void buildWordCheck(int documentCheck)
 
 	gtk_signal_connect_object(GTK_OBJECT(spellCheckWord),"delete_event",GTK_SIGNAL_FUNC(gtk_widget_hide),GTK_OBJECT(spellCheckWord));
 	gtk_signal_connect(GTK_OBJECT(spellCheckWord),"delete_event",GTK_SIGNAL_FUNC(gtk_true),NULL);
-}
-#endif
-
-int showFunctionEntry(void)
-{
-	GtkWidget*	dialog;
-	gint		result;
-	GtkWidget*	content_area;
-	GtkWidget*	entrybox;
-
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Enter Function Name");
-
-	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
-	gtk_window_set_title(GTK_WINDOW(dialog),"Find Function");
-
-	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
-	entrybox=gtk_entry_new();
-	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
-	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
-	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
-	gtk_widget_show_all(content_area);
-	result=gtk_dialog_run(GTK_DIALOG(dialog));
-	if(functionSearchText!=NULL)
-		g_free(functionSearchText);
-	functionSearchText=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
-	gtk_widget_destroy(dialog);
-
-	return(result);
-}
-
-#ifdef BUILDDOCVIEWER
-void buildGtkDocViewer(void)
-{
-	GtkWidget*	vbox;
-	GtkWidget*	hbox;
-	GtkWidget*	button;
-	GtkWidget*	scrolledWindow;
-	GtkWidget*	entry;
-	GtkWidget*	findbutton;
-
-	docView=gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_default_size(GTK_WINDOW(docView),800,600);
-	gtk_window_set_title((GtkWindow*)docView,"Search Gtk Docs");
-
-	vbox=gtk_vbox_new(false,0);
-	hbox=gtk_hbox_new(true,0);
-
-	webView=WEBKIT_WEB_VIEW(webkit_web_view_new());
-
-	scrolledWindow=gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scrolledWindow),GTK_WIDGET(webView));
-
-	gtk_container_add(GTK_CONTAINER(vbox),scrolledWindow);
-
-	button=gtk_button_new_from_stock(GTK_STOCK_GO_BACK);
-	gtk_box_pack_start(GTK_BOX(hbox),button,false,false,0);
-	g_signal_connect(G_OBJECT(button),"clicked",G_CALLBACK(webKitGoBack),(void*)webView);	
- 
-	button=gtk_button_new_from_stock(GTK_STOCK_HOME);
-	gtk_box_pack_start(GTK_BOX(hbox),button,false,false,0);
-	g_signal_connect(G_OBJECT(button),"clicked",G_CALLBACK(webKitGoHome),(void*)webView);	
- 
-	entry=gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox),entry,false,true,0);
-	g_signal_connect_after(G_OBJECT(entry),"activate",G_CALLBACK(docSearchFromBar),(void*)entry);
-	findbutton=gtk_button_new_from_stock(GTK_STOCK_FIND);
-	gtk_box_pack_start(GTK_BOX(hbox),findbutton,false,false,0);
-	g_signal_connect(G_OBJECT(findbutton),"clicked",G_CALLBACK(docSearchFromBar),(void*)entry);	
-
-	button=gtk_button_new_from_stock(GTK_STOCK_GO_FORWARD);
-	gtk_box_pack_start(GTK_BOX(hbox),button,false,false,0);
-	g_signal_connect(G_OBJECT(button),"clicked",G_CALLBACK(webKitGoForward),(void*)webView);	
-
-	gtk_box_pack_start(GTK_BOX(vbox),hbox,false,false,4);
-
-	gtk_container_add(GTK_CONTAINER(docView),vbox);
-	gtk_widget_grab_focus(GTK_WIDGET(webView));
-
-	gtk_signal_connect_object(GTK_OBJECT(docView),"delete_event",GTK_SIGNAL_FUNC(gtk_widget_hide),GTK_OBJECT(docView));
-	gtk_signal_connect(GTK_OBJECT(docView),"delete_event",GTK_SIGNAL_FUNC(gtk_true),NULL);
 }
 #endif
 
