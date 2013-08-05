@@ -87,32 +87,6 @@ struct tagStruct
 	PangoWeight	weight;
 };
 
-struct toolStruct
-{
-	char*				menuName;
-	char*				filePath;
-	char*				command;
-	int					flags;
-	bool				inTerminal;					
-	bool				inPopUp;
-};
-
-struct functionData
-{
-	char*				name;
-	char*				type;
-	int					line;
-	char*				file;
-	char*				define;
-	int					intab;
-};
-
-struct bookMarkStruct
-{
-	char*				label;
-	GtkTextMark*		mark;
-};
-
 extern GtkWidget*		window;
 extern GtkNotebook*		notebook;
 
@@ -138,8 +112,6 @@ extern GtkWidget*		saveMenu;
 extern GtkWidget*		saveAsMenu;
 
 extern GtkWidget*		lineNumberWidget;
-extern GtkWidget*		findApiWidget;
-extern GtkWidget*		findDefWidget;
 extern GtkWidget*		liveSearchWidget;
 
 extern int				currentPage;
@@ -255,16 +227,11 @@ pageStruct* getPageStructPtr(int pagenum);
 void getMimeType(char* filepath,void* ptr);
 void setLanguage(pageStruct* page);
 void runCommand(char* commandtorun,void* ptr,bool interm,int flags);
-functionData* getFunctionByName(char* name,bool recurse);
-void destroyData(functionData* fdata);
-void getRecursiveTagList(char* filepath,void* ptr);
 char* slice(char* srcstring,int startchar,int endchar);
 char* sliceBetween(char* srcstring,char* startstr,char* endstr);
 char* sliceLen(char* srcstring,int tmpstartchar,int len);
 char* sliceStrLen(char* srcstring,char* startstr,int len);
-void buildToolsList(void);
-char* deleteSlice(char* srcstring,char* delstr);
-void getRecursiveTagListFileName(char* filepath,void* ptr);
+char* deleteSlice(char* srcstring,char* delstr);findApiWidget
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter);
 
 #endif

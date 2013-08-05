@@ -352,21 +352,6 @@ void redo(GtkWidget* widget,gpointer data)
 		}
 }
 
-void dropUri(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelectionData *selection_data,guint info,guint32 time,gpointer user_data)
-{
-	gchar**	array=gtk_selection_data_get_uris(selection_data);
-	int		cnt=g_strv_length(array);
-	char*	filename;
-
-	for(int j=0;j<cnt;j++)
-		{
-			filename=g_filename_from_uri(array[j],NULL,NULL);
-			openFile(filename,0);
-		}
-
-	g_strfreev(array);
-}
-
 void externalTool(GtkWidget* widget,gpointer data)
 {
 	toolStruct*	tool=(toolStruct*)data;
@@ -989,32 +974,6 @@ void printFile(GtkWidget* widget,gpointer data)
 		}
 	g_object_unref(print);
 	g_object_unref(printview);
-}
-
-//void recentFileMenu(GtkWidget* widget,char* filename)
-//{
-//	openFile(filename,0);
-//}
-
-void recentFileMenu(GtkRecentChooser* chooser,gpointer* data)
-{
-	gchar*	uri=NULL;
-	char*	filename;
-
-	if(data!=NULL)
-		{
-			openFile((char*)data,0);
-			return;
-		}
-
-	uri=gtk_recent_chooser_get_current_uri(chooser);
-	if (uri!=NULL)
-	{
-		filename=g_filename_from_uri((const gchar*)uri,NULL,NULL);
-		openFile(filename,0);
-		g_free (uri);
-		g_free(filename);
-	}
 }
 
 void newEditor(GtkWidget* widget,gpointer data)

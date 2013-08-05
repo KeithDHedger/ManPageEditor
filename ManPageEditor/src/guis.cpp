@@ -552,7 +552,6 @@ void buildMainGui(void)
 	GtkToolItem*				toolbutton;
 	GtkAccelGroup*				accgroup;
 	GtkWidget*					image;
-	GtkWidget*					recent;
 	GtkRecentFilter*			filter;
 	GtkWidget*					menurecent;
 
@@ -582,11 +581,6 @@ void buildMainGui(void)
 	gtk_box_pack_start(GTK_BOX(vbox),(GtkWidget*)toolbar,false,true,0);
 	gtk_box_pack_start(GTK_BOX(vbox),(GtkWidget*)notebook,true,true,0);
 
-//dnd
-	gtk_drag_dest_set(vbox,GTK_DEST_DEFAULT_ALL,NULL,0,GDK_ACTION_COPY);
-	gtk_drag_dest_add_uri_targets(vbox);
-	g_signal_connect(G_OBJECT(vbox),"drag_data_received",G_CALLBACK(dropUri),NULL);
-
 //toolbar
 //new
 	newButton=gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
@@ -594,25 +588,6 @@ void buildMainGui(void)
 	gtk_signal_connect(GTK_OBJECT(newButton),"clicked",G_CALLBACK(newFile),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)newButton,"New File");
 
-//recent
-	recent=gtk_recent_chooser_menu_new();
-	gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recent),false);
-	gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recent),GTK_RECENT_SORT_MRU);
-	gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(recent),MAXRECENT);
-
-	filter=gtk_recent_filter_new();
-	gtk_recent_filter_add_application(filter,"kkedit");
-	gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recent),filter);
-	g_signal_connect(recent,"item_activated",G_CALLBACK(recentFileMenu),NULL);
-
-//open+recent
-
-	openButton=gtk_menu_tool_button_new_from_stock(GTK_STOCK_OPEN);
-	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(openButton),recent);
-	gtk_toolbar_insert((GtkToolbar*)toolbar,openButton,-1);
-	gtk_signal_connect(GTK_OBJECT(openButton),"clicked",G_CALLBACK(doOpenFile),NULL);
-	gtk_widget_set_tooltip_text((GtkWidget*)openButton,"Open File");
-	gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(openButton),"Open Recent File");
 
 //save
 	saveButton=gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
@@ -677,22 +652,6 @@ void buildMainGui(void)
 	gtk_widget_set_size_request((GtkWidget*)toolbutton,48,-1);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Go To Line");
 		
-//find in gtkdoc
-	findApiWidget=gtk_entry_new();
-	toolbutton=gtk_tool_item_new();
-	gtk_container_add((GtkContainer *)toolbutton,findApiWidget);
-	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
-	g_signal_connect_after(G_OBJECT(findApiWidget),"activate",G_CALLBACK(docSearchFromBar),(void*)findApiWidget);
-	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Find API In Gtk Docs");
-
-//find in function def
-	findDefWidget=gtk_entry_new();
-	toolbutton=gtk_tool_item_new();
-	gtk_container_add((GtkContainer *)toolbutton,findDefWidget);
-	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
-	g_signal_connect_after(G_OBJECT(findDefWidget),"activate",G_CALLBACK(defSearchFromBar),(void*)findDefWidget);
-	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Search For Define");
-
 //livesearch
 	liveSearchWidget=gtk_entry_new();
 	toolbutton=gtk_tool_item_new();

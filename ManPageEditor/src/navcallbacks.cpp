@@ -16,52 +16,6 @@
 int	theLineNum=0;
 int marknum=0;
 
-void goToDefine(functionData* fdata)
-{
-	pageStruct*	page;
-	GtkTextIter	iter;
-
-
-	if(fdata->intab==-1)
-		openFile(fdata->file,fdata->line-1);
-	else
-		{
-
-			page=getPageStructPtr(fdata->intab);
-			gtk_notebook_set_current_page(notebook,fdata->intab);
-			gtk_text_buffer_get_iter_at_line_offset((GtkTextBuffer*)page->buffer,&iter,fdata->line-1,0);
-			gtk_text_buffer_place_cursor((GtkTextBuffer*)page->buffer,&iter);
-			scrollToIterInPane(page,&iter);
-		}
-}
-
-void goToDefinition(GtkWidget* widget,gpointer data)
-{
-	pageStruct*		page=getPageStructPtr(-1);
-	GtkTextIter		start;
-	GtkTextIter		end;
-	char*			selection=NULL;
-	functionData*	fdata=NULL;
-
-	if(gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end))
-		{
-			selection=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,false);
-			if(selection==NULL)
-				return;
-		}
-	else
-		return;
-
-	fdata=getFunctionByName(selection,true);
-
-	if(fdata!=NULL)
-		{
-			goToDefine(fdata);
-			destroyData(fdata);
-		}
-	return;
-}
-
 void findFile(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page=getPageStructPtr(-1);

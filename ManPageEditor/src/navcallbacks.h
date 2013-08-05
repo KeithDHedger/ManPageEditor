@@ -15,8 +15,6 @@
 #ifndef _NAVCALLBACKS_
 #define _NAVCALLBACKS_
 
-void goToDefine(functionData* fdata);
-void goToDefinition(GtkWidget* widget,gpointer data);
 void findFile(GtkWidget* widget,gpointer data);
 void jumpToLine(GtkWidget* widget,gpointer data);
 void gotoLine(GtkWidget* widget,gpointer data);

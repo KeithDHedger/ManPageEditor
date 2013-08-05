@@ -52,8 +52,6 @@ GtkWidget*		saveMenu;
 GtkWidget*		saveAsMenu;
 
 GtkWidget*		lineNumberWidget;
-GtkWidget*		findApiWidget;
-GtkWidget*		findDefWidget;
 GtkWidget*		liveSearchWidget;
 
 int				currentPage=0;
@@ -242,13 +240,11 @@ void setLanguage(pageStruct* page)
 		{
 			getMimeType((char*)page->filePath,&mimetype);
 			lang=gtk_source_language_manager_guess_language(lm,page->filePath,mimetype);
-			//g_print("Language: [%s]\n", gtk_source_language_get_name(lang));
 			if (lang!=NULL)
 				gtk_source_buffer_set_language(page->buffer,lang);
 		}
 	else
 		{
-			//g_print("Language: [%s]\n", gtk_source_language_get_name(lang));
 			gtk_source_buffer_set_language(page->buffer,lang);
 		}
 
@@ -300,119 +296,6 @@ void runCommand(char* commandtorun,void* ptr,bool interm,int flags)
 	g_free(command);
 }
 
-functionData* getFunctionByName(char* name,bool recurse)
-{
-	pageStruct*	page;
-	int			numpages=gtk_notebook_get_n_pages(notebook);
-	char*		lineptr;
-	char*		functions=NULL;
-	char*		dirname;
-	gchar*		stdout=NULL;
-	char		function[1024];
-	char		funcname[256];
-	char		filepath[1024];
-	int			linenumber;
-
-	functionData* fdata;
-	page=getPageStructPtr(-1);
-	if(page==NULL)
-		return(NULL);
-
-	for(int loop=0;loop<numpages;loop++)
-		{
-			page=getPageStructPtr(loop);
-			if(page->filePath!=NULL)
-				{
-					getRecursiveTagList(page->filePath,&functions);
-					lineptr=functions;
-
-					while (lineptr!=NULL)
-						{
-							sscanf (lineptr,"%s",function);
-							if((strncasecmp(name,function,strlen(name))==0))
-								{
-									fdata=(functionData*)malloc(sizeof(functionData));
-									sscanf (lineptr,"%"VALIDFUNCTIONCHARS"s",function);
-									fdata->name=strdup(function);
-									sscanf (lineptr,"%*s %"VALIDFUNCTIONCHARS"s",function);
-									fdata->type=strdup(function);
-									sscanf (lineptr,"%*s %*s %i",&fdata->line);
-									sscanf (lineptr,"%*s %*s %*i %"VALIDFILENAMECHARS"s",function);
-									fdata->file=strdup(function);
-									sscanf (lineptr,"%*s %*s %*i %*s %"VALIDCHARS"s",function);
-									fdata->define=strdup(function);
-									fdata->intab=loop;
-									return(fdata);
-								}
-
-							lineptr=strchr(lineptr,'\n');
-							if (lineptr!=NULL)
-								lineptr++;
-						}
-				}
-		}
-	if(recurse==true)
-		{
-//not in any open files
-//check ./ from all files
-//dont do this from popup for speed reasons
-			for(int loop=0;loop<numpages;loop++)
-				{
-					page=getPageStructPtr(loop);
-					if(page->filePath!=NULL)
-						{
-							dirname=strdup(g_path_get_dirname(page->filePath));
-							getRecursiveTagListFileName(dirname,&stdout);
-
-							lineptr=stdout;
-							while (lineptr!=NULL)
-								{
-									sscanf (lineptr,"%s",function);
-									if((strncasecmp(name,function,strlen(name))==0))
-										{
-											sscanf (lineptr, "%s\t%s\t%i",funcname,filepath,&linenumber);
-
-											fdata=(functionData*)malloc(sizeof(functionData));
-											fdata->name=strdup(funcname);
-											fdata->file=strdup(filepath);
-											fdata->line=linenumber;
-											fdata->type=NULL;
-											fdata->define=NULL;
-											fdata->intab=-1;
-											return(fdata);
-										}
-
-									lineptr=strchr(lineptr,'\n');
-									if (lineptr!=NULL)
-										lineptr++;
-								}
-							if(stdout!=NULL)
-								g_free(stdout);
-							if(dirname!=NULL)
-								g_free(dirname);
-						}
-				}
-		}
-
-	return(NULL);
-}
-
-void destroyData(functionData* fdata)
-{
-	if(fdata!=NULL)
-		{
-			if(fdata->name!=NULL)
-				g_free(fdata->name);
-			if(fdata->type!=NULL)
-				g_free(fdata->type);
-			if(fdata->file!=NULL)
-				g_free(fdata->file);
-			if(fdata->define!=NULL)
-				g_free(fdata->define);
-			g_free(fdata);
-		}
-}
-
 char* deleteSlice(char* srcstring,char* delstr)
 {
 	GString*	str=g_string_new(srcstring);
@@ -421,57 +304,6 @@ char* deleteSlice(char* srcstring,char* delstr)
 	ptr=strstr(str->str,delstr);
 	g_string_erase(str,(long)ptr-(long)str->str,strlen(delstr));
 	return(g_string_free(str,false));
-}
-
-void getRecursiveTagListFileName(char* filepath,void* ptr)
-{
-	FILE*		fp;
-	char		line[1024];
-	GString*	str=g_string_new(NULL);
-	char*		command;
-
-	if(filepath==NULL)
-		return;
-
-	asprintf(&command,"find \"%s\" -maxdepth %i|ctags -L - --excmd=number --format=1 -f -",filepath,depth);
-	fp=popen(command, "r");
-	while(fgets(line,1024,fp))
-		{
-			g_string_append_printf(str,"%s",line);
-		}
-	pclose(fp);
-
-	*((char**)ptr)=str->str;
-	g_string_free(str,false);
-
-	g_free(command);
-}
-
-void getRecursiveTagList(char* filepath,void* ptr)
-{
-	FILE*		fp;
-	char		line[1024];
-	GString*	str=g_string_new(NULL);
-	char*		command;
-	char*		newstr=NULL;
-
-	if(filepath==NULL)
-		return;
-
-	asprintf(&command,"find \"%s\" -maxdepth %i|ctags -L - -x",filepath,depth);
-
-	fp=popen(command, "r");
-	while(fgets(line,1024,fp))
-		{
-			newstr=deleteSlice(line,filepath);
-			g_string_append_printf(str,"%s",newstr);
-			g_free(newstr);
-		}
-	pclose(fp);
-
-	*((char**)ptr)=str->str;
-	g_string_free(str,false);
-	g_free(command);
 }
 
 //string slicing
@@ -554,101 +386,6 @@ char* sliceStrLen(char* srcstring,char* startstr,int len)
 	printf("%i\n",startchar);
 	return(sliceLen(srcstring,startchar,len));
 }
-
-void destroyTool(gpointer data)
-{
-	if(((toolStruct*)data)->menuName!=NULL)
-		g_free(((toolStruct*)data)->menuName);
-	if(((toolStruct*)data)->filePath!=NULL)
-		g_free(((toolStruct*)data)->filePath);
-	if(((toolStruct*)data)->command!=NULL)
-		g_free(((toolStruct*)data)->command);
-	g_free(data);
-}
-
-void buildToolsList(void)
-{
-	GDir*			folder;
-	const gchar*	entry=NULL;
-	FILE*			fd=NULL;
-	char*			filepath;
-	char			buffer[4096];
-	toolStruct*		tool;
-	char*			datafolder[2];
-	char			strarg[1024];
-	
-	int				intermarg=0;
-	int				flagsarg=0;
-	int				inpopup=0;
-	char*			commandarg=NULL;
-	char*			menuname=NULL;
-
-	if(toolsList!=NULL)
-		{
-			g_list_free_full(toolsList,destroyTool);
-			toolsList=NULL;
-		}
-
-	asprintf(&datafolder[0],"%s/tools/",DATADIR);
-	asprintf(&datafolder[1],"%s/.ManPageEditor/tools/",getenv("HOME"));
-	for(int loop=0;loop<2;loop++)
-		{
-			folder=g_dir_open(datafolder[loop],0,NULL);
-			if(folder!=NULL)
-				{
-					entry=g_dir_read_name(folder);
-					while(entry!=NULL)
-						{
-							asprintf(&filepath,"%s%s",datafolder[loop],entry);
-							fd=fopen(filepath,"r");
-							if(fd!=NULL)
-								{
-									intermarg=0;
-									flagsarg=0;
-									inpopup=0;
-
-									while(fgets(buffer,4096,fd))
-										{
-											buffer[strlen(buffer)-1]=0;
-											sscanf((char*)&buffer,"%s",(char*)&strarg);
-											if(strcmp(strarg,"name")==0)
-												asprintf(&menuname,"%.*s",(int)strlen(buffer)-5,(char*)&buffer[5]);
-											if(strcmp(strarg,"command")==0)
-												asprintf(&commandarg,"%.*s",(int)strlen(buffer)-8,(char*)&buffer[8]);
-											if(strcmp(strarg,"interm")==0)
-												sscanf((char*)&buffer,"%*s %i",&intermarg);
-											if(strcmp(strarg,"flags")==0)
-												sscanf((char*)&buffer,"%*s %i",&flagsarg);
-											if(strcmp(strarg,"inpopup")==0)
-												sscanf((char*)&buffer,"%*s %i",&inpopup);
-										}
-
-									if((menuname!=NULL) &&(strlen(menuname)>0))
-										{
-											tool=(toolStruct*)malloc(sizeof(toolStruct));
-											tool->menuName=strdup(menuname);
-											tool->command=strdup(commandarg);											
-											tool->flags=flagsarg;
-											tool->inTerminal=(bool)intermarg;
-											tool->inPopUp=(bool)inpopup;
-											tool->filePath=strdup(filepath);
-											toolsList=g_list_prepend(toolsList,(gpointer)tool);
-										}
-									g_free(menuname);
-									g_free(commandarg);
-									menuname=NULL;
-									commandarg=NULL;
-									fclose(fd);
-								}
-							entry=g_dir_read_name(folder);
-						}
-				}
-		}
-	g_free(datafolder[0]);
-	g_free(datafolder[1]);
-}
-
-
 
 
 
