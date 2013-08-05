@@ -44,7 +44,7 @@ void selectToolOptions(GtkWidget* widget,gpointer data)
 	char*			text=gtk_combo_box_text_get_active_text((GtkComboBoxText*)widget);
 
 	asprintf(&datafolder[0],"%s/tools/",DATADIR);
-	asprintf(&datafolder[1],"%s/.KKEdit/tools/",getenv("HOME"));
+	asprintf(&datafolder[1],"%s/.ManPageEditor/tools/",getenv("HOME"));
 
 	for(int loop=0;loop<2;loop++)
 		{
@@ -156,7 +156,7 @@ void fillCombo(GtkComboBoxText* combo)
 	char*			menuname=NULL;
 
 	asprintf(&datafolder[0],"%s/tools/",DATADIR);
-	asprintf(&datafolder[1],"%s/.KKEdit/tools/",getenv("HOME"));
+	asprintf(&datafolder[1],"%s/.ManPageEditor/tools/",getenv("HOME"));
 
 	for(int loop=0;loop<2;loop++)
 		{

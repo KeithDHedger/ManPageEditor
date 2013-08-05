@@ -20,8 +20,6 @@
 #include "guis.h"
 #include "config.h"
 
-bool singleOverRide=false;
-
 void readConfig(void)
 {
 	FILE*	fd=NULL;
@@ -31,7 +29,7 @@ void readConfig(void)
 	int		intarg;
 	char	strarg[256];
 
-	asprintf(&filename,"%s/.KKEdit/kkedit.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/kkedit.rc",getenv("HOME"));
 	fd=fopen(filename,"r");
 	if(fd!=NULL)
 		{
@@ -40,58 +38,39 @@ void readConfig(void)
 					fgets(buffer,1024,fd);
 					sscanf(buffer,"%s %s",(char*)&name,(char*)&strarg);
 
-					if(strcasecmp(name,"indentcode")==0)
-							indent=(bool)atoi(strarg);
-					if(strcasecmp(name,"showlinenumbers")==0)
-							lineNumbers=(bool)atoi(strarg);
 					if(strcasecmp(name,"wrapline")==0)
 							lineWrap=(bool)atoi(strarg);
+
 					if(strcasecmp(name,"highlightcurrentline")==0)
 							highLight=(bool)atoi(strarg);
-					if(strcasecmp(name,"singleuse")==0)
-							singleUse=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"insenssearch")==0)
 							insensitiveSearch=(bool)atoi(strarg);
 					if(strcasecmp(name,"wrapsearch")==0)
 							wrapSearch=(bool)atoi(strarg);
 
-					if(strcasecmp(name,"savesessiononexit")==0)
-							onExitSaveSession=(bool)atoi(strarg);
-					if(strcasecmp(name,"restorebookmarks")==0)
-							restoreBookmarks=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"showjtoline")==0)
 							showJumpToLine=(bool)atoi(strarg);
-					if(strcasecmp(name,"showfindapi")==0)
-							showFindAPI=(bool)atoi(strarg);
-					if(strcasecmp(name,"showfinddef")==0)
-							showFindDef=(bool)atoi(strarg);
+
 					if(strcasecmp(name,"showlivesearch")==0)
 							showLiveSearch=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"tabwidth")==0)
 							tabWidth=atoi(strarg);
-					if(strcasecmp(name,"depth")==0)
-							depth=atoi(strarg);
 
 					if(strcasecmp(name,"font")==0)
 						{
 							sscanf(buffer,"%*s %s %i",(char*)&strarg,(int*)&intarg);
 							asprintf(&fontAndSize,"%s %i",strarg,intarg);
 						}
-					if(strcasecmp(name,"terminalcommand")==0)
-						{
-							g_free(terminalCommand);
-							sscanf(buffer,"%*s %"VALIDCHARS"s",(char*)&strarg);
-							terminalCommand=strdup(strarg);
-						}
+
 				}
 			fclose(fd);
 		}
 
 	g_free(filename);
-	asprintf(&filename,"%s/.KKEdit/kkedit.window.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManEdit/manedit.window.rc",getenv("HOME"));
 	fd=fopen(filename,"r");
 	if(fd!=NULL)
 		{
@@ -114,15 +93,10 @@ void init(void)
 #ifdef _ASPELL_
 	AspellCanHaveError*	possible_err;
 #endif
-	indent=true;
-	lineNumbers=true;
 	lineWrap=true;
 	highLight=true;
 	tabWidth=4;
-	depth=1;
-	singleUse=true;
 	fontAndSize=strdup("mono 10");
-	terminalCommand=strdup("xterm");
 	windowWidth=800;
 	windowHeight=400;
 	windowX=-1;
@@ -130,36 +104,22 @@ void init(void)
 	wrapSearch=true;
 	insensitiveSearch=true;
 	replaceAll=false;
-	onExitSaveSession=false;
-	onExitSaveSession=false;
-	restoreBookmarks=false;
 	showJumpToLine=true;
-	showFindAPI=true;
-	showFindDef=true;
 	showLiveSearch=true;
 
-	asprintf(&filename,"%s/.KKEdit",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
 	g_free(filename);
 
 	readConfig();
 
-	tmpIndent=indent;
-	tmpLineNumbers=lineNumbers;
-	tmpLineWrap=lineWrap;
 	tmpHighLight=highLight;
-	tmpSingleUse=singleUse;
 	tmpTabWidth=tabWidth;
-	tmpDepth=depth;
-	tmpSaveSessionOnExit=onExitSaveSession;
-	tmpRestoreBookmarks=restoreBookmarks;
 
 	tmpShowJumpToLine=showJumpToLine;
-	tmpShowFindAPI=showFindAPI;
-	tmpShowFindDef=showFindDef;
 	tmpShowLiveSearch=showLiveSearch;
 
-	filename=tempnam(NULL,"KKEdit");
+	filename=tempnam(NULL,"ManPageEditor");
 	asprintf(&htmlFile,"%s.html",filename);
 	asprintf(&htmlURI,"file://%s.html",filename);
 	g_free(filename);
@@ -183,23 +143,18 @@ int main(int argc,char **argv)
 
 	init();
 
+	buildMainGui();
 
-			buildMainGui();
+	if(onExitSaveSession==true)
+		restoreSession(NULL,(void*)restoreBookmarks);
 
-			if(onExitSaveSession==true)
-				restoreSession(NULL,(void*)restoreBookmarks);
+	for(int j=1;j<argc;j++)
+		openFile(argv[j],0);
 
-			for(int j=1;j<argc;j++)
-				openFile(argv[j],0);
+	refreshMainWindow();
 
-			refreshMainWindow();
+	buildFindReplace();
 
-			buildFindReplace();
-
-#ifdef BUILDDOCVIEWER
-			buildGtkDocViewer();
-#endif
-			setSensitive();
-
-			gtk_main();
+	setSensitive();
+	gtk_main();
 }

@@ -590,7 +590,7 @@ void buildToolsList(void)
 		}
 
 	asprintf(&datafolder[0],"%s/tools/",DATADIR);
-	asprintf(&datafolder[1],"%s/.KKEdit/tools/",getenv("HOME"));
+	asprintf(&datafolder[1],"%s/.ManPageEditor/tools/",getenv("HOME"));
 	for(int loop=0;loop<2;loop++)
 		{
 			folder=g_dir_open(datafolder[loop],0,NULL);

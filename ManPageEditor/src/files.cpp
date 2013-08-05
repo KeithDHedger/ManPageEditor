@@ -330,10 +330,10 @@ void saveSession(GtkWidget* widget,gpointer data)
 	GList*			listelement;
 	GtkTextIter		markiter;
 
-	asprintf(&filename,"%s/.KKEdit",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
 	g_free(filename);
-	asprintf(&filename,"%s/.KKEdit/session",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/session",getenv("HOME"));
 	fd=fopen(filename,"w");
 	if (fd!=NULL)
 		{
@@ -372,7 +372,7 @@ void restoreSession(GtkWidget* widget,gpointer data)
 	pageStruct*	page;
 	GtkTextIter	markiter;
 
-	asprintf(&filename,"%s/.KKEdit/session",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/session",getenv("HOME"));
 	fd=fopen(filename,"r");
 	if (fd!=NULL)
 		{

@@ -652,10 +652,10 @@ void writeExitData(void)
 	gtk_widget_get_allocation(window,&alloc);
 	gtk_window_get_position((GtkWindow*)window,&winx,&winy);
 
-	asprintf(&filename,"%s/.KKEdit",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
 	g_free(filename);
-	asprintf(&filename,"%s/.KKEdit/kkedit.window.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/kkedit.window.rc",getenv("HOME"));
 	fd=fopen(filename,"w");
 	if(fd!=NULL)
 		{
@@ -676,10 +676,10 @@ void writeConfig(void)
 	gtk_widget_get_allocation(window,&alloc);
 	gtk_window_get_position((GtkWindow*)window,&winx,&winy);
 
-	asprintf(&filename,"%s/.KKEdit",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
 	g_free(filename);
-	asprintf(&filename,"%s/.KKEdit/kkedit.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/kkedit.rc",getenv("HOME"));
 	fd=fopen(filename,"w");
 	if(fd!=NULL)
 		{
@@ -899,10 +899,10 @@ void setToolOptions(GtkWidget* widget,gpointer data)
 
 	if(strcmp(gtk_widget_get_name(widget),"apply")==0)
 		{
-			asprintf(&dirname,"%s/.KKEdit/tools",getenv("HOME"));
+			asprintf(&dirname,"%s/.ManPageEditor/tools",getenv("HOME"));
 			text=strdup(gtk_entry_get_text((GtkEntry*)toolNameWidget));
 			text=g_strdelimit(text," ",'-');
-			sprintf((char*)&toolpath,"%s/.KKEdit/tools/%s",getenv("HOME"),text);
+			sprintf((char*)&toolpath,"%s/.ManPageEditor/tools/%s",getenv("HOME"),text);
 
 			fd=fopen(toolpath,"w");
 			if(fd!=NULL)
@@ -942,9 +942,9 @@ void doAbout(GtkWidget* widget,gpointer data)
 {
 	const char*	authors[]={"K.D.Hedger <"MYEMAIL">",NULL};
 	const char	copyright[] ="Copyright \xc2\xa9 2013 K.D.Hedger";
-	const char*	aboutboxstring="KKEdit Code Text Editor";
+	const char*	aboutboxstring="ManPageEditor Code Text Editor";
 
-	gtk_show_about_dialog(NULL,"authors",authors,"comments",aboutboxstring,"copyright",copyright,"version",KKEDIT_VERSION,"website",MYWEBSITE,"program-name","KKEdit","logo-icon-name","KKEdit",NULL); 
+	gtk_show_about_dialog(NULL,"authors",authors,"comments",aboutboxstring,"copyright",copyright,"version",KKEDIT_VERSION,"website",MYWEBSITE,"program-name","ManPageEditor","logo-icon-name","ManPageEditor",NULL); 
 }
 
 void drawPage(GtkPrintOperation *operation,GtkPrintContext *context,gint page_nr,gpointer user_data)
