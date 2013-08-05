@@ -187,21 +187,6 @@ void showDocView(GtkWidget* widget,gpointer data)
 #endif
 }
 
-void defSearchFromBar(GtkWidget* widget,gpointer data)
-{
-	functionSearchText=strdup(gtk_entry_get_text((GtkEntry*)widget));
-	if(functionSearchText!=NULL)
-		{
-			functionData* fdata=getFunctionByName(functionSearchText,true);
-			if(fdata!=NULL)
-				{
-					goToDefine(fdata);
-					destroyData(fdata);
-				}
-			g_free(functionSearchText);
-		}
-}
-
 
 void doFindReplace(GtkDialog *dialog,gint response_id,gpointer user_data)
 {

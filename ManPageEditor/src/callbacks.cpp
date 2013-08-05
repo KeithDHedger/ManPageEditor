@@ -39,8 +39,6 @@ void refreshMainWindow(void)
 {
 	gtk_widget_show_all(window);
 	showHideWidget(lineNumberWidget,showJumpToLine);
-	showHideWidget(findApiWidget,showFindAPI);
-	showHideWidget(findDefWidget,showFindDef);
 	showHideWidget(liveSearchWidget,showLiveSearch);
 }
 
@@ -270,7 +268,6 @@ void switchPage(GtkNotebook *notebook,gpointer arg1,guint thispage,gpointer user
 
 	page->rebuildMenu=false;
 
-	getRecursiveTagList(page->filePath,&functions);
 	lineptr=functions;
 
 	page->isFirst=true;

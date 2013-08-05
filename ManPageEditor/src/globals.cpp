@@ -32,8 +32,8 @@ GtkNotebook*	notebook=NULL;
 GtkWidget*		menubar=NULL;
 GtkWidget*		menufile;
 GtkWidget*		menuedit;
-GtkWidget*		menufunc;
-GtkWidget*		menunav;
+
+
 GtkWidget*		menutools;
 GtkWidget*		menuhelp;
 GtkWidget*		menumanpage;

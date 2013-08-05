@@ -303,42 +303,6 @@ void doMakeTool(void)
 	gtk_widget_show_all(toolwin);
 }
 
-void buildTools(void)
-{
-	GtkWidget*		menuitem;
-	GtkWidget*		menu;
-	GtkWidget*		image;
-	GList*			ptr;
-
-	buildToolsList();
-
-	GtkWidget* submenu=gtk_menu_item_get_submenu((GtkMenuItem*)menutools);
-	if(submenu!=NULL)
-		gtk_menu_item_set_submenu((GtkMenuItem*)menutools,NULL);
-
-	menu=gtk_menu_new();
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menutools),menu);
-
-//addtool
-	menuitem=gtk_image_menu_item_new_with_label("Manage External Tools");
-	image=gtk_image_new_from_stock(GTK_STOCK_EDIT,GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
-
-	menuitem=gtk_separator_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-
-	ptr=toolsList;
-	while(ptr!=NULL)
-		{
-			menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-			gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
-			ptr=g_list_next(ptr);
-		}
-}
-
 void doPrefs(void)
 {
 	GtkWidget*	vbox;
@@ -480,69 +444,6 @@ void doPrefs(void)
 	gtk_widget_show_all(prefswin);
 }
 
-void addRecentToMenu(GtkRecentChooser* chooser,GtkWidget* menu)
-{
-	GList*		itemlist=NULL;
-	GList*		l=NULL;
-	GtkWidget*	menuitem;
-	char*		uri=NULL;
-	char*		filename=NULL;
-	int			i=0;
-
-	itemlist=gtk_recent_chooser_get_items(chooser);
-
-	for (l = itemlist; l != NULL; l = l->next)
-		{
-			const gchar *menuname;
-			GtkRecentInfo *info = (GtkRecentInfo*)l->data;
-			if (i >= MAXRECENT)
-				break;
-			i++;
-
-			menuname=gtk_recent_info_get_display_name(info);
-			uri=(char*)gtk_recent_info_get_uri(info);
-			if (uri!=NULL)
-				{
-					filename=g_filename_from_uri((const gchar*)uri,NULL,NULL);
-					menuitem=gtk_image_menu_item_new_with_label(menuname);
-					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-					gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(recentFileMenu),(void*)filename);
-					g_free (uri);
-				}
-		}
-}
-#if 0
-void doManPageMark(GtkWidget* widget,gpointer data)
-{
-printf("XXXXXXXXXXXX%i\n",(int)(long)data);
-	pageStruct*					page=getPageStructPtr(-1);
-	GtkTextMark*	mark;
-	GtkTextMark*	manmark;
-	GtkTextIter		iter;
-	int				line;
-
-	mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
-	gtk_text_buffer_get_iter_at_mark((GtkTextBuffer*)page->buffer,&iter,mark);
-
-	line=gtk_text_iter_get_line(&iter);
-
-	gtk_text_buffer_get_iter_at_line((GtkTextBuffer*)page->buffer,&iter,line);
-
-	manmark=gtk_text_mark_new("TESTMARK",true);
-	gtk_text_buffer_add_mark((GtkTextBuffer*)page->buffer,manmark,&iter);
-	gtk_text_mark_set_visible(manmark,true);
-
-
-GtkTextTag *tag;
-  
-      tag = gtk_text_buffer_create_tag ((GtkTextBuffer*)page->buffer, NULL, 
-                                        "weight", PANGO_WEIGHT_BOLD, "editable",false,
-                                        NULL);
-      gtk_text_buffer_insert_with_tags ((GtkTextBuffer*)page->buffer, &iter, "hypertext:\n", -1, tag, NULL);
-}
-
-#endif
-
 void buildMainGui(void)
 {
 	GtkWidget*					vbox;
@@ -553,7 +454,6 @@ void buildMainGui(void)
 	GtkAccelGroup*				accgroup;
 	GtkWidget*					image;
 	GtkRecentFilter*			filter;
-	GtkWidget*					menurecent;
 
 	GtkSourceLanguageManager*	lm;
 	const gchar* const*			ids;
@@ -635,14 +535,6 @@ void buildMainGui(void)
 	gtk_signal_connect(GTK_OBJECT(toolbutton),"clicked",G_CALLBACK(find),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Find/Replace");
 
-//navigation
-	toolbutton=gtk_tool_button_new_from_stock(GTK_STOCK_DIALOG_QUESTION);
-	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
-	gtk_signal_connect(GTK_OBJECT(toolbutton),"clicked",G_CALLBACK(goToDefinition),NULL);
-	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Go To Definition");
-
-	gtk_toolbar_insert((GtkToolbar*)toolbar,gtk_separator_tool_item_new(),-1);
-
 //goto line
 	lineNumberWidget=gtk_entry_new();
 	toolbutton=gtk_tool_item_new();
@@ -718,16 +610,6 @@ void buildMainGui(void)
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(newEditor),(void*)2);
-
-	menuitem=gtk_separator_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-
-//recent menu
-	menuitem=gtk_image_menu_item_new_with_label("Recent Files");
-	menurecent=gtk_menu_new();
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem),menurecent);
-	addRecentToMenu((GtkRecentChooser*)recent,menurecent);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);

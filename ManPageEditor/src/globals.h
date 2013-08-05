@@ -93,8 +93,8 @@ extern GtkNotebook*		notebook;
 extern GtkWidget*		menubar;
 extern GtkWidget*		menufile;
 extern GtkWidget*		menuedit;
-extern GtkWidget*		menufunc;
-extern GtkWidget*		menunav;
+
+
 extern GtkWidget*		menutools;
 extern GtkWidget*		menubookmark;
 extern GtkWidget*		menubookmarksub;
@@ -231,7 +231,7 @@ char* slice(char* srcstring,int startchar,int endchar);
 char* sliceBetween(char* srcstring,char* startstr,char* endstr);
 char* sliceLen(char* srcstring,int tmpstartchar,int len);
 char* sliceStrLen(char* srcstring,char* startstr,int len);
-char* deleteSlice(char* srcstring,char* delstr);findApiWidget
+char* deleteSlice(char* srcstring,char* delstr);
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter);
 
 #endif
