@@ -13,9 +13,6 @@
 #include <gtksourceview/gtksourceview.h>
 
 #include "config.h"
-#ifdef BUILDDOCVIEWER
-#include <webkit/webkit.h>
-#endif
 
 #ifdef _ASPELL_
 #include <aspell.h>
@@ -57,8 +54,6 @@ struct pageStruct
 	GtkSourceView*		view;
 	GtkSourceView*		view2;
 	char*				filePath;
-	GtkMenuItem*		navSubMenu;
-	bool				rebuildMenu;
 	GtkWidget*			tabName;
 	GtkTextIter			iter;
 	GtkTextIter			match_start;
@@ -95,9 +90,9 @@ extern GtkWidget*		menufile;
 extern GtkWidget*		menuedit;
 
 
-extern GtkWidget*		menutools;
-extern GtkWidget*		menubookmark;
-extern GtkWidget*		menubookmarksub;
+
+
+
 extern GtkWidget*		menuhelp;
 extern GtkWidget*		menuprint;
 extern GtkWidget*		menuclose;
@@ -200,15 +195,10 @@ extern GtkWidget*		findReplaceDialog;
 extern GtkWidget*		findBox;
 extern GtkWidget*		replaceBox;
 
-extern char*			functionSearchText;
 extern char*			thePage;
 extern char*			htmlFile;
 extern char*			htmlURI;
 
-#ifdef BUILDDOCVIEWER
-extern GtkWidget*		docView;
-extern WebKitWebView*	webView;
-#endif
 
 extern GtkWidget*		spellCheckWord;
 extern GtkWidget*		wordListDropbox;

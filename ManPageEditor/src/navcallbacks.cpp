@@ -16,62 +16,6 @@
 int	theLineNum=0;
 int marknum=0;
 
-void findFile(GtkWidget* widget,gpointer data)
-{
-	pageStruct*	page=getPageStructPtr(-1);
-	GtkTextIter	start;
-	GtkTextIter	end;
-	char*		selection=NULL;
-	char		strarg[2048];
-	char*		filename;
-	char*		command;
-	gchar*		stdout=NULL;
-	gchar*		stderr=NULL;
-	gint		retval=0;
-	char*		lineptr;
-	char		buffer[2048];
-	char*		searchdir;
-
-	if(gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end))
-		{
-			selection=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,false);
-			if(selection==NULL)
-				return;
-		}
-	else
-		return;
-
-	sscanf(selection,"#include %s",(char*)&strarg);
-	strarg[strlen(strarg)-1]=0;
-	
-	if(strarg[0]=='<')
-		searchdir=strdup("/usr/include");
-	else
-		searchdir=strdup(g_path_get_dirname(page->filePath));
-
-	filename=g_path_get_basename(&strarg[1]);
-	asprintf(&command,"find \"%s\" -name \"%s\"",searchdir,filename);
-	g_spawn_command_line_sync(command,&stdout,&stderr,&retval,NULL);
-	if (retval==0)
-		{
-			stdout[strlen(stdout)-1]=0;
-			lineptr=stdout;
-			while (lineptr!=NULL)
-				{
-					sscanf (lineptr,"%s",(char*)&buffer);
-					lineptr=strchr(lineptr,'\n');
-					if (lineptr!=NULL)
-						lineptr++;
-					openFile(buffer,0);
-				}
-			g_free(stdout);
-			g_free(stderr);
-		}
-
-	g_free(searchdir);
-	g_free(filename);
-	g_free(command);
-}
 
 void gotoLine(GtkWidget* widget,gpointer data)
 {

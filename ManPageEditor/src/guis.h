@@ -22,8 +22,5 @@ void buildTools(void);
 void buildFindReplace(void);
 void buildWordCheck(int documentCheck);
 int showFunctionEntry(void);
-#ifdef BUILDDOCVIEWER
-void buildGtkDocViewer(void);
-#endif
 
 #endif

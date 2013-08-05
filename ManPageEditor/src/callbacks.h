@@ -24,7 +24,7 @@ void cutToClip(GtkWidget* widget,gpointer data);
 void pasteFromClip(GtkWidget* widget,gpointer data);
 void undo(GtkWidget* widget,gpointer data);
 void redo(GtkWidget* widget,gpointer data);
-void externalTool(GtkWidget* widget,gpointer data);
+
 void openHelp(GtkWidget* widget,gpointer data);
 void printFile(GtkWidget* widget,gpointer data);
 void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data);

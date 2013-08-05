@@ -34,12 +34,12 @@ GtkWidget*		menufile;
 GtkWidget*		menuedit;
 
 
-GtkWidget*		menutools;
+
 GtkWidget*		menuhelp;
 GtkWidget*		menumanpage;
 
-GtkWidget*		menubookmark;
-GtkWidget*		menubookmarksub;
+
+
 GtkWidget*		menuprint;
 GtkWidget*		menuclose;
 GtkWidget*		menucloseall;
@@ -138,15 +138,10 @@ GtkWidget*		findReplaceDialog;
 GtkWidget*		findBox;
 GtkWidget*		replaceBox;
 
-char*			functionSearchText=NULL;
 char*			thePage=NULL;
 char*			htmlFile=NULL;
 char*			htmlURI=NULL;
 
-#ifdef BUILDDOCVIEWER
-GtkWidget*		docView;
-WebKitWebView*	webView;
-#endif
 
 //spellcheck
 GtkWidget*		spellCheckWord;

@@ -245,60 +245,6 @@ bool saveFile(GtkWidget* widget,gpointer data)
 	return(true);
 }
 
-void openAsHexDump(GtkWidget *widget,gpointer user_data)
-{
-	GtkWidget*		dialog;
-	char*			filepath;
-	char*			filename;
-	int				pagenum;
-	FILE*			fp;
-	char			line[1024];
-	GString*		str=g_string_new(NULL);
-	char*			command;
-	GtkTextIter		iter;
-	pageStruct*		page;
-	char*			convstr=NULL;
-
-	dialog=gtk_file_chooser_dialog_new("Open File",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
-	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
-		{
-			filepath=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			filename=g_path_get_basename(filepath);
-			newFile(NULL,NULL);
-			pagenum=currentPage-1;
-			page=getPageStructPtr(pagenum);
-			asprintf(&command,"hexdump -C %s",filepath);
-			fp=popen(command, "r");
-			while(fgets(line,1024,fp))
-				g_string_append_printf(str,"%s",line);
-
-			pclose(fp);
-
-			gtk_source_buffer_begin_not_undoable_action(page->buffer);
-				gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(page->buffer),&iter);
-				if(g_utf8_validate(str->str,-1,NULL)==false)
-					{
-						convstr=g_locale_to_utf8(str->str,-1,NULL,NULL,NULL);
-						gtk_text_buffer_insert(GTK_TEXT_BUFFER(page->buffer),&iter,convstr,-1);
-						g_free(convstr);
-					}
-				else
-					{
-						gtk_text_buffer_insert(GTK_TEXT_BUFFER(page->buffer),&iter,str->str,-1);
-					}
-			gtk_source_buffer_end_not_undoable_action(page->buffer);
-			gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
-			
-			g_string_free(str,true);
-			g_free (filepath);
-			g_free (filename);
-			setSensitive();
-		}
-
-	gtk_widget_destroy (dialog);
-	refreshMainWindow();
-}
-
 void reloadFile(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page=getPageStructPtr(-1);
@@ -394,7 +340,6 @@ pageStruct* makeNewPage(void)
 	gtk_container_add (GTK_CONTAINER(page->pageWindow),(GtkWidget*)page->view);
 	g_signal_connect(G_OBJECT(page->view),"button-release-event",G_CALLBACK(whatPane),(void*)1);
 
-	page->rebuildMenu=true;
 	page->isFirst=true;
 	page->itsMe=false;
 	page->markList=NULL;

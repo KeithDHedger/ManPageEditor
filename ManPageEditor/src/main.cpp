@@ -145,9 +145,6 @@ int main(int argc,char **argv)
 
 	buildMainGui();
 
-	if(onExitSaveSession==true)
-		restoreSession(NULL,(void*)restoreBookmarks);
-
 	for(int j=1;j<argc;j++)
 		openFile(argv[j],0);
 
