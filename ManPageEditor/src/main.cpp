@@ -13,7 +13,6 @@
 #include <gtksourceview/gtksourcebuffer.h>
 #include <gtksourceview/gtksourcelanguage.h>
 #include <gtksourceview/gtksourcelanguagemanager.h>
-#include <unique/unique.h>
 
 #include "globals.h"
 #include "files.h"
@@ -179,50 +178,12 @@ void init(void)
 
 int main(int argc,char **argv)
 {
-	UniqueApp*			app;
-	UniqueMessageData*	message=NULL;
-	UniqueCommand 		command;
-	UniqueResponse 		response;
-	UniqueBackend*		back;
-	char*				dbusname;
 
 	gtk_init(&argc,&argv);
 
-	back=unique_backend_create();
-	asprintf(&dbusname,"org.keithhedger%i.ManPageEditor",unique_backend_get_workspace(back));
-	app=unique_app_new(dbusname,NULL);
-	message=unique_message_data_new();
-
 	init();
 
-	if((argc>1) && (strcmp(argv[1],"-m")==0))
-		singleOverRide=true;
 
-	if((unique_app_is_running(app)==true) && (singleUse==true) && (singleOverRide==false))
-		{
-			if(argc==1)
-				{
-					command=UNIQUE_ACTIVATE;
-					response=unique_app_send_message(app,command,NULL);
-				}
-			else
-				{
-					command=UNIQUE_OPEN;
-					unique_message_data_set_uris(message,argv);
-					response=unique_app_send_message(app,command,message);
-					}
-
-			g_object_unref(app);
-			unique_message_data_free(message);
-
-			if(response==UNIQUE_RESPONSE_OK)
-				return 0;
-			else
-				printf("FAIL\n");
-				//handle_fail_or_user_cancel();
-		}
-	else
-		{
 			buildMainGui();
 
 			if(onExitSaveSession==true)
@@ -238,10 +199,7 @@ int main(int argc,char **argv)
 #ifdef BUILDDOCVIEWER
 			buildGtkDocViewer();
 #endif
-			unique_app_watch_window(app,(GtkWindow*)window);
-			g_signal_connect(app,"message-received",G_CALLBACK(messageReceived),NULL);
 			setSensitive();
 
 			gtk_main();
-		}
 }

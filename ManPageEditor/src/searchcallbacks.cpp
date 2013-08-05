@@ -8,7 +8,7 @@
 
 #include <gtk/gtk.h>
 #include <gtksourceview/gtksourceiter.h>
-#include <unique/unique.h>
+//#include <unique/unique.h>
 
 #include "config.h"
 #ifdef BUILDDOCVIEWER

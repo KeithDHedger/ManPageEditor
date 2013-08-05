@@ -8,7 +8,7 @@
 
 #include <gtk/gtk.h>
 #include <gtksourceview/gtksourceiter.h>
-#include <unique/unique.h>
+//#include <unique/unique.h>
 #include <gtksourceview/gtksourceprintcompositor.h>
 
 #include "config.h"
@@ -640,42 +640,6 @@ bool tabPopUp(GtkWidget *widget, GdkEventButton *event,gpointer user_data)
 		return(false);
 }
 
-void messageOpen(UniqueMessageData *message)
-{
-	int argc;
-
-	gchar** uris=unique_message_data_get_uris(message);
-	argc=g_strv_length(uris);
-
-	for (int loop=1;loop<argc;loop++)
-		openFile(uris[loop],1);
-}
-
-UniqueResponse messageReceived(UniqueApp *app,UniqueCommand command,UniqueMessageData *message,guint time,gpointer user_data)
-{
-	UniqueResponse	res;
-
-	switch(command)
-		{
-			case UNIQUE_ACTIVATE:
-				gtk_window_set_screen(GTK_WINDOW(window),unique_message_data_get_screen(message));
-				gtk_window_present_with_time(GTK_WINDOW(window),time);
-				res=UNIQUE_RESPONSE_OK;
-				break;
-
-			case UNIQUE_OPEN:
-				messageOpen(message);
-				gtk_window_set_screen(GTK_WINDOW(window),unique_message_data_get_screen(message));
-				gtk_window_present_with_time(GTK_WINDOW(window),time);
-   				res=UNIQUE_RESPONSE_OK;
-				break;
-
-			default:
-				res=UNIQUE_RESPONSE_OK;
-				break;
-		}
-	return(res);
-}
 
 void writeExitData(void)
 {
@@ -1055,18 +1019,7 @@ void recentFileMenu(GtkRecentChooser* chooser,gpointer* data)
 
 void newEditor(GtkWidget* widget,gpointer data)
 {
-
-	if((long)data==1)
-#ifdef _GTKSU_
-		system("gtksu -- kkedit -m 2>/dev/null");
-#else
-		char*	command=NULL;
-		asprintf(&command,"%s sudo kkedit -m",terminalCommand);
-		system(command);
-		g_free(command);
-#endif
-	if((long)data==2)
-		system("kkedit -m");
+	system("manpageeditor");
 }
 
 void changeSourceStyle(GtkWidget* widget,gpointer data)

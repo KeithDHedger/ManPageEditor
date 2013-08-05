@@ -8,7 +8,6 @@
 
 #include <gtk/gtk.h>
 #include <gtksourceview/gtksourceiter.h>
-#include <unique/unique.h>
 
 #include "globals.h"
 #include "files.h"

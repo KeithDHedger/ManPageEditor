@@ -7,7 +7,7 @@
 */
 
 #include <gtk/gtk.h>
-#include <unique/unique.h>
+//#include <unique/unique.h>
 
 #include "globals.h"
 #include "files.h"
@@ -30,7 +30,7 @@ void openHelp(GtkWidget* widget,gpointer data);
 void printFile(GtkWidget* widget,gpointer data);
 void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data);
 void tabPopUp(GtkWidget *my_widget, GdkEventButton *event,gpointer user_data);
-UniqueResponse messageReceived(UniqueApp *app,UniqueCommand command,UniqueMessageData *message,guint time,gpointer user_data);
+
 void doShutdown(GtkWidget* widget,gpointer data);
 void setPrefs(GtkWidget* widget,gpointer data);
 void setToolOptions(GtkWidget* widget,gpointer data);
