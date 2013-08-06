@@ -62,8 +62,8 @@ void setFilePrefs(GtkSourceView* sourceview)
 {
 	PangoFontDescription*	font_desc;
 
-	gtk_source_view_set_auto_indent(sourceview,indent);
-	gtk_source_view_set_show_line_numbers(sourceview,lineNumbers);
+	gtk_source_view_set_auto_indent(sourceview,false);
+	gtk_source_view_set_show_line_numbers(sourceview,false);
 	gtk_source_view_set_highlight_current_line(sourceview,highLight);
 
 	if(lineWrap==true)
@@ -170,6 +170,87 @@ bool getSaveFile(void)
 	gtk_widget_destroy(dialog);
 	refreshMainWindow();
 	return(retval);
+}
+
+void exportFile(GtkWidget* widget,gpointer data)
+{
+	pageStruct*	page=getPageStructPtr(-1);
+	GtkTextIter	start,end;
+	gchar*		text;
+	FILE*		fd=NULL;
+	char*	tstr;
+	int ln=2;
+	GString*	str=g_string_new(NULL);
+
+	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+	text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
+
+	bool	list=false;
+//header
+	printf(".TH \"XFCE-THEME-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
+printf(".SH \"NAME\"\n");
+printf("xfce\-theme\-manager \- A theme manager for Xfce\n");
+
+//section is tab
+	printf(".SH \"%s\"\n",page->fileName);
+//printf("line 1=%s\n",text);
+
+	tstr=strtok(text,"\n");
+	if(tstr[0]=='\t')
+		{
+			printf(".TP.\n");
+			list=true;
+		}
+
+	for(int j=0;j<strlen(tstr);j++)
+		{
+			switch(tstr[j])
+				{
+					case '\t':
+						//printf("<TP>\n");
+						//list=true;
+						break;
+					case '-':
+						g_string_append_printf(str,"\\%c",tstr[j]);
+						break;
+					default:
+						g_string_append_c(str,tstr[j]);
+				}
+		}
+		
+	printf("%s\n",str->str);
+	printf(".br\n");
+	g_string_free(str,true);
+					/* Extract remaining 
+					 * strings 		*/
+	while ( (tstr=strtok(NULL,"\n"))!= NULL)
+		{
+			str=g_string_new(NULL);
+			for(int j=0;j<strlen(tstr);j++)
+				{
+					switch(tstr[j])
+						{
+							case '\t':
+								if(j==0 && list==false)
+									{
+										printf("<TP>\n");
+										list=true;
+									}
+								break;
+							case '-':
+								g_string_append_printf(str,"\\%c",tstr[j]);
+								break;
+							default:
+								//if(j==0 && list==true)
+								//	list=false;
+								g_string_append_c(str,tstr[j]);
+						}
+				}
+			printf("%s\n",str->str);
+			g_string_free(str,true);
+		}
+
 }
 
 bool saveFile(GtkWidget* widget,gpointer data)

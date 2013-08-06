@@ -49,6 +49,8 @@ GtkWidget*		menurevert;
 GtkWidget*		redoMenu;
 GtkWidget*		undoMenu;
 GtkWidget*		saveMenu;
+GtkWidget*		exportMenu;
+
 GtkWidget*		saveAsMenu;
 
 GtkWidget*		lineNumberWidget;
@@ -57,36 +59,36 @@ GtkWidget*		liveSearchWidget;
 int				currentPage=0;
 
 GtkWidget*		prefswin;
-bool			indent;
-bool			lineNumbers;
+
+
 bool			lineWrap;
 bool			highLight;
-bool			singleUse;
+
 int				tabWidth;
 char*			fontAndSize;
-char*			terminalCommand;
-int				depth;
-bool			onExitSaveSession;
+
+
+
 bool			restoreBookmarks;
 bool			showJumpToLine;
-bool			showFindAPI;
-bool			showFindDef;
+
+
 bool			showLiveSearch;
 
 GtkWidget*		fontBox;
 GtkWidget*		terminalBox;
-bool			tmpIndent;
-bool			tmpLineNumbers;
+
+
 bool			tmpLineWrap;
 bool			tmpHighLight;
-bool			tmpSingleUse;
+
 int				tmpTabWidth;
-int				tmpDepth;
-bool			tmpSaveSessionOnExit;
-bool			tmpRestoreBookmarks;
+
+
+
 bool			tmpShowJumpToLine;
-bool			tmpShowFindAPI;
-bool			tmpShowFindDef;
+
+
 bool			tmpShowLiveSearch;
 
 GtkWidget*		toolNameWidget;
@@ -105,14 +107,14 @@ GList*			toolsList=NULL;
 
 GtkWidget*		restoreBMs;
 
-bool			inTerm=false;
-bool			inPopup=false;
-bool			runSync=true;
-bool			ignoreOut=true;
-bool			pasteOut=false;
-bool			replaceOut=false;
+
+
+
+
+
+
 bool			showDoc=false;
-bool			editTool=false;
+
 
 int				windowWidth;
 int				windowHeight;
@@ -132,7 +134,7 @@ GtkToolItem*	saveasButton;
 GtkToolItem*	closeButton;
 GtkToolItem*	redoButton;
 GtkToolItem*	undoButton;
-GtkToolItem*	sourceFormatButton;
+
 
 GtkWidget*		findReplaceDialog;
 GtkWidget*		findBox;
@@ -154,7 +156,8 @@ AspellSpeller*	spellChecker=0;
 #endif
 
 //tags
-tagStruct*		tagList[100];
+tagStruct*		tagList[100]={NULL,};
+
 int				currentTagNum=0;
 
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter)
@@ -248,47 +251,6 @@ void setLanguage(pageStruct* page)
 
 	if(mimetype!=NULL)
 		g_free(mimetype);
-}
-
-
-void runCommand(char* commandtorun,void* ptr,bool interm,int flags)
-{
-	char*	command;
-	FILE*	fp=NULL;
-	GString*	str=NULL;
-	char		line[1024];
-
-	if(interm==true)
-		{
-			asprintf(&command,"%s %s",terminalCommand,commandtorun);
-			flags=8;
-		}
-	else
-		command=strdup(commandtorun);
-
-	if((flags & TOOL_ASYNC)==TOOL_ASYNC)
-		{
-			g_spawn_command_line_async(command,NULL);
-		}
-	else
-		{
-			fp=popen(command,"r");
-			if(fp!=NULL)
-				{
-					str=g_string_new(NULL);
-					while(fgets(line,1024,fp))
-						 g_string_append(str,line);
-					pclose(fp);
-					if(ptr!=NULL)
-						*((char**)ptr)=str->str;
-					g_string_free(str,false);
-				}
-		}
-
-	if(flags & TOOL_SHOW_DOC)
-		showDocView(NULL,(void*)1);
-
-	g_free(command);
 }
 
 char* deleteSlice(char* srcstring,char* delstr)

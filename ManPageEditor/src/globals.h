@@ -72,14 +72,16 @@ struct pageStruct
 
 struct tagStruct
 {
-	GtkTextIter	start;
-	GtkTextIter	end;
-	char*		name;
-	int			startLine;
-	int			startOffset;
-	int			endLine;
-	int			endOffset;
-	PangoWeight	weight;
+	GtkTextIter		start;
+	GtkTextIter		end;
+	char*			name;
+	int				startLine;
+	int				startOffset;
+	int				endLine;
+	int				endOffset;
+	PangoWeight		weight;
+	bool			isTag;
+	GtkTextMark*	mark;
 };
 
 extern GtkWidget*		window;
@@ -104,6 +106,7 @@ extern GtkWidget*		menumanpage;
 extern GtkWidget*		redoMenu;
 extern GtkWidget*		undoMenu;
 extern GtkWidget*		saveMenu;
+extern GtkWidget*		exportMenu;
 extern GtkWidget*		saveAsMenu;
 
 extern GtkWidget*		lineNumberWidget;
@@ -112,36 +115,36 @@ extern GtkWidget*		liveSearchWidget;
 extern int				currentPage;
 
 extern GtkWidget*		prefswin;
-extern bool				indent;
-extern bool				lineNumbers;
+
+
 extern bool				lineWrap;
 extern bool				highLight;
-extern bool				singleUse;
+
 extern int				tabWidth;
 extern char*			fontAndSize;
-extern char*			terminalCommand;
-extern int				depth;
-extern bool				onExitSaveSession;
-extern bool				restoreBookmarks;
+
+
+
+
 extern bool				showJumpToLine;
-extern bool				showFindAPI;
-extern bool				showFindDef;
+
+
 extern bool				showLiveSearch;
 
 extern GtkWidget*		fontBox;
 extern GtkWidget*		terminalBox;
-extern bool				tmpIndent;
-extern bool				tmpLineNumbers;
+
+
 extern bool				tmpLineWrap;
 extern bool				tmpHighLight;
-extern bool				tmpSingleUse;
+
 extern int				tmpTabWidth;
-extern int				tmpDepth;
-extern bool				tmpSaveSessionOnExit;
-extern bool				tmpRestoreBookmarks;
+
+
+
 extern bool				tmpShowJumpToLine;
-extern bool				tmpShowFindAPI;
-extern bool				tmpShowFindDef;
+
+
 extern bool				tmpShowLiveSearch;
 
 extern GtkWidget*		toolNameWidget;
@@ -162,14 +165,14 @@ extern GList*			toolsList;
 extern GtkWidget*		restoreBMs;
 
 
-extern bool				inTerm;
-extern bool				inPopup;
-extern bool				runSync;
-extern bool				ignoreOut;
-extern bool				pasteOut;
-extern bool				replaceOut;
+
+
+
+
+
+
 extern bool				showDoc;
-extern bool				editTool;
+
 
 extern int				windowWidth;
 extern int				windowHeight;
@@ -189,7 +192,7 @@ extern GtkToolItem*		saveasButton;
 extern GtkToolItem*		closeButton;
 extern GtkToolItem*		redoButton;
 extern GtkToolItem*		undoButton;
-extern GtkToolItem*		sourceFormatButton;
+
 
 extern GtkWidget*		findReplaceDialog;
 extern GtkWidget*		findBox;

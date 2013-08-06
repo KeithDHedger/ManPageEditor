@@ -224,7 +224,6 @@ void closeTab(GtkWidget* widget,gpointer data)
 void closeAllTabs(GtkWidget* widget,gpointer data)
 {
 	int	numtabs=gtk_notebook_get_n_pages(notebook);
-	GtkWidget*	menuitem;
 
 	for(int loop=0;loop<numtabs;loop++)
 		{
@@ -236,12 +235,6 @@ void closeAllTabs(GtkWidget* widget,gpointer data)
 void switchPage(GtkNotebook *notebook,gpointer arg1,guint thispage,gpointer user_data)
 {
 	pageStruct*	page;
-	char*		functions=NULL;
-	GtkWidget*	menuitem;
-	int			linenum;
-	char		tmpstr[1024];
-	char*		lineptr;
-	bool		onefunc=false;
 
 	if(arg1==NULL)
 		return;
@@ -261,12 +254,6 @@ void switchPage(GtkNotebook *notebook,gpointer arg1,guint thispage,gpointer user
 
 	setSensitive();
 
-	if(page->lang!=NULL)
-		gtk_tool_button_set_label((GtkToolButton*)sourceFormatButton,page->lang);
-	else
-		gtk_tool_button_set_label((GtkToolButton*)sourceFormatButton,"");
-
-	gtk_widget_show_all((GtkWidget*)sourceFormatButton);
 }
 
 void copyToClip(GtkWidget* widget,gpointer data)
@@ -317,15 +304,9 @@ void redo(GtkWidget* widget,gpointer data)
 
 void openHelp(GtkWidget* widget,gpointer data)
 {
-#ifdef BUILDDOCVIEWER
-	asprintf(&thePage,"file://%s/help/help.html",DATADIR);
-	showDocView(NULL,(void*)1);
-#else
 	char*	runhelp;
 	asprintf(&runhelp,"xdg-open %s/help/help.html",DATADIR);
-	runCommand(runhelp,NULL,false,8);
-	g_free(runhelp);
-#endif
+	system(runhelp);
 }
 
 void copyToClipboard(GtkWidget* widget,gpointer data)
@@ -341,8 +322,6 @@ void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data)
 	GtkTextIter		end;
 	char*			selection=NULL;
 	GtkWidget*		menuitem;
-	GtkWidget*		image;
-	GList*			ptr;
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu),menuitem);
@@ -511,24 +490,24 @@ void writeConfig(void)
 	fd=fopen(filename,"w");
 	if(fd!=NULL)
 		{
-			fprintf(fd,"indentcode	%i\n",(int)indent);
-			fprintf(fd,"showlinenumbers	%i\n",(int)lineNumbers);
+
+
 			fprintf(fd,"wrapline	%i\n",(int)lineWrap);
 			fprintf(fd,"highlightcurrentline	%i\n",(int)highLight);
-			fprintf(fd,"singleuse	%i\n",(int)singleUse);
+
 			fprintf(fd,"insenssearch	%i\n",(int)insensitiveSearch);
 			fprintf(fd,"wrapsearch	%i\n",(int)wrapSearch);
-			fprintf(fd,"savesessiononexit	%i\n",(int)onExitSaveSession);
-			fprintf(fd,"restorebookmarks	%i\n",(int)restoreBookmarks);
+
+
 			fprintf(fd,"showjtoline	%i\n",(int)showJumpToLine);
-			fprintf(fd,"showfindapi	%i\n",(int)showFindAPI);
-			fprintf(fd,"showfinddef	%i\n",(int)showFindDef);
+
+
 			fprintf(fd,"showlivesearch	%i\n",(int)showLiveSearch);
 
 			fprintf(fd,"tabwidth	%i\n",tabWidth);
-			fprintf(fd,"depth	%i\n",depth);
+
 			fprintf(fd,"font	%s\n",fontAndSize);
-			fprintf(fd,"terminalcommand	%s\n",terminalCommand);
+
 			fclose(fd);
 		}
 	g_free(filename);
@@ -593,67 +572,30 @@ void doShutdown(GtkWidget* widget,gpointer data)
 
 void setPrefs(GtkWidget* widget,gpointer data)
 {
-
-	if(strcmp(gtk_widget_get_name(widget),"indent")==0)
-		tmpIndent=gtk_toggle_button_get_active((GtkToggleButton*)data);
-	if(strcmp(gtk_widget_get_name(widget),"show")==0)
-		tmpLineNumbers=gtk_toggle_button_get_active((GtkToggleButton*)data);
 	if(strcmp(gtk_widget_get_name(widget),"wrap")==0)
 		tmpLineWrap=gtk_toggle_button_get_active((GtkToggleButton*)data);
 	if(strcmp(gtk_widget_get_name(widget),"high")==0)
 		tmpHighLight=gtk_toggle_button_get_active((GtkToggleButton*)data);
-	if(strcmp(gtk_widget_get_name(widget),"single")==0)
-		tmpSingleUse=gtk_toggle_button_get_active((GtkToggleButton*)data);
-	if(strcmp(gtk_widget_get_name(widget),"save")==0)
-		tmpSaveSessionOnExit=gtk_toggle_button_get_active((GtkToggleButton*)data);
-	if(strcmp(gtk_widget_get_name(widget),"marks")==0)
-		tmpRestoreBookmarks=gtk_toggle_button_get_active((GtkToggleButton*)data);
 
 	if(strcmp(gtk_widget_get_name(widget),"jtolintool")==0)
 		tmpShowJumpToLine=gtk_toggle_button_get_active((GtkToggleButton*)data);
-	if(strcmp(gtk_widget_get_name(widget),"findapiintool")==0)
-		tmpShowFindAPI=gtk_toggle_button_get_active((GtkToggleButton*)data);
-	if(strcmp(gtk_widget_get_name(widget),"searchdef")==0)
-		tmpShowFindDef=gtk_toggle_button_get_active((GtkToggleButton*)data);
 	if(strcmp(gtk_widget_get_name(widget),"livesearch")==0)
 		tmpShowLiveSearch=gtk_toggle_button_get_active((GtkToggleButton*)data);
 
-
-	gtk_widget_set_sensitive(restoreBMs,tmpSaveSessionOnExit);
-
 	if(strcmp(gtk_widget_get_name(widget),"tabs")==0)
 		tmpTabWidth=(int)gtk_spin_button_get_value((GtkSpinButton*)data);
-
-	if(strcmp(gtk_widget_get_name(widget),"depth")==0)
-		tmpDepth=(int)gtk_spin_button_get_value((GtkSpinButton*)data);
 
 	if(strcmp(gtk_widget_get_name(widget),"cancel")==0)
 		gtk_widget_destroy(prefswin);
 
 	if(strcmp(gtk_widget_get_name(widget),"apply")==0)
 		{
-			indent=tmpIndent;
-			lineNumbers=tmpLineNumbers;
 			lineWrap=tmpLineWrap;
 			highLight=tmpHighLight;
-			singleUse=tmpSingleUse;
-			onExitSaveSession=tmpSaveSessionOnExit;
-			restoreBookmarks=tmpRestoreBookmarks;
 			showJumpToLine=tmpShowJumpToLine;
-			showFindAPI=tmpShowFindAPI;
-			showFindDef=tmpShowFindDef;
 			showLiveSearch=tmpShowLiveSearch;
-
 			showHideWidget(lineNumberWidget,showJumpToLine);
-
-
 			showHideWidget(liveSearchWidget,showLiveSearch);
-
-			if(terminalCommand!=NULL)
-				{
-					g_free(terminalCommand);
-					terminalCommand=strdup(gtk_entry_get_text((GtkEntry*)terminalBox));
-				}
 
 			if(fontAndSize!=NULL)
 				{
@@ -662,7 +604,6 @@ void setPrefs(GtkWidget* widget,gpointer data)
 				}
 
 			tabWidth=tmpTabWidth;
-			depth=tmpDepth;
 			gtk_widget_destroy(prefswin);
 			resetAllFilePrefs();
 			writeConfig();
@@ -727,26 +668,10 @@ void newEditor(GtkWidget* widget,gpointer data)
 	system("manpageeditor");
 }
 
-void changeSourceStyle(GtkWidget* widget,gpointer data)
-{
-	pageStruct*					page=getPageStructPtr(-1);
-	GtkSourceLanguageManager*	lm=gtk_source_language_manager_get_default();
-	const gchar* const*			ids=gtk_source_language_manager_get_language_ids(lm);
-	GtkSourceLanguage*			lang=gtk_source_language_manager_get_language(lm,ids[(long)data]);
-
-	gtk_source_buffer_set_language(page->buffer,lang);
-	//if(page->lang!=NULL)
-	//	g_free(page->lang);
-	page->lang=strdup(ids[(long)data]);
-
-	gtk_tool_button_set_label((GtkToolButton*)sourceFormatButton,page->lang);
-	gtk_widget_show_all((GtkWidget*)sourceFormatButton);
-}
-
-
 bool bold=false;
 GtkTextTag *boldtag;
 int	boldnum=0;
+int	breaknum=0;
 
 void doFormat(GtkWidget* widget,gpointer data)
 {
@@ -756,8 +681,6 @@ void doFormat(GtkWidget* widget,gpointer data)
 	GtkTextIter		start;
 	GtkTextIter		end;
 	char*			name;
-	int				line;
-	GtkTextIter		startprev,endprev;
 
 	mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
 	gtk_text_buffer_get_iter_at_mark((GtkTextBuffer*)page->buffer,&iter,mark);
@@ -771,18 +694,41 @@ void doFormat(GtkWidget* widget,gpointer data)
 					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,boldtag,&start,&end);
 					bold=true;
 					boldnum++;
+					tagList[currentTagNum]=(tagStruct*)malloc(sizeof(tagStruct));
+					tagList[currentTagNum]->name=strdup(name);
+					tagList[currentTagNum]->startLine=gtk_text_iter_get_line(&start);
+					tagList[currentTagNum]->startOffset=gtk_text_iter_get_line_offset(&start);
+					tagList[currentTagNum]->endLine=gtk_text_iter_get_line(&end);
+					tagList[currentTagNum]->endOffset=gtk_text_iter_get_line_offset(&end);
+					tagList[currentTagNum]->isTag=true;
+					currentTagNum++;
 					g_free(name);
 				break;
 			case 2:
 //				asprintf(&name,"BOLDOFF",marknum);
 				bold=false;
 				break;
+
+			case 3:
+				asprintf(&name,"break-%i",breaknum);
+				breaknum++;
+				tagList[currentTagNum]=(tagStruct*)malloc(sizeof(tagStruct));
+				tagList[currentTagNum]->name=strdup(name);
+				tagList[currentTagNum]->startLine=gtk_text_iter_get_line(&iter);
+				tagList[currentTagNum]->startOffset=0;
+				tagList[currentTagNum]->isTag=false;
+				gtk_text_iter_set_offset(&iter,0);
+				tagList[currentTagNum]->mark=gtk_text_buffer_create_mark((GtkTextBuffer*)page->buffer,name,&iter,true);
+				gtk_text_mark_set_visible(tagList[currentTagNum]->mark,true);
+				currentTagNum++;
+				g_free(name);
+				break;
 		}
 		
 //	gtk_text_buffer_create_mark((GtkTextBuffer*)page->buffer,name,&iter,true);
-	printf("thing=%i\n",(long)data);
-	printf("start line - %i\nchar -%i\n",gtk_text_iter_get_line(&start),gtk_text_iter_get_line_offset(&start));
-	printf("end line - %i\nchar -%i\n",gtk_text_iter_get_line(&end),gtk_text_iter_get_line_offset(&end));
+//	printf("thing=%i\n",(int)(long)data);
+//	printf("start line - %i\nchar -%i\n",gtk_text_iter_get_line(&start),gtk_text_iter_get_line_offset(&start));
+//	printf("end line - %i\nchar -%i\n",gtk_text_iter_get_line(&end),gtk_text_iter_get_line_offset(&end));
 	
 	refreshMainWindow();
 }
