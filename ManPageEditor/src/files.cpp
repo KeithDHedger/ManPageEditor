@@ -181,6 +181,52 @@ void exportFile(GtkWidget* widget,gpointer data)
 	char*	tstr;
 	int ln=2;
 	GString*	str=g_string_new(NULL);
+	char*		ptr;
+	char*		endptr;
+
+	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+	text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
+
+
+	printf(".TH \"XFCE-THEME-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
+	printf(".SH \"NAME\"\n");
+	printf("xfce\-theme\-manager \- A theme manager for Xfce\n");
+
+	ptr=text;
+	char ss;
+	char* nl;
+	char* sss;
+	asprintf(&nl,"%c",'\n');
+	long	len;
+	char*	line;
+asprintf(&sss,"%c",ptr[0]);
+printf("zz%szz\n",sliceBetween(ptr,(char*)sss,(char*)nl));
+return;
+
+	while(ptr!=NULL)
+		{
+			//ss=ptr[0];
+			//printf("%c\n%c\n%c\n",ptr[0],text[0],ss);
+			//ptr=sliceBetween(ptr,"-",(char*)nl);
+			endptr=strstr(ptr,nl);
+			len=(long)endptr-(long)ptr;
+			line=slice(ptr,0,len-1);
+			endptr++;
+			ptr=endptr;
+			printf("line XX %s XX\n",line);
+		}
+
+}
+void exportFileX(GtkWidget* widget,gpointer data)
+{
+	pageStruct*	page=getPageStructPtr(-1);
+	GtkTextIter	start,end;
+	gchar*		text;
+	FILE*		fd=NULL;
+	char*	tstr;
+	int ln=2;
+	GString*	str=g_string_new(NULL);
 
 	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
 	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
@@ -207,10 +253,10 @@ printf("xfce\-theme\-manager \- A theme manager for Xfce\n");
 		{
 			switch(tstr[j])
 				{
-					case '\t':
+					//case '\t':
 						//printf("<TP>\n");
 						//list=true;
-						break;
+					//	break;
 					case '-':
 						g_string_append_printf(str,"\\%c",tstr[j]);
 						break;
@@ -227,17 +273,19 @@ printf("xfce\-theme\-manager \- A theme manager for Xfce\n");
 	while ( (tstr=strtok(NULL,"\n"))!= NULL)
 		{
 			str=g_string_new(NULL);
+			if(strlen(tstr)>1)
+				{
 			for(int j=0;j<strlen(tstr);j++)
 				{
 					switch(tstr[j])
 						{
-							case '\t':
-								if(j==0 && list==false)
-									{
-										printf("<TP>\n");
-										list=true;
-									}
-								break;
+							//case '\t':
+							//	if(j==0 && list==false)
+							//		{
+							//			printf(".TP\n");
+							//			list=true;
+							//		}
+							//	break;
 							case '-':
 								g_string_append_printf(str,"\\%c",tstr[j]);
 								break;
@@ -247,8 +295,12 @@ printf("xfce\-theme\-manager \- A theme manager for Xfce\n");
 								g_string_append_c(str,tstr[j]);
 						}
 				}
-			printf("%s\n",str->str);
+			printf("%s\n.br\n",str->str);
 			g_string_free(str,true);
+				}
+			else
+				printf("XXX\n");
+			
 		}
 
 }
