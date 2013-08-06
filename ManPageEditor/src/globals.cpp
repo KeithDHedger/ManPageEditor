@@ -308,6 +308,35 @@ char* sliceBetween(char* srcstring,char* startstr,char* endstr)
 	return(dest);
 }
 
+char* sliceInclude(char* srcstring,char* startstr,char* endstr,bool includeFirst,bool includeLast)
+{
+	int		startchar;
+	int		endchar;
+	char*	ptr;
+	char*	dest=NULL;
+	int		startoffset=0;
+	int 	endoffset=0;
+
+	ptr=strstr(srcstring,startstr);
+	if(ptr==NULL)
+		return(NULL);
+	startchar=(int)(long)ptr+strlen(startstr)-(long)srcstring;
+
+	ptr=strstr((char*)&srcstring[startchar],endstr);
+	if(ptr==NULL)
+		return(NULL);
+	endchar=(int)(long)ptr-(long)srcstring-1;
+
+	if(includeFirst==true)
+		startoffset=-1;
+	if(includeLast==true)
+		endoffset=1;
+
+	dest=slice(srcstring,startchar+startoffset,endchar+endoffset);
+	return(dest);
+}
+
+
 char* sliceLen(char* srcstring,int tmpstartchar,int len)
 {
 	char*	dest;

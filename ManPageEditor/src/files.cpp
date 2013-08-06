@@ -201,7 +201,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 	long	len;
 	char*	line;
 asprintf(&sss,"%c",ptr[0]);
-printf("zz%szz\n",sliceBetween(ptr,(char*)sss,(char*)nl));
+printf("zz%szz\n",sliceInclude(ptr,(char*)sss,(char*)nl,true,true));
 return;
 
 	while(ptr!=NULL)
