@@ -29,7 +29,7 @@ void readConfig(void)
 	int		intarg;
 	char	strarg[256];
 
-	asprintf(&filename,"%s/.ManPageEditor/kkedit.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/editor.rc",getenv("HOME"));
 	fd=fopen(filename,"r");
 	if(fd!=NULL)
 		{
@@ -70,7 +70,7 @@ void readConfig(void)
 		}
 
 	g_free(filename);
-	asprintf(&filename,"%s/.ManEdit/manedit.window.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/editor.window.rc",getenv("HOME"));
 	fd=fopen(filename,"r");
 	if(fd!=NULL)
 		{

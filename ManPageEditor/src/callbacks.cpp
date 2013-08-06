@@ -483,7 +483,7 @@ void writeExitData(void)
 	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
 	g_free(filename);
-	asprintf(&filename,"%s/.ManPageEditor/kkedit.window.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/editor.window.rc",getenv("HOME"));
 	fd=fopen(filename,"w");
 	if(fd!=NULL)
 		{
@@ -507,7 +507,7 @@ void writeConfig(void)
 	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
 	g_free(filename);
-	asprintf(&filename,"%s/.ManPageEditor/kkedit.rc",getenv("HOME"));
+	asprintf(&filename,"%s/.ManPageEditor/editor.rc",getenv("HOME"));
 	fd=fopen(filename,"w");
 	if(fd!=NULL)
 		{
