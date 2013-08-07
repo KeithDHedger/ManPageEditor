@@ -19,6 +19,7 @@
 #include "files.h"
 #include "guis.h"
 #include "navcallbacks.h"
+#include "script.h"
 
 #ifdef BUILDDOCVIEWER
 void webKitGoBack(GtkWidget* widget,gpointer data)

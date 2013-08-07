@@ -20,6 +20,7 @@
 #include "globals.h"
 #include "callbacks.h"
 #include "navcallbacks.h"
+#include "script.h"
 
 GtkWidget*	vbox;
 char*		saveFileName=NULL;
@@ -201,7 +202,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 	long	len;
 	char*	line;
 asprintf(&sss,"%c",ptr[0]);
-printf("zz%szz\n",sliceInclude(ptr,(char*)sss,(char*)nl,true,true));
+printf("zz%szz\n",sliceInclude(ptr,(char*)sss,"\n",true,false));
 return;
 
 	while(ptr!=NULL)

@@ -220,13 +220,8 @@ pageStruct* getPageStructPtr(int pagenum);
 void getMimeType(char* filepath,void* ptr);
 void setLanguage(pageStruct* page);
 void runCommand(char* commandtorun,void* ptr,bool interm,int flags);
-char* slice(char* srcstring,int startchar,int endchar);
-char* sliceBetween(char* srcstring,char* startstr,char* endstr);
-char* sliceLen(char* srcstring,int tmpstartchar,int len);
-char* sliceStrLen(char* srcstring,char* startstr,int len);
-char* deleteSlice(char* srcstring,char* delstr);
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter);
-char* sliceInclude(char* srcstring,char* startstr,char* endstr,bool includeFirst,bool includeLast);
+
 #endif
 
 
