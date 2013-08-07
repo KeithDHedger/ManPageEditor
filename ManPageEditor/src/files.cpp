@@ -197,13 +197,30 @@ void exportFile(GtkWidget* widget,gpointer data)
 	ptr=text;
 	char ss;
 	char* nl;
-	char* startChar;
-	asprintf(&nl,"%c",'\n');
+	char startChar[2];
+	//asprintf(&nl,"%c",'\n');
 	long	len;
 	char*	line;
-asprintf(&startChar,"%c",ptr[0]);
-printf("zz%szz\n",sliceInclude(ptr,(char*)startChar,"\n",true,false));
-return;
+	//asprintf(&startChar,"%c",ptr[0]);
+	startChar[1]=0;
+//	startChar[0]=ptr[0];
+//	printf("%s\n",sliceInclude(ptr,(char*)&startChar[0],"\n",true,false));
+
+	char*	linePtr;
+	char*	holdPtr;
+	while(strlen(ptr)>0)
+		{
+			startChar[0]=ptr[0];
+			linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,false);
+			printf("--%s--\n",linePtr);
+			g_free(linePtr);
+			linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,true);
+			ptr=deleteSlice(ptr,linePtr);	
+			g_free(linePtr);
+		}
+
+
+	return;
 
 	while(ptr!=NULL)
 		{
