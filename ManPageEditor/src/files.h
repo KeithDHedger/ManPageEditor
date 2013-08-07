@@ -19,4 +19,7 @@ void exportFile(GtkWidget* widget,gpointer data);
 void fileChangedOnDisk(GFileMonitor *monitor,GFile *file,GFile *other_file,GFileMonitorEvent event_type,gpointer user_data);
 void setFilePrefs(GtkSourceView* sourceview);
 
+void newSection(GtkWidget* widget,gpointer data);
+void newManpage(GtkWidget* widget,gpointer data);
+
 #endif

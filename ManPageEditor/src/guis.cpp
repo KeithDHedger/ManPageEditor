@@ -131,7 +131,7 @@ void buildMainGui(void)
 //new
 	newButton=gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
 	gtk_toolbar_insert((GtkToolbar*)toolbar,newButton,-1);
-	gtk_signal_connect(GTK_OBJECT(newButton),"clicked",G_CALLBACK(newFile),NULL);
+	gtk_signal_connect(GTK_OBJECT(newButton),"clicked",G_CALLBACK(newSection),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)newButton,"New File");
 
 //save
@@ -205,8 +205,15 @@ void buildMainGui(void)
 //new
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_NEW,NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(newFile),NULL);
+	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(newManpage),NULL);
 	gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,'N',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
+
+//newsection
+	menuitem=gtk_image_menu_item_new_with_label("New Section");
+	image=gtk_image_new_from_stock(GTK_STOCK_NEW,GTK_ICON_SIZE_MENU);
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(newSection),NULL);
 
 //open
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN,NULL);
@@ -238,8 +245,6 @@ void buildMainGui(void)
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)exportMenu,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),exportMenu);
 	gtk_signal_connect(GTK_OBJECT(exportMenu),"activate",G_CALLBACK(exportFile),NULL);
-//	gtk_widget_add_accelerator((GtkWidget *)saveMenu,"activate",accgroup,'S',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
-
 
 //savas
 	saveAsMenu=gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE_AS,NULL);

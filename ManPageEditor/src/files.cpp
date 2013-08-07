@@ -197,6 +197,16 @@ char* escapeString(char* ptr)
 	return(g_string_free(deststr,false));
 }
 
+char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]"};
+char* textTo[]={"\\fB","\\fI","\\fR"};
+
+char* doManFormat(char* srcstr)
+{
+	for(int j=0;j<3;j++)
+		srcstr=replaceAllSlice(srcstr,textFrom[j],textTo[j]);
+	return(srcstr);
+}
+
 void exportFile(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page;
@@ -223,8 +233,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
 			text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
 
-			ptr=text;
-
+			ptr=doManFormat(text);
 			printf(".SH \"%s\"\n",page->fileName);
 			while(strlen(ptr)>0)
 				{
@@ -232,15 +241,23 @@ void exportFile(GtkWidget* widget,gpointer data)
 					if(strcmp(startChar,"\n")!=0)
 						{
 							linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,false);
-							//linePtr=escapeString(linePtr);
-							printf("%s\n.br\n",linePtr);
-							g_free(linePtr);
-							linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,true);
-							holdPtr=deleteSlice(ptr,linePtr);	
-							g_free(linePtr);
-							g_free(ptr);
-							ptr=holdPtr;
-							lastWasNL=false;
+							if(linePtr==NULL && strlen(ptr)>0)
+								{
+									printf("%s\n.br\n",ptr);
+									g_free(ptr);
+									ptr="";
+								}
+							else
+								{
+									printf("%s\n.br\n",linePtr);
+									g_free(linePtr);
+									linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,true);
+									holdPtr=deleteSlice(ptr,linePtr);	
+									g_free(linePtr);
+									g_free(ptr);
+									ptr=holdPtr;
+									lastWasNL=false;
+								}
 						}
 					else
 						{
@@ -531,6 +548,67 @@ bool openFile(const gchar *filepath,int linenumber)
 	return TRUE;
 }
 
+/*
+	printf(".TH \"XFCE\\-THEME\\-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
+	printf(".SH \"NAME\"\n");
+	printf("xfce\\-theme\\-manager \\- A theme manager for Xfce\n");
+
+*/
+GtkWidget*	nameBox;
+GtkWidget*	sectionBox;
+GtkWidget*	versionBox;
+
+void newManpage(GtkWidget* widget,gpointer data)
+{
+	GtkWidget*	dialog;
+	gint		result;
+	GtkWidget*	content_area;
+	GtkWidget*	label;
+	char*		retval=NULL;
+	GtkWidget*	hbox;
+
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,NULL);
+
+	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
+	gtk_window_set_title(GTK_WINDOW(dialog),"Create New Manpage");
+
+	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	
+	hbox=gtk_hbox_new(false,0);
+		nameBox=gtk_entry_new();
+		label=gtk_label_new("Name\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),nameBox,true,true,0);		
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		sectionBox=gtk_entry_new();
+		label=gtk_label_new("Section\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);		
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		versionBox=gtk_entry_new();
+		label=gtk_label_new("Version\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);		
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+//	gtk_widget_show(label);
+
+//	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
+	gtk_widget_show_all(content_area);
+	result=gtk_dialog_run(GTK_DIALOG(dialog));
+
+//	if(result==GTK_RESPONSE_YES)
+//		retval=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
+
+	gtk_widget_destroy(dialog);
+
+
+}
+
 void newFile(GtkWidget* widget,gpointer data)
 {
 	GtkTextIter	iter;
@@ -560,4 +638,70 @@ void newFile(GtkWidget* widget,gpointer data)
 	currentPage++;
 	gtk_widget_show_all((GtkWidget*)notebook);
 
+}
+
+char* getNewSectionName(void)
+{
+	GtkWidget*	dialog;
+	gint		result;
+	GtkWidget*	content_area;
+	GtkWidget*	entrybox;
+	char*		retval=NULL;
+
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Enter Section Name");
+
+	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
+	gtk_window_set_title(GTK_WINDOW(dialog),"Section");
+
+	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
+	entrybox=gtk_entry_new();
+	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
+	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
+	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
+	gtk_widget_show_all(content_area);
+	result=gtk_dialog_run(GTK_DIALOG(dialog));
+
+	if(result==GTK_RESPONSE_YES)
+		retval=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
+
+	gtk_widget_destroy(dialog);
+
+	return(retval);
+}
+
+void newSection(GtkWidget* widget,gpointer data)
+{
+	GtkTextIter	iter;
+	GtkWidget*	label;
+	pageStruct*	page;
+	char*		retval=NULL;
+	GString*	str;
+
+	retval=getNewSectionName();
+	if(retval!=NULL)
+		{
+			page=makeNewPage();
+			page->tabVbox=gtk_vbox_new(true,4);
+			page->filePath=NULL;
+			str=g_string_new(retval);
+			g_string_ascii_up(str);
+
+			page->fileName=g_string_free(str,false);
+
+			label=makeNewTab(page->fileName,NULL,page);
+
+/* move cursor to the beginning */
+			gtk_text_buffer_get_start_iter(GTK_TEXT_BUFFER(page->buffer),&iter);
+			gtk_text_buffer_place_cursor(GTK_TEXT_BUFFER(page->buffer),&iter);
+
+//connect to ntebook
+			gtk_container_add(GTK_CONTAINER(page->tabVbox),GTK_WIDGET(page->pane));
+			g_object_set_data(G_OBJECT(page->tabVbox),"pagedata",(gpointer)page);
+
+			gtk_notebook_append_page(notebook,page->tabVbox,label);
+			gtk_notebook_set_tab_reorderable(notebook,page->tabVbox,true);
+			gtk_notebook_set_current_page(notebook,currentPage);
+			currentPage++;
+			gtk_widget_show_all((GtkWidget*)notebook);
+		}
 }
