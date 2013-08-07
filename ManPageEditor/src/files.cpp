@@ -557,6 +557,8 @@ bool openFile(const gchar *filepath,int linenumber)
 GtkWidget*	nameBox;
 GtkWidget*	sectionBox;
 GtkWidget*	versionBox;
+GtkWidget*	authorBox;
+GtkWidget*	categoryBox;
 
 void newManpage(GtkWidget* widget,gpointer data)
 {
@@ -567,10 +569,10 @@ void newManpage(GtkWidget* widget,gpointer data)
 	char*		retval=NULL;
 	GtkWidget*	hbox;
 
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,NULL);
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Create New Manpage");
 
 	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
-	gtk_window_set_title(GTK_WINDOW(dialog),"Create New Manpage");
+	gtk_window_set_title(GTK_WINDOW(dialog),"Details");
 
 	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 	
@@ -593,6 +595,20 @@ void newManpage(GtkWidget* widget,gpointer data)
 		label=gtk_label_new("Version\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);		
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		authorBox=gtk_entry_new();
+		label=gtk_label_new("Author\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);		
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		categoryBox=gtk_entry_new();
+		label=gtk_label_new("Category\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);		
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 //	gtk_widget_show(label);
