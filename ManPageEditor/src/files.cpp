@@ -179,7 +179,7 @@ char* escapeString(char* ptr)
 	GString*	deststr=g_string_new(NULL);
 	g_free(ptr);
 
-	for(int j=0;j<str->len;j++)
+	for(unsigned int j=0;j<str->len;j++)
 		{
 			switch(str->str[j])
 				{
@@ -193,50 +193,28 @@ char* escapeString(char* ptr)
 						g_string_append_c(deststr,str->str[j]);
 				}
 		}
-	g_string_free(str,NULL);
+	g_string_free(str,true);
 	return(g_string_free(deststr,false));
 }
 
 void exportFile(GtkWidget* widget,gpointer data)
 {
-	int			numpages=gtk_notebook_get_n_pages(notebook);
-	int			result;
-
 	pageStruct*	page;
-	//=getPageStructPtr(-1);
 	GtkTextIter	start,end;
 	gchar*		text;
-	FILE*		fd=NULL;
-	char*	tstr;
-	int ln=2;
-	GString*	str=g_string_new(NULL);
 	char*		ptr;
-	char*		endptr;
-
-//	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-//	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-//	text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
-
+	int			numpages=gtk_notebook_get_n_pages(notebook);
+	char		startChar[2];
+	char*		linePtr;
+	char*		holdPtr;
+	bool		lastWasNL=false;
 
 	printf(".TH \"XFCE\\-THEME\\-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
 	printf(".SH \"NAME\"\n");
 	printf("xfce\\-theme\\-manager \\- A theme manager for Xfce\n");
 
 	ptr=text;
-	char ss;
-	char* nl;
-	char startChar[2];
-	//asprintf(&nl,"%c",'\n');
-	long	len;
-	char*	line;
-	//asprintf(&startChar,"%c",ptr[0]);
 	startChar[1]=0;
-//	startChar[0]=ptr[0];
-//	printf("%s\n",sliceInclude(ptr,(char*)&startChar[0],"\n",true,false));
-
-	char*	linePtr;
-	char*	holdPtr;
-	bool	lastWasNL=false;
 
 	for(int loop=0;loop<numpages;loop++)
 		{
@@ -247,35 +225,34 @@ void exportFile(GtkWidget* widget,gpointer data)
 
 			ptr=text;
 
-	printf(".SH \"%s\"\n",page->fileName);
-	while(strlen(ptr)>0)
-		{
-			startChar[0]=ptr[0];
-			if(strcmp(startChar,"\n")!=0)
+			printf(".SH \"%s\"\n",page->fileName);
+			while(strlen(ptr)>0)
 				{
-					linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,false);
-					//linePtr=escapeString(linePtr);
-					printf("%s\n.br\n",linePtr);
-					g_free(linePtr);
-					linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,true);
-					holdPtr=deleteSlice(ptr,linePtr);	
-					g_free(linePtr);
-					g_free(ptr);
-					ptr=holdPtr;
-					lastWasNL=false;
-				}
-			else
-				{
-					holdPtr=deleteSlice(ptr,"\n");
-					g_free(ptr);
-					ptr=holdPtr;
+					startChar[0]=ptr[0];
+					if(strcmp(startChar,"\n")!=0)
+						{
+							linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,false);
+							//linePtr=escapeString(linePtr);
+							printf("%s\n.br\n",linePtr);
+							g_free(linePtr);
+							linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,true);
+							holdPtr=deleteSlice(ptr,linePtr);	
+							g_free(linePtr);
+							g_free(ptr);
+							ptr=holdPtr;
+							lastWasNL=false;
+						}
+					else
+						{
+							holdPtr=deleteSlice(ptr,(char*)"\n");
+							g_free(ptr);
+							ptr=holdPtr;
 
-					if(lastWasNL==false)
-						printf("\n");
-					lastWasNL=true;
-				}
-		}
-		//g_free(text);
+							if(lastWasNL==false)
+								printf("\n");
+							lastWasNL=true;
+						}
+			}
 		}
 
 	return;
