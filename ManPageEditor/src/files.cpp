@@ -208,15 +208,33 @@ void exportFile(GtkWidget* widget,gpointer data)
 
 	char*	linePtr;
 	char*	holdPtr;
+	bool	lastWasNL=false;
+
 	while(strlen(ptr)>0)
 		{
 			startChar[0]=ptr[0];
-			linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,false);
-			printf("--%s--\n",linePtr);
-			g_free(linePtr);
-			linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,true);
-			ptr=deleteSlice(ptr,linePtr);	
-			g_free(linePtr);
+			if(strcmp(startChar,"\n")!=0)
+				{
+					linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,false);
+					printf("%s\n.br\n",linePtr);
+					g_free(linePtr);
+					linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,true);
+					holdPtr=deleteSlice(ptr,linePtr);	
+					g_free(linePtr);
+					g_free(ptr);
+					ptr=holdPtr;
+					lastWasNL=false;
+				}
+			else
+				{
+					holdPtr=deleteSlice(ptr,"\n");
+					g_free(ptr);
+					ptr=holdPtr;
+
+					if(lastWasNL==false)
+						printf("\n");
+					lastWasNL=true;
+				}
 		}
 
 
