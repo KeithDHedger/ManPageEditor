@@ -199,7 +199,11 @@ char* escapeString(char* ptr)
 
 void exportFile(GtkWidget* widget,gpointer data)
 {
-	pageStruct*	page=getPageStructPtr(-1);
+	int			numpages=gtk_notebook_get_n_pages(notebook);
+	int			result;
+
+	pageStruct*	page;
+	//=getPageStructPtr(-1);
 	GtkTextIter	start,end;
 	gchar*		text;
 	FILE*		fd=NULL;
@@ -209,14 +213,14 @@ void exportFile(GtkWidget* widget,gpointer data)
 	char*		ptr;
 	char*		endptr;
 
-	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-	text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
+//	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+//	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+//	text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
 
 
-	printf(".TH \"XFCE-THEME-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
+	printf(".TH \"XFCE\\-THEME\\-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
 	printf(".SH \"NAME\"\n");
-	printf("xfce\-theme\-manager \- A theme manager for Xfce\n");
+	printf("xfce\\-theme\\-manager \\- A theme manager for Xfce\n");
 
 	ptr=text;
 	char ss;
@@ -234,6 +238,16 @@ void exportFile(GtkWidget* widget,gpointer data)
 	char*	holdPtr;
 	bool	lastWasNL=false;
 
+	for(int loop=0;loop<numpages;loop++)
+		{
+			page=getPageStructPtr(loop);
+			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+			text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
+
+			ptr=text;
+
+	printf(".SH \"%s\"\n",page->fileName);
 	while(strlen(ptr)>0)
 		{
 			startChar[0]=ptr[0];
@@ -261,95 +275,10 @@ void exportFile(GtkWidget* widget,gpointer data)
 					lastWasNL=true;
 				}
 		}
-
+		//g_free(text);
+		}
 
 	return;
-}
-void exportFileX(GtkWidget* widget,gpointer data)
-{
-	pageStruct*	page=getPageStructPtr(-1);
-	GtkTextIter	start,end;
-	gchar*		text;
-	FILE*		fd=NULL;
-	char*	tstr;
-	int ln=2;
-	GString*	str=g_string_new(NULL);
-
-	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-	text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
-
-	bool	list=false;
-//header
-	printf(".TH \"XFCE-THEME-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
-printf(".SH \"NAME\"\n");
-printf("xfce\-theme\-manager \- A theme manager for Xfce\n");
-
-//section is tab
-	printf(".SH \"%s\"\n",page->fileName);
-//printf("line 1=%s\n",text);
-
-	tstr=strtok(text,"\n");
-	if(tstr[0]=='\t')
-		{
-			printf(".TP.\n");
-			list=true;
-		}
-
-	for(int j=0;j<strlen(tstr);j++)
-		{
-			switch(tstr[j])
-				{
-					//case '\t':
-						//printf("<TP>\n");
-						//list=true;
-					//	break;
-					case '-':
-						g_string_append_printf(str,"\\%c",tstr[j]);
-						break;
-					default:
-						g_string_append_c(str,tstr[j]);
-				}
-		}
-		
-	printf("%s\n",str->str);
-	printf(".br\n");
-	g_string_free(str,true);
-					/* Extract remaining 
-					 * strings 		*/
-	while ( (tstr=strtok(NULL,"\n"))!= NULL)
-		{
-			str=g_string_new(NULL);
-			if(strlen(tstr)>1)
-				{
-			for(int j=0;j<strlen(tstr);j++)
-				{
-					switch(tstr[j])
-						{
-							//case '\t':
-							//	if(j==0 && list==false)
-							//		{
-							//			printf(".TP\n");
-							//			list=true;
-							//		}
-							//	break;
-							case '-':
-								g_string_append_printf(str,"\\%c",tstr[j]);
-								break;
-							default:
-								//if(j==0 && list==true)
-								//	list=false;
-								g_string_append_c(str,tstr[j]);
-						}
-				}
-			printf("%s\n.br\n",str->str);
-			g_string_free(str,true);
-				}
-			else
-				printf("XXX\n");
-			
-		}
-
 }
 
 bool saveFile(GtkWidget* widget,gpointer data)
