@@ -173,6 +173,30 @@ bool getSaveFile(void)
 	return(retval);
 }
 
+char* escapeString(char* ptr)
+{
+	GString*	str=g_string_new(ptr);
+	GString*	deststr=g_string_new(NULL);
+	g_free(ptr);
+
+	for(int j=0;j<str->len;j++)
+		{
+			switch(str->str[j])
+				{
+					case '-':
+						g_string_append(deststr,"\\-");
+						break;
+//					case '<':
+//						g_string_append(deststr,"\-");
+//						break;
+					default:
+						g_string_append_c(deststr,str->str[j]);
+				}
+		}
+	g_string_free(str,NULL);
+	return(g_string_free(deststr,false));
+}
+
 void exportFile(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page=getPageStructPtr(-1);
@@ -216,6 +240,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 			if(strcmp(startChar,"\n")!=0)
 				{
 					linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,false);
+					//linePtr=escapeString(linePtr);
 					printf("%s\n.br\n",linePtr);
 					g_free(linePtr);
 					linePtr=sliceInclude(ptr,(char*)&startChar[0],"\n",true,true);
@@ -239,20 +264,6 @@ void exportFile(GtkWidget* widget,gpointer data)
 
 
 	return;
-
-	while(ptr!=NULL)
-		{
-			//ss=ptr[0];
-			//printf("%c\n%c\n%c\n",ptr[0],text[0],ss);
-			//ptr=sliceBetween(ptr,"-",(char*)nl);
-			endptr=strstr(ptr,nl);
-			len=(long)endptr-(long)ptr;
-			line=slice(ptr,0,len-1);
-			endptr++;
-			ptr=endptr;
-			printf("line XX %s XX\n",line);
-		}
-
 }
 void exportFileX(GtkWidget* widget,gpointer data)
 {
