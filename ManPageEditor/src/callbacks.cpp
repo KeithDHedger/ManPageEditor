@@ -8,18 +8,11 @@
 
 #include <gtk/gtk.h>
 #include <gtksourceview/gtksourceiter.h>
-//#include <unique/unique.h>
 #include <gtksourceview/gtksourceprintcompositor.h>
-
-#include "config.h"
-#ifdef BUILDDOCVIEWER
-#include <webkit/webkit.h>
-#endif
 
 #include "globals.h"
 #include "files.h"
 #include "guis.h"
-#include "navcallbacks.h"
 #include "searchcallbacks.h"
 #include "spellcheck.h"
 
@@ -234,14 +227,6 @@ void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data)
 	gtk_widget_show_all((GtkWidget*)menu);
 }
 
-void doTabMenu(GtkWidget *widget,gpointer user_data)
-{
-	GtkClipboard*	clipboard=gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-
-	gtk_clipboard_set_text(clipboard,(char*)user_data,-1);
-	gtk_widget_destroy(tabMenu);
-}
-
 gboolean whatPane(GtkWidget *widget,GdkEvent *event,gpointer data)
 {
 	pageStruct* page=(pageStruct*)getPageStructPtr(-1);
@@ -365,8 +350,6 @@ void writeConfig(void)
 	fd=fopen(filename,"w");
 	if(fd!=NULL)
 		{
-
-
 			fprintf(fd,"wrapline	%i\n",(int)lineWrap);
 			fprintf(fd,"highlightcurrentline	%i\n",(int)highLight);
 			fprintf(fd,"insenssearch	%i\n",(int)insensitiveSearch);
@@ -646,12 +629,3 @@ void redoProps(GtkWidget* widget,gpointer data)
 		}
 	gtk_widget_destroy(dialog);
 }
-
-
-
-
-
-
-
-
-

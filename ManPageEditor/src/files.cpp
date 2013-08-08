@@ -14,15 +14,11 @@
 
 #include <gtksourceview/gtksourceview.h>
 #include <gtksourceview/gtksourcebuffer.h>
-#include <gtksourceview/gtksourcelanguage.h>
-#include <gtksourceview/gtksourcelanguagemanager.h>
 
 #include "globals.h"
 #include "callbacks.h"
-#include "navcallbacks.h"
 #include "script.h"
 
-GtkWidget*	vbox;
 char*		saveFileName=NULL;
 char*		saveFilePath=NULL;
 bool		dropTextFile=false;
@@ -596,8 +592,6 @@ void newSection(GtkWidget* widget,gpointer data)
 		}
 }
 
-//char*	openFilename=NULL;
-
 void doOpenManpage(char* file)
 {
 	char*		command=NULL;
@@ -650,8 +644,6 @@ void doOpenManpage(char* file)
 	recenturi=g_filename_to_uri(manFilePath,NULL,NULL);
 	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	pageOpen=true;
-//	setSensitive();
-//	refreshMainWindow();	
 }
 
 void openManpage(GtkWidget* widget,gpointer data)

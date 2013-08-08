@@ -8,17 +8,12 @@
 
 #include <gtk/gtk.h>
 #include <gtksourceview/gtksourceiter.h>
-//#include <unique/unique.h>
 
 #include "config.h"
-#ifdef BUILDDOCVIEWER
-#include <webkit/webkit.h>
-#endif
 
 #include "globals.h"
 #include "files.h"
 #include "guis.h"
-#include "navcallbacks.h"
 #include "script.h"
 
 void doFindReplace(GtkDialog *dialog,gint response_id,gpointer user_data)
@@ -239,11 +234,4 @@ void doLiveSearch(GtkWidget* widget,GdkEvent *event,gpointer data)
 		}
 	gtk_text_buffer_end_user_action((GtkTextBuffer*)page->buffer);
 }
-
-
-
-
-
-
-
 

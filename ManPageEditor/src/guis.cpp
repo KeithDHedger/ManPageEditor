@@ -11,14 +11,11 @@
 
 #include <gtksourceview/gtksourceview.h>
 #include <gtksourceview/gtksourcebuffer.h>
-#include <gtksourceview/gtksourcelanguage.h>
-#include <gtksourceview/gtksourcelanguagemanager.h>
 
 #include "config.h"
 #include "globals.h"
 #include "files.h"
 #include "callbacks.h"
-#include "navcallbacks.h"
 #include "searchcallbacks.h"
 #include "spellcheck.h"
 
@@ -263,12 +260,6 @@ void buildMainGui(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuclose);
 	gtk_signal_connect(GTK_OBJECT(menuclose),"activate",G_CALLBACK(closeTab),NULL);
 	gtk_widget_add_accelerator((GtkWidget *)menuclose,"activate",accgroup,'W',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
-//close-all
-//	image=gtk_image_new_from_stock(GTK_STOCK_CLOSE,GTK_ICON_SIZE_MENU);
-//	menucloseall=gtk_image_menu_item_new_with_label("Close All Tabs");
-//	gtk_image_menu_item_set_image((GtkImageMenuItem *)menucloseall,image);
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menucloseall);
-//	gtk_signal_connect(GTK_OBJECT(menucloseall),"activate",G_CALLBACK(closeAllTabs),NULL);
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
@@ -351,13 +342,6 @@ GtkWidget*		menuformat;
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)3);
 
-//goto line number
-	menuitem=gtk_image_menu_item_new_with_label("Go To Line");
-	image=gtk_image_new_from_stock(GTK_STOCK_GO_DOWN,GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(jumpToLine),NULL);
-
 //help
 	menuhelp=gtk_menu_item_new_with_label("Help");
 	menu=gtk_menu_new();
@@ -374,13 +358,7 @@ GtkWidget*		menuformat;
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar),menufile);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar),menuedit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar),menuformat);
-
-
-
-
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar),menuhelp);
-
-
 
 	gtk_container_add(GTK_CONTAINER(window),(GtkWidget*)vbox);
 	gtk_widget_set_sensitive((GtkWidget*)saveButton,false);
@@ -404,7 +382,6 @@ void buildFindReplace(void)
 
 	vbox=gtk_vbox_new(true,0);
 	hbox=gtk_hbox_new(false,0);
-
 
 	label=gtk_label_new("Find");
 	gtk_container_add(GTK_CONTAINER(content_area),label);
