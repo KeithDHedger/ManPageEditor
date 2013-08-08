@@ -284,11 +284,14 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	FILE*		fd=NULL;
 	GtkTextIter	start,end;
 	char*		manifest;
+	const char*		suffix="";
 
-	if(saveFilePath==NULL)
+	if(manFilePath==NULL)
 		{
 			if(getSaveFile()==false)
 				return;
+			suffix=".mpz";
+			manFilePath=strdup(saveFilePath);
 		}
 
 	for(int loop=0;loop<numpages;loop++)
@@ -326,7 +329,7 @@ void saveManpage(GtkWidget* widget,gpointer data)
 		}
 	g_free(manifest);
 
-	asprintf(&manifest,"tar -cC %s -f %s.mpz .",manFilename,saveFilePath);
+	asprintf(&manifest,"tar -cC %s -f %s%s .",manFilename,manFilePath,suffix);
 	system(manifest);
 	g_free(manifest);
 }
@@ -815,7 +818,8 @@ void openManpage(GtkWidget* widget,gpointer data)
 			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 			if(manFilename!=NULL)
 				{
-					//deleteffolder
+					sprintf((char*)&buffer[0],"rm -r \"%s\"",manFilename);
+					system((char*)&buffer[0]);
 					g_free(manFilename);
 				}
 			manFilename=tempnam(NULL,"ManEd");
@@ -847,6 +851,9 @@ void openManpage(GtkWidget* widget,gpointer data)
 
 			g_free(command);
 			fclose(fp);
+			if(manFilePath!=NULL)
+				g_free(manFilePath);
+			manFilePath=strdup(filename);
 		}
 	gtk_widget_destroy (dialog);
 	refreshMainWindow();	
