@@ -62,7 +62,7 @@ GtkWidget*		menuhelp;
 
 GtkWidget*		menuprint;
 GtkWidget*		menuclose;
-GtkWidget*		menucloseall;
+
 GtkWidget*		menusaveall;
 
 GtkWidget*		redoMenu;

@@ -117,7 +117,6 @@ void buildMainGui(void)
 
 	notebook=(GtkNotebook*)gtk_notebook_new();
 	gtk_notebook_set_scrollable(notebook,true);
-//	gtk_signal_connect(GTK_OBJECT(notebook),"switch-page",G_CALLBACK(switchPage),NULL);
 	gtk_signal_connect(GTK_OBJECT(notebook),"page-reordered",G_CALLBACK(makeDirty),NULL);
 
 	vbox=gtk_vbox_new(FALSE,0);
@@ -180,15 +179,6 @@ void buildMainGui(void)
 	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
 	gtk_signal_connect(GTK_OBJECT(toolbutton),"clicked",G_CALLBACK(find),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Find/Replace");
-
-//goto line
-//	lineNumberWidget=gtk_entry_new();
-//	toolbutton=gtk_tool_item_new();
-//	gtk_container_add((GtkContainer *)toolbutton,lineNumberWidget);
-//	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
-//	g_signal_connect_after(G_OBJECT(lineNumberWidget),"key-release-event",G_CALLBACK(jumpToLineFromBar),NULL);
-//	gtk_widget_set_size_request((GtkWidget*)toolbutton,48,-1);
-//	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Go To Line");
 		
 //livesearch
 	liveSearchWidget=gtk_entry_new();
@@ -246,7 +236,6 @@ void buildMainGui(void)
 	gtk_signal_connect(GTK_OBJECT(saveAsMenu),"activate",G_CALLBACK(saveAs),NULL);
 	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
 
-
 //export
 	image=gtk_image_new_from_stock(GTK_STOCK_SAVE,GTK_ICON_SIZE_MENU);
 	exportMenu=gtk_image_menu_item_new_with_label("Export Man Page");
@@ -275,11 +264,11 @@ void buildMainGui(void)
 	gtk_signal_connect(GTK_OBJECT(menuclose),"activate",G_CALLBACK(closeTab),NULL);
 	gtk_widget_add_accelerator((GtkWidget *)menuclose,"activate",accgroup,'W',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 //close-all
-	image=gtk_image_new_from_stock(GTK_STOCK_CLOSE,GTK_ICON_SIZE_MENU);
-	menucloseall=gtk_image_menu_item_new_with_label("Close All Tabs");
-	gtk_image_menu_item_set_image((GtkImageMenuItem *)menucloseall,image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menucloseall);
-	gtk_signal_connect(GTK_OBJECT(menucloseall),"activate",G_CALLBACK(closeAllTabs),NULL);
+//	image=gtk_image_new_from_stock(GTK_STOCK_CLOSE,GTK_ICON_SIZE_MENU);
+//	menucloseall=gtk_image_menu_item_new_with_label("Close All Tabs");
+//	gtk_image_menu_item_set_image((GtkImageMenuItem *)menucloseall,image);
+//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menucloseall);
+//	gtk_signal_connect(GTK_OBJECT(menucloseall),"activate",G_CALLBACK(closeAllTabs),NULL);
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);

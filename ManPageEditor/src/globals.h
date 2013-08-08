@@ -100,7 +100,7 @@ extern GtkWidget*		menuedit;
 extern GtkWidget*		menuhelp;
 extern GtkWidget*		menuprint;
 extern GtkWidget*		menuclose;
-extern GtkWidget*		menucloseall;
+
 extern GtkWidget*		menusaveall;
 
 
