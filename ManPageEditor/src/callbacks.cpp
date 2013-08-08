@@ -119,15 +119,15 @@ void setSensitive(void)
 //menu
 			gtk_widget_set_sensitive((GtkWidget*)undoMenu,false);
 			gtk_widget_set_sensitive((GtkWidget*)redoMenu,false);
-			gtk_widget_set_sensitive((GtkWidget*)saveMenu,false);
-			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
+//			gtk_widget_set_sensitive((GtkWidget*)saveMenu,false);
+//			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
 
 
 
 			gtk_widget_set_sensitive((GtkWidget*)menuprint,false);
 			gtk_widget_set_sensitive((GtkWidget*)menuclose,false);
-			gtk_widget_set_sensitive((GtkWidget*)menucloseall,false);
-			gtk_widget_set_sensitive((GtkWidget*)menusaveall,false);
+//			gtk_widget_set_sensitive((GtkWidget*)menucloseall,false);
+//			gtk_widget_set_sensitive((GtkWidget*)menusaveall,false);
 			gtk_widget_set_sensitive((GtkWidget*)menurevert,false);
 		}
 	else
@@ -156,11 +156,11 @@ void setSensitive(void)
 			g_free(newlabel);
 
 
-			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
+//			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
 			gtk_widget_set_sensitive((GtkWidget*)menuprint,true);
 			gtk_widget_set_sensitive((GtkWidget*)menuclose,true);
-			gtk_widget_set_sensitive((GtkWidget*)menucloseall,true);
-			gtk_widget_set_sensitive((GtkWidget*)menusaveall,true);
+//			gtk_widget_set_sensitive((GtkWidget*)menucloseall,true);
+//			gtk_widget_set_sensitive((GtkWidget*)menusaveall,true);
 			gtk_widget_set_sensitive((GtkWidget*)menurevert,true);
 			gtk_widget_show_all(page->tabName);
 		}
@@ -168,8 +168,10 @@ void setSensitive(void)
 
 bool closingAll=false;
 
+
 void closeTab(GtkWidget* widget,gpointer data)
 {
+#if 0
 	long		thispage;
 	int			result;
 	pageStruct*	page;
@@ -219,6 +221,7 @@ void closeTab(GtkWidget* widget,gpointer data)
 	currentPage--;
 	gtk_notebook_remove_page(notebook,thispage);
 	setSensitive();
+#endif
 }
 
 void closeAllTabs(GtkWidget* widget,gpointer data)
@@ -515,6 +518,8 @@ void writeConfig(void)
 
 bool doSaveAll(GtkWidget* widget,gpointer data)
 {
+return(true);
+#if 0
 	int			numpages=gtk_notebook_get_n_pages(notebook);
 	int			result;
 	pageStruct*	page;
@@ -549,6 +554,7 @@ bool doSaveAll(GtkWidget* widget,gpointer data)
 				}
 		}
 	return(true);
+#endif
 }
 
 void doShutdown(GtkWidget* widget,gpointer data)

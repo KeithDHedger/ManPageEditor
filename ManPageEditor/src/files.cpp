@@ -197,13 +197,13 @@ char* escapeString(char* ptr)
 	return(g_string_free(deststr,false));
 }
 
-char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]"};
-char* textTo[]={"\\fB","\\fI","\\fR"};
+const char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]"};
+const char* textTo[]={"\\fB","\\fI","\\fR"};
 
 char* doManFormat(char* srcstr)
 {
 	for(int j=0;j<3;j++)
-		srcstr=replaceAllSlice(srcstr,textFrom[j],textTo[j]);
+		srcstr=replaceAllSlice(srcstr,(char*)textFrom[j],(char*)textTo[j]);
 	return(srcstr);
 }
 
@@ -275,7 +275,53 @@ void exportFile(GtkWidget* widget,gpointer data)
 	return;
 }
 
-bool saveFile(GtkWidget* widget,gpointer data)
+void saveManpage(GtkWidget* widget,gpointer data)
+{
+	int			numpages=gtk_notebook_get_n_pages(notebook);
+	int			result;
+	pageStruct*	page;
+	gchar*		text;
+	FILE*		fd=NULL;
+	GtkTextIter	start,end;
+	char*		manifest;
+
+	for(int loop=0;loop<numpages;loop++)
+		{
+			page=getPageStructPtr(loop);
+			page->itsMe=true;
+			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+			text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
+
+			fd=fopen(page->filePath,"w");
+			if (fd!=NULL)
+				{
+					fputs(text,fd);
+					fclose(fd);
+					gtk_text_buffer_set_modified((GtkTextBuffer*)page->buffer,false);
+				}
+		}
+
+	asprintf(&manifest,"%s/manifest",manFilename);
+	fd=fopen(manifest,"w");
+	if (fd!=NULL)
+		{
+			fprintf(fd,"manname=%s\n",manName);
+			fprintf(fd,"mansection=%s\n",manSection);
+			fprintf(fd,"manversion=%s\n",manVersion);
+			fprintf(fd,"manauthor=%s\n",manAuthor);
+			fprintf(fd,"mancategory=%s\n",manCategory);
+			for(int loop=0;loop<numpages;loop++)
+				{
+					page=getPageStructPtr(loop);
+					fprintf(fd,"file=%s\n",page->fileName);
+				}
+			fclose(fd);
+		}
+	g_free(manifest);
+}
+
+bool XsaveManpage(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page=getPageStructPtr(-1);
 	GtkTextIter	start,end;
@@ -568,6 +614,7 @@ void newManpage(GtkWidget* widget,gpointer data)
 	GtkWidget*	label;
 	char*		retval=NULL;
 	GtkWidget*	hbox;
+	FILE*		fd=NULL;
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Create New Manpage");
 
@@ -611,18 +658,23 @@ void newManpage(GtkWidget* widget,gpointer data)
 		gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);		
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-//	gtk_widget_show(label);
 
-//	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
 	gtk_widget_show_all(content_area);
 	result=gtk_dialog_run(GTK_DIALOG(dialog));
 
-//	if(result==GTK_RESPONSE_YES)
-//		retval=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
+	if(result==GTK_RESPONSE_YES)
+		{
+			manFilename=tempnam(NULL,"ManEd");
+			manName=strdup(gtk_entry_get_text((GtkEntry*)nameBox));
+			manSection=strdup(gtk_entry_get_text((GtkEntry*)sectionBox));
+			manVersion=strdup(gtk_entry_get_text((GtkEntry*)versionBox));
+			manAuthor=strdup(gtk_entry_get_text((GtkEntry*)authorBox));
+			manCategory=strdup(gtk_entry_get_text((GtkEntry*)categoryBox));
+
+			g_mkdir_with_parents(manFilename,493);
+		}
 
 	gtk_widget_destroy(dialog);
-
-
 }
 
 void newFile(GtkWidget* widget,gpointer data)
@@ -698,11 +750,11 @@ void newSection(GtkWidget* widget,gpointer data)
 		{
 			page=makeNewPage();
 			page->tabVbox=gtk_vbox_new(true,4);
-			page->filePath=NULL;
 			str=g_string_new(retval);
 			g_string_ascii_up(str);
 
 			page->fileName=g_string_free(str,false);
+			asprintf(&page->filePath,"%s/%s",manFilename,page->fileName);
 
 			label=makeNewTab(page->fileName,NULL,page);
 

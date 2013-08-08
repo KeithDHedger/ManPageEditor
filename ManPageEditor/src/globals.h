@@ -84,6 +84,14 @@ struct tagStruct
 	GtkTextMark*	mark;
 };
 
+//manpage stuff
+extern char*			manFilename;
+extern char*			manName;
+extern char*			manSection;
+extern char*			manVersion;
+extern char*			manAuthor;
+extern char*			manCategory;
+
 extern GtkWidget*		window;
 extern GtkNotebook*		notebook;
 

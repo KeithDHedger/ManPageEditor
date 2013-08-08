@@ -28,6 +28,15 @@
 #include "callbacks.h"
 #include "script.h"
 
+
+//manpage
+char*			manFilename=NULL;
+char*			manName=NULL;
+char*			manSection=NULL;
+char*			manVersion=NULL;
+char*			manAuthor=NULL;
+char*			manCategory=NULL;
+
 GtkWidget*		window=NULL;
 GtkNotebook*	notebook=NULL;
 GtkWidget*		menubar=NULL;

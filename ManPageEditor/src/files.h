@@ -9,7 +9,7 @@
 #define _FILES_
 
 bool openFile(const gchar *filepath,int linenumber);
-bool saveFile(GtkWidget* widget,gpointer data);
+void saveManpage(GtkWidget* widget,gpointer data);
 void newFile(GtkWidget* widget,gpointer data);
 void resetAllFilePrefs(void);
 
