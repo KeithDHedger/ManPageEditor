@@ -171,42 +171,16 @@ bool closingAll=false;
 
 void closeTab(GtkWidget* widget,gpointer data)
 {
-#if 0
+
 	long		thispage;
 	int			result;
 	pageStruct*	page;
 
-	if(closingAll==true)
-		thispage=0;
-	else
-		{
-			if(data==NULL)
-				thispage=gtk_notebook_get_current_page(notebook);
-			else
-				thispage=gtk_notebook_page_num(notebook,(GtkWidget *)data);
-		}
 
-	closingAll=false;
+	thispage=0;
 	page=getPageStructPtr(thispage);
 	if(page==NULL)
 		return;
-
-	if(gtk_text_buffer_get_modified((GtkTextBuffer*)page->buffer))
-		{
-			result=show_question(page->fileName);
-			switch(result)
-				{
-					case GTK_RESPONSE_YES:
-						if(saveFile(NULL,NULL)==false)
-							return;
-						break;
-					case GTK_RESPONSE_NO:
-						break;
-					default:
-						return;
-						break;
-				}
-		}
 
 	if(page->filePath!=NULL)
 		g_free(page->filePath);
@@ -221,7 +195,6 @@ void closeTab(GtkWidget* widget,gpointer data)
 	currentPage--;
 	gtk_notebook_remove_page(notebook,thispage);
 	setSensitive();
-#endif
 }
 
 void closeAllTabs(GtkWidget* widget,gpointer data)

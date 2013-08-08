@@ -332,6 +332,7 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	asprintf(&manifest,"tar -cC %s -f %s%s .",manFilename,manFilePath,suffix);
 	system(manifest);
 	g_free(manifest);
+	dirty=false;
 }
 
 void saveAs(GtkWidget* widget,gpointer data)
@@ -486,6 +487,11 @@ void fileChangedOnDisk(GFileMonitor *monitor,GFile *file,GFile *other_file,GFile
 		}
 }
 
+void makeDirty(void)
+{
+	dirty=true;
+}
+
 pageStruct* makeNewPage(void)
 {
 	pageStruct*		page;
@@ -500,7 +506,7 @@ pageStruct* makeNewPage(void)
 
 	page->buffer=gtk_source_buffer_new(NULL);
 	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
-	g_signal_connect(G_OBJECT(page->buffer),"modified-changed",G_CALLBACK(setSensitive),NULL);
+	g_signal_connect(G_OBJECT(page->buffer),"modified-changed",G_CALLBACK(makeDirty),NULL);
 	page->view=(GtkSourceView*)gtk_source_view_new_with_buffer(page->buffer);
 
 	g_signal_connect(G_OBJECT(page->view),"populate-popup",G_CALLBACK(populatePopupMenu),NULL);
@@ -810,6 +816,12 @@ void openManpage(GtkWidget* widget,gpointer data)
 	char		buffer[4096];
 	char		name[256];
 	char		strarg[256];
+
+	if(dirty==true)
+		saveManpage(NULL,NULL);
+
+	if(manFilename!=NULL)
+		closeAllTabs(NULL,NULL);
 
 	dialog=gtk_file_chooser_dialog_new("Open File",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
 
