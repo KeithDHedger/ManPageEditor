@@ -240,11 +240,10 @@ void buildMainGui(void)
 	gtk_widget_add_accelerator((GtkWidget *)saveMenu,"activate",accgroup,'S',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 
 //save as
-//	saveAsMenu=gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE_AS,NULL);
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),saveAsMenu);
-//	gtk_signal_connect(GTK_OBJECT(saveAsMenu),"activate",G_CALLBACK(saveAs),NULL);
-//	gtk_widget_add_accelerator((GtkWidget *)saveAsMenu,"activate",accgroup,'S',(GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK),GTK_ACCEL_VISIBLE);
-//	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
+	saveAsMenu=gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE_AS,NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),saveAsMenu);
+	gtk_signal_connect(GTK_OBJECT(saveAsMenu),"activate",G_CALLBACK(saveAs),NULL);
+	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
 
 
 //export

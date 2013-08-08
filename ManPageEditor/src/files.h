@@ -22,5 +22,6 @@ void newSection(GtkWidget* widget,gpointer data);
 void newManpage(GtkWidget* widget,gpointer data);
 void openManpage(GtkWidget* widget,gpointer data);
 void saveManpage(GtkWidget* widget,gpointer data);
+void saveAs(GtkWidget* widget,gpointer data);
 
 #endif

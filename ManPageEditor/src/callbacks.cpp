@@ -148,15 +148,18 @@ void setSensitive(void)
 				offset=1;
 
 			if(gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer))==true)
-				asprintf(&newlabel,"*%s",&text[offset]);
+				{
+					asprintf(&newlabel,"*%s",&text[offset]);
+					dirty=true;
+				}
 			else
 				newlabel=strdup(&text[offset]);
 
 			gtk_label_set_text((GtkLabel*)page->tabName,(const gchar*)newlabel);
 			g_free(newlabel);
 
-
-//			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
+			if(pageOpen==true)
+				gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
 			gtk_widget_set_sensitive((GtkWidget*)menuprint,true);
 			gtk_widget_set_sensitive((GtkWidget*)menuclose,true);
 //			gtk_widget_set_sensitive((GtkWidget*)menucloseall,true);
@@ -758,7 +761,7 @@ void redoProps(GtkWidget* widget,gpointer data)
 			manAuthor=strdup(gtk_entry_get_text((GtkEntry*)authorBox));
 			manCategory=strdup(gtk_entry_get_text((GtkEntry*)categoryBox));
 		}
-
+	dirty=true;
 	gtk_widget_destroy(dialog);
 }
 

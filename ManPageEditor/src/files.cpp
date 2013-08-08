@@ -292,14 +292,17 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	FILE*		fd=NULL;
 	GtkTextIter	start,end;
 	char*		manifest;
-	const char*		suffix="";
+//	const char*		suffix="";
 
 	if(manFilePath==NULL)
 		{
 			if(getSaveFile()==false)
 				return;
-			suffix=".mpz";
-			manFilePath=strdup(saveFilePath);
+//			suffix=".mpz";
+			if(g_str_has_suffix(saveFilePath,".mpz"))
+				manFilePath=strdup(saveFilePath);
+			else
+				asprintf(&manFilePath,"%s.mpz",saveFilePath);
 		}
 
 	for(int loop=0;loop<numpages;loop++)
@@ -337,7 +340,7 @@ void saveManpage(GtkWidget* widget,gpointer data)
 		}
 	g_free(manifest);
 
-	asprintf(&manifest,"tar -cC %s -f %s%s .",manFilename,manFilePath,suffix);
+	asprintf(&manifest,"tar -cC %s -f %s .",manFilename,manFilePath);
 	system(manifest);
 	g_free(manifest);
 	dirty=false;
@@ -345,85 +348,12 @@ void saveManpage(GtkWidget* widget,gpointer data)
 
 void saveAs(GtkWidget* widget,gpointer data)
 {
-	if(saveFilePath!=NULL)
+	if(manFilePath!=NULL)
 		{
-			g_free(saveFilePath);
-			g_free(saveFileName);
+			g_free(manFilePath);
+			manFilePath=NULL;
 		}
 	saveManpage(NULL,NULL);
-}
-
-bool XsaveManpage(GtkWidget* widget,gpointer data)
-{
-	pageStruct*	page=getPageStructPtr(-1);
-	GtkTextIter	start,end;
-	gchar*		text;
-	FILE*		fd=NULL;
-	GtkWidget*	dialog;
-
-	page->itsMe=true;
-	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-	gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-	text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
-	if(page->filePath!=NULL && data==NULL)
-		{
-			fd=fopen(page->filePath,"w");
-			if (fd!=NULL)
-				{
-					fputs(text,fd);
-					fclose(fd);
-					gtk_text_buffer_set_modified((GtkTextBuffer*)page->buffer,false);
-				}
-			else
-				{
-					dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Can't save file '%s' :(",page->filePath);
-					gtk_dialog_run(GTK_DIALOG(dialog));
-					gtk_widget_destroy(dialog);
-					return(false);
-				}
-		}
-	else
-		{
-			if(data!=NULL)
-				{
-					saveFilePath=page->filePath;
-					saveFileName=page->fileName;
-				}
-
-			saveFileName=page->fileName;
-			if(getSaveFile()==false)
-				return(false);
-
-			fd=fopen(saveFilePath,"w");
-			if (fd!=NULL)
-				{
-					page->filePath=saveFilePath;
-					page->fileName=saveFileName;
-
-					gtk_text_buffer_set_modified ((GtkTextBuffer*)page->buffer,FALSE);
-
-					gtk_widget_set_tooltip_text(page->tabName,page->filePath);
-					gtk_label_set_text((GtkLabel*)page->tabName,(const gchar*)saveFileName);
-
-					fprintf(fd,"%s",text);
-					fclose(fd);
-				}
-			else
-				{
-					dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Can't save file '%s' :(",page->filePath);
-					gtk_dialog_run(GTK_DIALOG(dialog));
-					gtk_widget_destroy(dialog);
-					return(false);
-				}
-
-			saveFileName=NULL;
-			saveFilePath=NULL;
-		}
-	if(page->lang==NULL)
-		setLanguage(page);
-	switchPage(notebook,NULL,currentTabNumber,NULL);
-	setSensitive();
-	return(true);
 }
 
 void reloadFile(GtkWidget* widget,gpointer data)
@@ -556,7 +486,6 @@ bool openFile(const gchar *filepath,int linenumber)
 	pageStruct*		page;
 	GtkTextMark*	scroll2mark=gtk_text_mark_new(NULL,true);
 	char*			str=NULL;
-//	char*			recenturi;
 	int				linenum=linenumber-1;
 
 	if(!g_file_test(filepath,G_FILE_TEST_EXISTS))
@@ -861,7 +790,9 @@ void openManpage(GtkWidget* widget,gpointer data)
 
 			recenturi=g_filename_to_uri(manFilePath,NULL,NULL);
 			gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
+			pageOpen=true;
 		}
 	gtk_widget_destroy (dialog);
+	setSensitive();
 	refreshMainWindow();	
 }

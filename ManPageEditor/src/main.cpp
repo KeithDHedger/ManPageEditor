@@ -119,11 +119,6 @@ void init(void)
 	tmpShowJumpToLine=showJumpToLine;
 	tmpShowLiveSearch=showLiveSearch;
 
-//	filename=tempnam(NULL,"ManPageEditor");
-//	asprintf(&htmlFile,"%s.html",filename);
-//	asprintf(&htmlURI,"file://%s.html",filename);
-//	g_free(filename);
-
 #ifdef _ASPELL_
 	aspellConfig=new_aspell_config();
 	possible_err=new_aspell_speller(aspellConfig);
