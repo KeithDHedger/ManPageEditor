@@ -41,6 +41,12 @@ bool			pageOpen=false;
 bool			dirty=false;
 char*			exportPath=NULL;
 
+GtkWidget*		nameBox;
+GtkWidget*		sectionBox;
+GtkWidget*		versionBox;
+GtkWidget*		authorBox;
+GtkWidget*		categoryBox;
+
 GtkWidget*		window=NULL;
 GtkNotebook*	notebook=NULL;
 GtkWidget*		menubar=NULL;

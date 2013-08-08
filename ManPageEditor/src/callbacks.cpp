@@ -691,8 +691,76 @@ void doFormat(GtkWidget* widget,gpointer data)
 
 
 
+void redoProps(GtkWidget* widget,gpointer data)
+{
+	GtkWidget*	dialog;
+	gint		result;
+	GtkWidget*	content_area;
+	GtkWidget*	label;
+	GtkWidget*	hbox;
+
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Set Properties");
+
+	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
+	gtk_window_set_title(GTK_WINDOW(dialog),"Properties");
+
+	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	
+	hbox=gtk_hbox_new(false,0);
+		nameBox=gtk_entry_new();
+		label=gtk_label_new("Name\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),nameBox,true,true,0);	
+		gtk_entry_set_text((GtkEntry*)nameBox,manName);
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		sectionBox=gtk_entry_new();
+		label=gtk_label_new("Section\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);		
+		gtk_entry_set_text((GtkEntry*)sectionBox,manSection);
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		versionBox=gtk_entry_new();
+		label=gtk_label_new("Version\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);		
+		gtk_entry_set_text((GtkEntry*)versionBox,manVersion);
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		authorBox=gtk_entry_new();
+		label=gtk_label_new("Author\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);		
+		gtk_entry_set_text((GtkEntry*)authorBox,manAuthor);
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
+
+	hbox=gtk_hbox_new(false,0);
+		categoryBox=gtk_entry_new();
+		label=gtk_label_new("Category\t");
+		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+		gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);		
+		gtk_entry_set_text((GtkEntry*)categoryBox,manCategory);
+	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 
+	gtk_widget_show_all(content_area);
+	result=gtk_dialog_run(GTK_DIALOG(dialog));
+
+	if(result==GTK_RESPONSE_YES)
+		{
+			manName=strdup(gtk_entry_get_text((GtkEntry*)nameBox));
+			manSection=strdup(gtk_entry_get_text((GtkEntry*)sectionBox));
+			manVersion=strdup(gtk_entry_get_text((GtkEntry*)versionBox));
+			manAuthor=strdup(gtk_entry_get_text((GtkEntry*)authorBox));
+			manCategory=strdup(gtk_entry_get_text((GtkEntry*)categoryBox));
+		}
+
+	gtk_widget_destroy(dialog);
+}
 
 
 

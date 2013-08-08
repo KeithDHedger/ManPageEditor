@@ -254,6 +254,11 @@ void buildMainGui(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),exportMenu);
 	gtk_signal_connect(GTK_OBJECT(exportMenu),"activate",G_CALLBACK(exportFile),NULL);
 
+//properties
+	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES,NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(redoProps),NULL);
+
 
 //savas
 //	saveAsMenu=gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE_AS,NULL);

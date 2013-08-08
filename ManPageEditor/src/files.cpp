@@ -629,19 +629,6 @@ bool openFile(const gchar *filepath,int linenumber)
 	return TRUE;
 }
 
-/*
-	printf(".TH \"XFCE\\-THEME\\-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
-	printf(".SH \"NAME\"\n");
-	printf("xfce\\-theme\\-manager \\- A theme manager for Xfce\n");
-
-*/
-GtkWidget*	nameBox;
-GtkWidget*	sectionBox;
-GtkWidget*	versionBox;
-GtkWidget*	authorBox;
-GtkWidget*	categoryBox;
-
-
 void newManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;

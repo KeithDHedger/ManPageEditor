@@ -96,6 +96,12 @@ extern bool				pageOpen;
 extern bool				dirty;
 extern char*			exportPath;
 
+extern GtkWidget*		nameBox;
+extern GtkWidget*		sectionBox;
+extern GtkWidget*		versionBox;
+extern GtkWidget*		authorBox;
+extern GtkWidget*		categoryBox;
+
 extern GtkWidget*		window;
 extern GtkNotebook*		notebook;
 
