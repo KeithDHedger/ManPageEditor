@@ -105,6 +105,24 @@ int show_question(char* filename)
 
 void setSensitive(void)
 {
+//	if(dirty==true)
+//		{
+//toolbar
+	gtk_widget_set_sensitive((GtkWidget*)undoButton,dirty);
+	gtk_widget_set_sensitive((GtkWidget*)redoButton,dirty);
+	gtk_widget_set_sensitive((GtkWidget*)saveButton,dirty);
+//menu
+	gtk_widget_set_sensitive((GtkWidget*)undoMenu,dirty);
+	gtk_widget_set_sensitive((GtkWidget*)redoMenu,dirty);
+	gtk_widget_set_sensitive((GtkWidget*)saveMenu,dirty);
+	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,pageOpen);
+	gtk_widget_set_sensitive((GtkWidget*)exportMenu,pageOpen);
+			
+//		}
+}
+
+void setSensitiveX(void)
+{
 	pageStruct*		page=getPageStructPtr(currentTabNumber);
 	const gchar*	text;
 	char*			newlabel;
@@ -143,21 +161,22 @@ void setSensitive(void)
 			gtk_widget_set_sensitive((GtkWidget*)redoMenu,gtk_source_buffer_can_redo(page->buffer));
 			gtk_widget_set_sensitive((GtkWidget*)saveMenu,gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)));
 //tab
-			gtk_widget_set_sensitive((GtkWidget*)saveButton,gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)));
+#if 0
+//			gtk_widget_set_sensitive((GtkWidget*)saveButton,gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)));
 			if(text[0]=='*')
 				offset=1;
 
 			if(gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer))==true)
 				{
 					asprintf(&newlabel,"*%s",&text[offset]);
-					dirty=true;
+				//	dirty=true;
 				}
 			else
 				newlabel=strdup(&text[offset]);
 
 			gtk_label_set_text((GtkLabel*)page->tabName,(const gchar*)newlabel);
 			g_free(newlabel);
-
+#endif
 			if(pageOpen==true)
 				gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
 			gtk_widget_set_sensitive((GtkWidget*)menuprint,true);
@@ -267,8 +286,6 @@ void redo(GtkWidget* widget,gpointer data)
 		}
 }
 
-
-
 void openHelp(GtkWidget* widget,gpointer data)
 {
 	char*	runhelp;
@@ -289,6 +306,9 @@ void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data)
 	GtkTextIter		end;
 	char*			selection=NULL;
 	GtkWidget*		menuitem;
+#ifdef _ASPELL_
+	GtkWidget*		image;
+#endif
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu),menuitem);
@@ -306,8 +326,6 @@ void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data)
 					gtk_menu_shell_prepend(GTK_MENU_SHELL(menu),menuitem);
 					gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(checkWord),NULL);
 #endif
-					menuitem=gtk_separator_menu_item_new();
-					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 				}
 		}
 	gtk_widget_show_all((GtkWidget*)menu);
@@ -370,19 +388,6 @@ bool tabPopUp(GtkWidget *widget, GdkEventButton *event,gpointer user_data)
 	    {
 			tabMenu=gtk_menu_new();
 			page=(pageStruct*)user_data;
-
-//copy filepath
-			image=gtk_image_new_from_stock(GTK_STOCK_COPY,GTK_ICON_SIZE_MENU);
-			menuitem=gtk_image_menu_item_new_with_label("Copy Filepath");
-			gtk_image_menu_item_set_image((GtkImageMenuItem*)menuitem,image);
-			gtk_menu_shell_append(GTK_MENU_SHELL(tabMenu),menuitem);
-			gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doTabMenu),(void*)page->filePath);
-//copy filename
-			image=gtk_image_new_from_stock(GTK_STOCK_COPY,GTK_ICON_SIZE_MENU);
-			menuitem=gtk_image_menu_item_new_with_label("Copy FileName");
-			gtk_image_menu_item_set_image((GtkImageMenuItem*)menuitem,image);
-			gtk_menu_shell_append(GTK_MENU_SHELL(tabMenu),menuitem);
-			gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doTabMenu),(void*)page->fileName);
 
 #ifdef _ASPELL_
 //check document
@@ -680,8 +685,6 @@ void doFormat(GtkWidget* widget,gpointer data)
 	refreshMainWindow();
 }
 
-
-
 void redoProps(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
@@ -748,8 +751,9 @@ void redoProps(GtkWidget* widget,gpointer data)
 			manVersion=strdup(gtk_entry_get_text((GtkEntry*)versionBox));
 			manAuthor=strdup(gtk_entry_get_text((GtkEntry*)authorBox));
 			manCategory=strdup(gtk_entry_get_text((GtkEntry*)categoryBox));
+			dirty=true;
+			setSensitive();
 		}
-	dirty=true;
 	gtk_widget_destroy(dialog);
 }
 

@@ -140,13 +140,14 @@ int main(int argc,char **argv)
 
 	buildMainGui();
 
-	for(int j=1;j<argc;j++)
-		openFile(argv[j],0);
+	if(argc>1)
+		doOpenManpage(argv[1]);
 
 	refreshMainWindow();
 
 	buildFindReplace();
 
+	dirty=false;
 	setSensitive();
 	gtk_main();
 }
