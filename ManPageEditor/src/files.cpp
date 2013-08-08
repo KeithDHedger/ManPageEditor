@@ -278,7 +278,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 										fprintf(fd,"\n");
 									lastWasNL=true;
 								}
-					}
+						}
 				}
 			fclose(fd);
 		}
