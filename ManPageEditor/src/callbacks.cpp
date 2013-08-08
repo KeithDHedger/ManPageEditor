@@ -120,7 +120,7 @@ void setSensitive(void)
 			gtk_widget_set_sensitive((GtkWidget*)undoMenu,false);
 			gtk_widget_set_sensitive((GtkWidget*)redoMenu,false);
 //			gtk_widget_set_sensitive((GtkWidget*)saveMenu,false);
-//			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
+			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
 
 
 
@@ -156,7 +156,7 @@ void setSensitive(void)
 			g_free(newlabel);
 
 
-//			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
+			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
 			gtk_widget_set_sensitive((GtkWidget*)menuprint,true);
 			gtk_widget_set_sensitive((GtkWidget*)menuclose,true);
 //			gtk_widget_set_sensitive((GtkWidget*)menucloseall,true);

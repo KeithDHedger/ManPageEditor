@@ -285,6 +285,12 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	GtkTextIter	start,end;
 	char*		manifest;
 
+	if(saveFilePath==NULL)
+		{
+			if(getSaveFile()==false;)
+				return;
+		}
+
 	for(int loop=0;loop<numpages;loop++)
 		{
 			page=getPageStructPtr(loop);
@@ -319,15 +325,20 @@ void saveManpage(GtkWidget* widget,gpointer data)
 			fclose(fd);
 		}
 	g_free(manifest);
-	if(saveFilePath==NULL)
+
+	asprintf(&manifest,"tar -cC %s -f %s.mpz .",manFilename,saveFilePath);
+	system(manifest);
+	g_free(manifest);
+}
+
+void saveAs(GtkWidget* widget,gpointer data)
+{
+	if(saveFilePath!=NULL)
 		{
-			if(getSaveFile()==true)
-				{
-					asprintf(&manifest,"tar -cC %s -f %s.mpz .",manFilename,saveFilePath);
-					system(manifest);
-					g_free(manifest);
-				}
+			g_free(saveFilePath);
+			g_free(saveFileName);
 		}
+	saveManpage(NULL,NULL);
 }
 
 bool XsaveManpage(GtkWidget* widget,gpointer data)
