@@ -20,7 +20,7 @@ helpfiles_DATA = ../resources/help/*
 install-exec-hook:
 	cp ../resources/pixmaps/ManPageEditor.desktop $(DESTDIR)${prefix}/share/applications/ManPageEditor.desktop
 	echo Icon=${prefix}/share/ManPageEditor/pixmaps/ManPageEditor.png >> $(DESTDIR)${prefix}/share/applications/ManPageEditor.desktop
-	echo Exec=${bindir}/bin/manpageeditor >> $(DESTDIR)${prefix}/share/applications/ManPageEditor.desktop
+	echo Exec=${bindir}/manpageeditor >> $(DESTDIR)${prefix}/share/applications/ManPageEditor.desktop
 
 
 uninstall-hook:
