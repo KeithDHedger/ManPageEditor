@@ -218,6 +218,15 @@ void exportFile(GtkWidget* widget,gpointer data)
 	char*		linePtr;
 	char*		holdPtr;
 	bool		lastWasNL=false;
+	FILE*		fd;
+
+	if(exportPath==NULL)
+		{
+			if(getSaveFile()==false)
+				return;
+			suffix=".mpz";
+			exportPath=strdup(saveFilePath);
+		}
 
 	printf(".TH \"XFCE\\-THEME\\-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
 	printf(".SH \"NAME\"\n");
@@ -245,7 +254,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 								{
 									printf("%s\n.br\n",ptr);
 									g_free(ptr);
-									ptr="";
+									ptr=(char*)"";
 								}
 							else
 								{
@@ -278,7 +287,6 @@ void exportFile(GtkWidget* widget,gpointer data)
 void saveManpage(GtkWidget* widget,gpointer data)
 {
 	int			numpages=gtk_notebook_get_n_pages(notebook);
-	int			result;
 	pageStruct*	page;
 	gchar*		text;
 	FILE*		fd=NULL;
@@ -505,8 +513,6 @@ pageStruct* makeNewPage(void)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page->pageWindow2),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
 
 	page->buffer=gtk_source_buffer_new(NULL);
-	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
-	g_signal_connect(G_OBJECT(page->buffer),"modified-changed",G_CALLBACK(makeDirty),NULL);
 	page->view=(GtkSourceView*)gtk_source_view_new_with_buffer(page->buffer);
 
 	g_signal_connect(G_OBJECT(page->view),"populate-popup",G_CALLBACK(populatePopupMenu),NULL);
@@ -533,7 +539,7 @@ pageStruct* makeNewPage(void)
 	gtk_drag_dest_add_text_targets((GtkWidget*)page->view);
 	g_signal_connect_after(G_OBJECT(page->view),"drag-data-received",G_CALLBACK(dropText),(void*)page);
 
-	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),FALSE);
+	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
 	g_signal_connect(G_OBJECT(page->buffer),"modified-changed",G_CALLBACK(setSensitive),NULL);
 	gtk_widget_grab_focus((GtkWidget*)page->view);
 
@@ -550,7 +556,7 @@ bool openFile(const gchar *filepath,int linenumber)
 	pageStruct*		page;
 	GtkTextMark*	scroll2mark=gtk_text_mark_new(NULL,true);
 	char*			str=NULL;
-	char*			recenturi;
+//	char*			recenturi;
 	int				linenum=linenumber-1;
 
 	if(!g_file_test(filepath,G_FILE_TEST_EXISTS))
@@ -584,17 +590,17 @@ bool openFile(const gchar *filepath,int linenumber)
 			}
 	gtk_source_buffer_end_not_undoable_action(page->buffer);
 
-	page->gFile=g_file_new_for_path(page->filePath);
-	page->monitor=g_file_monitor(page->gFile,(GFileMonitorFlags)G_FILE_MONITOR_NONE,NULL,NULL);
-	g_signal_connect(G_OBJECT(page->monitor),"changed",G_CALLBACK(fileChangedOnDisk),(void*)page);
+//	page->gFile=g_file_new_for_path(page->filePath);
+//	page->monitor=g_file_monitor(page->gFile,(GFileMonitorFlags)G_FILE_MONITOR_NONE,NULL,NULL);
+//	g_signal_connect(G_OBJECT(page->monitor),"changed",G_CALLBACK(fileChangedOnDisk),(void*)page);
 
 //	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
 
-	str=g_file_get_path(page->gFile);
-	recenturi=g_filename_to_uri(str,NULL,NULL);
-	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
+//	str=g_file_get_path(page->gFile);
+//	recenturi=g_filename_to_uri(str,NULL,NULL);
+//	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	g_free(filename);
-	g_free(recenturi);
+//	g_free(recenturi);
 	g_free(str);
 
 //connect to ntebook
@@ -642,9 +648,7 @@ void newManpage(GtkWidget* widget,gpointer data)
 	gint		result;
 	GtkWidget*	content_area;
 	GtkWidget*	label;
-	char*		retval=NULL;
 	GtkWidget*	hbox;
-	FILE*		fd=NULL;
 
 	if(pageOpen==true)
 		saveManpage(NULL,NULL);
@@ -816,6 +820,7 @@ void openManpage(GtkWidget* widget,gpointer data)
 	char		buffer[4096];
 	char		name[256];
 	char		strarg[256];
+	char*		recenturi;
 
 	if(dirty==true)
 		saveManpage(NULL,NULL);
@@ -866,6 +871,9 @@ void openManpage(GtkWidget* widget,gpointer data)
 			if(manFilePath!=NULL)
 				g_free(manFilePath);
 			manFilePath=strdup(filename);
+
+			recenturi=g_filename_to_uri(manFilePath,NULL,NULL);
+			gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 		}
 	gtk_widget_destroy (dialog);
 	refreshMainWindow();	

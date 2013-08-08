@@ -39,6 +39,7 @@ char*			manCategory=NULL;
 char*			manFilePath=NULL;
 bool			pageOpen=false;
 bool			dirty=false;
+char*			exportPath=NULL;
 
 GtkWidget*		window=NULL;
 GtkNotebook*	notebook=NULL;
@@ -154,8 +155,8 @@ GtkWidget*		findBox;
 GtkWidget*		replaceBox;
 
 char*			thePage=NULL;
-char*			htmlFile=NULL;
-char*			htmlURI=NULL;
+//char*			htmlFile=NULL;
+//char*			htmlURI=NULL;
 
 
 //spellcheck

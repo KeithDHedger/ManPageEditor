@@ -35,7 +35,6 @@ void setPrefs(GtkWidget* widget,gpointer data);
 void setToolOptions(GtkWidget* widget,gpointer data);
 void doAbout(GtkWidget* widget,gpointer data);
 void writeExitData(void);
-bool doSaveAll(GtkWidget* widget,gpointer data);
 void closeAllTabs(GtkWidget* widget,gpointer data);
 void showHideWidget(GtkWidget* widget,bool show);
 void refreshMainWindow(void);

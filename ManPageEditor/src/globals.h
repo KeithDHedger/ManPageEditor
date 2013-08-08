@@ -94,6 +94,7 @@ extern char*			manCategory;
 extern char*			manFilePath;
 extern bool				pageOpen;
 extern bool				dirty;
+extern char*			exportPath;
 
 extern GtkWidget*		window;
 extern GtkNotebook*		notebook;
@@ -210,8 +211,8 @@ extern GtkWidget*		findBox;
 extern GtkWidget*		replaceBox;
 
 extern char*			thePage;
-extern char*			htmlFile;
-extern char*			htmlURI;
+//extern char*			htmlFile;
+//extern char*			htmlURI;
 
 
 extern GtkWidget*		spellCheckWord;

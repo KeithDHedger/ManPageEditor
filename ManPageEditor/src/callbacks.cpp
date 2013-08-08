@@ -489,64 +489,41 @@ void writeConfig(void)
 	g_free(filename);
 }
 
-bool doSaveAll(GtkWidget* widget,gpointer data)
-{
-return(true);
-#if 0
-	int			numpages=gtk_notebook_get_n_pages(notebook);
-	int			result;
-	pageStruct*	page;
-
-	for(int loop=0;loop<numpages;loop++)
-		{
-			page=getPageStructPtr(loop);
-			if(gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)))
-				{
-					if((bool)data==true)
-						{
-							result=show_question(g_path_get_basename(page->fileName));
-							switch(result)
-								{
-									case GTK_RESPONSE_YES:
-										gtk_notebook_set_current_page(notebook,loop);
-										saveFile(NULL,NULL);
-										
-										break;
-									case GTK_RESPONSE_NO:
-										break;
-									default:
-										return(false);;
-										break;
-								}
-						}
-					else
-						{
-							gtk_notebook_set_current_page(notebook,loop);
-							saveFile(NULL,NULL);
-						}
-				}
-		}
-	return(true);
-#endif
-}
-
 void doShutdown(GtkWidget* widget,gpointer data)
 {
 	char*	command;
+	int		result;
 
-	asprintf(&command,"rm %s &>/dev/null",htmlFile);
-	if(doSaveAll(widget,(void*)true)==true)
+	if(dirty==true)
 		{
-			writeExitData();
-			gtk_main_quit();
+			result=show_question(g_path_get_basename(manFilePath));
+			switch(result)
+				{
+					case GTK_RESPONSE_YES:
+						saveManpage(NULL,NULL);
+						break;
+					case GTK_RESPONSE_NO:
+						break;
+					default:
+						return;
+						break;
+				}
 		}
-	system(command);
-	g_free(command);
+	if(manFilename!=NULL)
+		{
+			asprintf(&command,"rm -r \"%s\"",manFilename);
+			system(command);
+			g_free(command);
+			g_free(manFilename);
+		}
 
 #ifdef _ASPELL_
 	delete_aspell_config(aspellConfig);
 	delete_aspell_speller(spellChecker);
 #endif
+
+	writeExitData();
+	gtk_main_quit();
 }
 
 void setPrefs(GtkWidget* widget,gpointer data)
