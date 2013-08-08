@@ -20,5 +20,6 @@ void openManpage(GtkWidget* widget,gpointer data);
 void saveManpage(GtkWidget* widget,gpointer data);
 void saveAs(GtkWidget* widget,gpointer data);
 void doOpenManpage(char* file);
+void makeDirty(GtkWidget* widget,gpointer data);
 
 #endif

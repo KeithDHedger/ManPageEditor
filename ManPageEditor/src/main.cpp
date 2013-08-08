@@ -49,10 +49,6 @@ void readConfig(void)
 					if(strcasecmp(name,"wrapsearch")==0)
 							wrapSearch=(bool)atoi(strarg);
 
-
-					if(strcasecmp(name,"showjtoline")==0)
-							showJumpToLine=(bool)atoi(strarg);
-
 					if(strcasecmp(name,"showlivesearch")==0)
 							showLiveSearch=(bool)atoi(strarg);
 
@@ -104,7 +100,6 @@ void init(void)
 	wrapSearch=true;
 	insensitiveSearch=true;
 	replaceAll=false;
-	showJumpToLine=true;
 	showLiveSearch=true;
 
 	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
@@ -115,8 +110,6 @@ void init(void)
 
 	tmpHighLight=highLight;
 	tmpTabWidth=tabWidth;
-
-	tmpShowJumpToLine=showJumpToLine;
 	tmpShowLiveSearch=showLiveSearch;
 
 #ifdef _ASPELL_

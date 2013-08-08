@@ -24,7 +24,6 @@
 #include "spellcheck.h"
 
 GtkWidget*			tabMenu;
-char				defineText[1024];
 GtkPrintSettings*	settings=NULL;
 
 void showHideWidget(GtkWidget* widget,bool show)
@@ -38,7 +37,6 @@ void showHideWidget(GtkWidget* widget,bool show)
 void refreshMainWindow(void)
 {
 	gtk_widget_show_all(window);
-	showHideWidget(lineNumberWidget,showJumpToLine);
 	showHideWidget(liveSearchWidget,showLiveSearch);
 }
 
@@ -105,8 +103,6 @@ int show_question(char* filename)
 
 void setSensitive(void)
 {
-//	if(dirty==true)
-//		{
 //toolbar
 	gtk_widget_set_sensitive((GtkWidget*)undoButton,dirty);
 	gtk_widget_set_sensitive((GtkWidget*)redoButton,dirty);
@@ -117,75 +113,6 @@ void setSensitive(void)
 	gtk_widget_set_sensitive((GtkWidget*)saveMenu,dirty);
 	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,pageOpen);
 	gtk_widget_set_sensitive((GtkWidget*)exportMenu,pageOpen);
-			
-//		}
-}
-
-void setSensitiveX(void)
-{
-	pageStruct*		page=getPageStructPtr(currentTabNumber);
-	const gchar*	text;
-	char*			newlabel;
-	int				offset=0;
-
-	if(page==NULL)
-		{
-//toolbar
-			gtk_widget_set_sensitive((GtkWidget*)undoButton,false);
-			gtk_widget_set_sensitive((GtkWidget*)redoButton,false);
-			gtk_widget_set_sensitive((GtkWidget*)saveButton,false);
-//menu
-			gtk_widget_set_sensitive((GtkWidget*)undoMenu,false);
-			gtk_widget_set_sensitive((GtkWidget*)redoMenu,false);
-//			gtk_widget_set_sensitive((GtkWidget*)saveMenu,false);
-//			gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
-
-
-
-			gtk_widget_set_sensitive((GtkWidget*)menuprint,false);
-			gtk_widget_set_sensitive((GtkWidget*)menuclose,false);
-//			gtk_widget_set_sensitive((GtkWidget*)menucloseall,false);
-//			gtk_widget_set_sensitive((GtkWidget*)menusaveall,false);
-//			gtk_widget_set_sensitive((GtkWidget*)menurevert,false);
-		}
-	else
-		{
-			text=gtk_label_get_text((GtkLabel*)page->tabName);
-//toolbar
-			gtk_widget_set_sensitive((GtkWidget*)undoButton,gtk_source_buffer_can_undo(page->buffer));
-			gtk_widget_set_sensitive((GtkWidget*)redoButton,gtk_source_buffer_can_redo(page->buffer));
-			gtk_widget_set_sensitive((GtkWidget*)saveButton,gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)));
-
-//menu
-			gtk_widget_set_sensitive((GtkWidget*)undoMenu,gtk_source_buffer_can_undo(page->buffer));
-			gtk_widget_set_sensitive((GtkWidget*)redoMenu,gtk_source_buffer_can_redo(page->buffer));
-			gtk_widget_set_sensitive((GtkWidget*)saveMenu,gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)));
-//tab
-#if 0
-//			gtk_widget_set_sensitive((GtkWidget*)saveButton,gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)));
-			if(text[0]=='*')
-				offset=1;
-
-			if(gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer))==true)
-				{
-					asprintf(&newlabel,"*%s",&text[offset]);
-				//	dirty=true;
-				}
-			else
-				newlabel=strdup(&text[offset]);
-
-			gtk_label_set_text((GtkLabel*)page->tabName,(const gchar*)newlabel);
-			g_free(newlabel);
-#endif
-			if(pageOpen==true)
-				gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
-			gtk_widget_set_sensitive((GtkWidget*)menuprint,true);
-			gtk_widget_set_sensitive((GtkWidget*)menuclose,true);
-//			gtk_widget_set_sensitive((GtkWidget*)menucloseall,true);
-//			gtk_widget_set_sensitive((GtkWidget*)menusaveall,true);
-//			gtk_widget_set_sensitive((GtkWidget*)menurevert,true);
-			gtk_widget_show_all(page->tabName);
-		}
 }
 
 void closeTab(GtkWidget* widget,gpointer data)
@@ -216,30 +143,6 @@ void closeAllTabs(GtkWidget* widget,gpointer data)
 
 	for(int loop=0;loop<numtabs;loop++)
 		closeTab(NULL,0);
-}
-
-void switchPage(GtkNotebook *notebook,gpointer arg1,guint thispage,gpointer user_data)
-{
-	pageStruct*	page;
-
-	if(arg1==NULL)
-		return;
-
-	page=(pageStruct*)g_object_get_data((GObject*)arg1,"pagedata");
-	if(page==NULL)
-		return;
-
-	currentTabNumber=thispage;
-
-
-
-	page->isFirst=true;
-
-	gtk_window_set_title((GtkWindow*)window,page->fileName);
-	refreshMainWindow();
-
-	setSensitive();
-
 }
 
 void copyToClip(GtkWidget* widget,gpointer data)
@@ -466,20 +369,11 @@ void writeConfig(void)
 
 			fprintf(fd,"wrapline	%i\n",(int)lineWrap);
 			fprintf(fd,"highlightcurrentline	%i\n",(int)highLight);
-
 			fprintf(fd,"insenssearch	%i\n",(int)insensitiveSearch);
 			fprintf(fd,"wrapsearch	%i\n",(int)wrapSearch);
-
-
-			fprintf(fd,"showjtoline	%i\n",(int)showJumpToLine);
-
-
 			fprintf(fd,"showlivesearch	%i\n",(int)showLiveSearch);
-
 			fprintf(fd,"tabwidth	%i\n",tabWidth);
-
 			fprintf(fd,"font	%s\n",fontAndSize);
-
 			fclose(fd);
 		}
 	g_free(filename);
@@ -529,8 +423,6 @@ void setPrefs(GtkWidget* widget,gpointer data)
 	if(strcmp(gtk_widget_get_name(widget),"high")==0)
 		tmpHighLight=gtk_toggle_button_get_active((GtkToggleButton*)data);
 
-	if(strcmp(gtk_widget_get_name(widget),"jtolintool")==0)
-		tmpShowJumpToLine=gtk_toggle_button_get_active((GtkToggleButton*)data);
 	if(strcmp(gtk_widget_get_name(widget),"livesearch")==0)
 		tmpShowLiveSearch=gtk_toggle_button_get_active((GtkToggleButton*)data);
 
@@ -544,9 +436,7 @@ void setPrefs(GtkWidget* widget,gpointer data)
 		{
 			lineWrap=tmpLineWrap;
 			highLight=tmpHighLight;
-			showJumpToLine=tmpShowJumpToLine;
 			showLiveSearch=tmpShowLiveSearch;
-			showHideWidget(lineNumberWidget,showJumpToLine);
 			showHideWidget(liveSearchWidget,showLiveSearch);
 
 			if(fontAndSize!=NULL)
@@ -568,7 +458,7 @@ void doAbout(GtkWidget* widget,gpointer data)
 	const char	copyright[] ="Copyright \xc2\xa9 2013 K.D.Hedger";
 	const char*	aboutboxstring="ManPageEditor Code Text Editor";
 
-	gtk_show_about_dialog(NULL,"authors",authors,"comments",aboutboxstring,"copyright",copyright,"version",KKEDIT_VERSION,"website",MYWEBSITE,"program-name","ManPageEditor","logo-icon-name","ManPageEditor",NULL); 
+	gtk_show_about_dialog(NULL,"authors",authors,"comments",aboutboxstring,"copyright",copyright,"version",VERSION,"website",MYWEBSITE,"program-name","ManPageEditor","logo-icon-name","ManPageEditor",NULL); 
 }
 
 void drawPage(GtkPrintOperation *operation,GtkPrintContext *context,gint page_nr,gpointer user_data)

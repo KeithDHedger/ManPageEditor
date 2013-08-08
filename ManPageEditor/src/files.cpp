@@ -411,7 +411,6 @@ bool openFile(const gchar *filepath,int linenumber)
 	page->fileName=strdup(filename);
 
 	label=makeNewTab(page->fileName,page->filePath,page);
-	setLanguage(page);
 
 	g_file_get_contents(filepath,&buffer,(gsize*)&filelen,NULL);
 

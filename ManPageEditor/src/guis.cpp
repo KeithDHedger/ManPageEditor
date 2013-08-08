@@ -106,6 +106,7 @@ void buildMainGui(void)
 	GtkWidget*					image;
 
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title((GtkWindow*)window,"Manpage Editor");
 	gtk_window_set_default_size((GtkWindow*)window,windowWidth,windowHeight);
 	if(windowX!=-1 && windowY!=-1)
 		gtk_window_move((GtkWindow *)window,windowX,windowY);
@@ -116,8 +117,8 @@ void buildMainGui(void)
 
 	notebook=(GtkNotebook*)gtk_notebook_new();
 	gtk_notebook_set_scrollable(notebook,true);
-	gtk_signal_connect(GTK_OBJECT(notebook),"switch-page",G_CALLBACK(switchPage),NULL);
-	gtk_signal_connect(GTK_OBJECT(notebook),"page-reordered",G_CALLBACK(switchPage),NULL);
+//	gtk_signal_connect(GTK_OBJECT(notebook),"switch-page",G_CALLBACK(switchPage),NULL);
+	gtk_signal_connect(GTK_OBJECT(notebook),"page-reordered",G_CALLBACK(makeDirty),NULL);
 
 	vbox=gtk_vbox_new(FALSE,0);
 	menubar=gtk_menu_bar_new();
@@ -181,13 +182,13 @@ void buildMainGui(void)
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Find/Replace");
 
 //goto line
-	lineNumberWidget=gtk_entry_new();
-	toolbutton=gtk_tool_item_new();
-	gtk_container_add((GtkContainer *)toolbutton,lineNumberWidget);
-	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
-	g_signal_connect_after(G_OBJECT(lineNumberWidget),"key-release-event",G_CALLBACK(jumpToLineFromBar),NULL);
-	gtk_widget_set_size_request((GtkWidget*)toolbutton,48,-1);
-	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Go To Line");
+//	lineNumberWidget=gtk_entry_new();
+//	toolbutton=gtk_tool_item_new();
+//	gtk_container_add((GtkContainer *)toolbutton,lineNumberWidget);
+//	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
+//	g_signal_connect_after(G_OBJECT(lineNumberWidget),"key-release-event",G_CALLBACK(jumpToLineFromBar),NULL);
+//	gtk_widget_set_size_request((GtkWidget*)toolbutton,48,-1);
+//	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Go To Line");
 		
 //livesearch
 	liveSearchWidget=gtk_entry_new();

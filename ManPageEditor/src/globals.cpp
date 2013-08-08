@@ -56,7 +56,7 @@ GtkWidget*		menuedit;
 
 
 GtkWidget*		menuhelp;
-GtkWidget*		menumanpage;
+
 
 
 
@@ -72,7 +72,7 @@ GtkWidget*		exportMenu;
 
 GtkWidget*		saveAsMenu;
 
-GtkWidget*		lineNumberWidget;
+
 GtkWidget*		liveSearchWidget;
 
 int				currentPage=0;
@@ -88,14 +88,14 @@ char*			fontAndSize;
 
 
 
-bool			restoreBookmarks;
-bool			showJumpToLine;
+
+
 
 
 bool			showLiveSearch;
 
 GtkWidget*		fontBox;
-GtkWidget*		terminalBox;
+
 
 
 bool			tmpLineWrap;
@@ -105,26 +105,11 @@ int				tmpTabWidth;
 
 
 
-bool			tmpShowJumpToLine;
+
 
 
 bool			tmpShowLiveSearch;
 
-GtkWidget*		toolNameWidget;
-GtkWidget*		commandLineWidget;
-GtkWidget*		inTermWidget;
-GtkWidget*		inPopupWidget;
-GtkWidget*		syncWidget;
-GtkWidget*		ignoreWidget;
-GtkWidget*		pasteWidget;
-GtkWidget*		replaceWidget;
-GtkWidget*		showDocWidget;
-GtkWidget*		toolSelect;
-
-char*			selectedToolPath=NULL;
-GList*			toolsList=NULL;
-
-GtkWidget*		restoreBMs;
 
 
 
@@ -132,7 +117,6 @@ GtkWidget*		restoreBMs;
 
 
 
-bool			showDoc=false;
 
 
 int				windowWidth;
@@ -144,12 +128,12 @@ bool			insensitiveSearch;
 bool			replaceAll;
 
 int				currentTabNumber;
-int 			untitledNumber=1;
+
 
 GtkToolItem*	newButton;
 GtkToolItem*	openButton;
 GtkToolItem*	saveButton;
-GtkToolItem*	saveasButton;
+
 GtkToolItem*	closeButton;
 GtkToolItem*	redoButton;
 GtkToolItem*	undoButton;
@@ -160,8 +144,8 @@ GtkWidget*		findBox;
 GtkWidget*		replaceBox;
 
 char*			thePage=NULL;
-//char*			htmlFile=NULL;
-//char*			htmlURI=NULL;
+
+
 
 
 //spellcheck
@@ -176,7 +160,6 @@ AspellSpeller*	spellChecker=0;
 
 //tags
 tagStruct*		tagList[100]={NULL,};
-
 int				currentTagNum=0;
 
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter)
@@ -204,73 +187,6 @@ pageStruct* getPageStructPtr(int pagenum)
 		return((pageStruct*)g_object_get_data((GObject*)pageBox,"pagedata"));
 }
 
-void getMimeType(char* filepath,void* ptr)
-{
-	char*	command;
-	gchar	*stdout=NULL;
-	gchar	*stderr=NULL;
-	gint	retval=0;
-
-	asprintf(&command,"file -b --mime-type %s",filepath);
-	g_spawn_command_line_sync(command,&stdout,&stderr,&retval,NULL);
-	if (retval==0)
-		{
-			stdout[strlen(stdout)-1]=0;
-			*((char**)ptr)=strdup(stdout);
-			g_free(stdout);
-			g_free(stderr);
-		}
-}
-
-void setLanguage(pageStruct* page)
-{
-	GtkSourceLanguage*			lang=NULL;
-	GtkSourceLanguageManager*	lm=NULL;
-	char*						mimetype;
-	gboolean					result_uncertain;
-	char*						command;
-	char						line[1024];
-	FILE*						fp;
-
-	lm=gtk_source_language_manager_new();
-
-	g_object_ref(lm);
-	g_object_set_data_full(G_OBJECT(page->buffer),"languages-manager",lm,(GDestroyNotify)g_object_unref);
-	lm=gtk_source_language_manager_get_default();
-	mimetype=g_content_type_guess(page->filePath,NULL,0,&result_uncertain);
-
-	if (result_uncertain)
-		{
-			g_free(mimetype);
-			mimetype=NULL;
-
-			asprintf(&command,"xdg-mime query filetype \"%s\"",page->filePath);
-			fp=popen(command,"r");
-			fgets(line,1024,fp);
-			asprintf(&mimetype,"%s",sliceBetween(line,(char*)"",(char*)";"));
-			pclose(fp);
-		}
-
-	lang=gtk_source_language_manager_guess_language(lm,page->filePath,mimetype);
-
-	if (lang==NULL)
-		{
-			getMimeType((char*)page->filePath,&mimetype);
-			lang=gtk_source_language_manager_guess_language(lm,page->filePath,mimetype);
-			if (lang!=NULL)
-				gtk_source_buffer_set_language(page->buffer,lang);
-		}
-	else
-		{
-			gtk_source_buffer_set_language(page->buffer,lang);
-		}
-
-	if(lang!=NULL)
-		page->lang=gtk_source_language_get_name(lang);
-
-	if(mimetype!=NULL)
-		g_free(mimetype);
-}
 
 
 
