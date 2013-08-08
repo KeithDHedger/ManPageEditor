@@ -218,70 +218,70 @@ void exportFile(GtkWidget* widget,gpointer data)
 	char*		linePtr;
 	char*		holdPtr;
 	bool		lastWasNL=false;
-	FILE*		fd;
+	FILE*		fd=NULL;
 
 	if(exportPath==NULL)
 		{
 			if(getSaveFile()==false)
 				return;
-			suffix=".mpz";
 			exportPath=strdup(saveFilePath);
 		}
 
-	printf(".TH \"XFCE\\-THEME\\-MANAGER\" \"1\" \"0.3.4\" \"K.D.Hedger\" \"\"\n");
-	printf(".SH \"NAME\"\n");
-	printf("xfce\\-theme\\-manager \\- A theme manager for Xfce\n");
-
-	ptr=text;
-	startChar[1]=0;
-
-	for(int loop=0;loop<numpages;loop++)
+	fd=fopen(exportPath,"w");
+	if (fd!=NULL)
 		{
-			page=getPageStructPtr(loop);
-			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-			text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
+			fprintf(fd,".TH \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"\n",manName,manSection,manVersion,manAuthor,manCategory);
 
-			ptr=doManFormat(text);
-			printf(".SH \"%s\"\n",page->fileName);
-			while(strlen(ptr)>0)
+			ptr=text;
+			startChar[1]=0;
+
+			for(int loop=0;loop<numpages;loop++)
 				{
-					startChar[0]=ptr[0];
-					if(strcmp(startChar,"\n")!=0)
+					page=getPageStructPtr(loop);
+					gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+					gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+					text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
+
+					ptr=doManFormat(text);
+					fprintf(fd,".SH \"%s\"\n",page->fileName);
+					while(strlen(ptr)>0)
 						{
-							linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,false);
-							if(linePtr==NULL && strlen(ptr)>0)
+							startChar[0]=ptr[0];
+							if(strcmp(startChar,"\n")!=0)
 								{
-									printf("%s\n.br\n",ptr);
-									g_free(ptr);
-									ptr=(char*)"";
+									linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,false);
+									if(linePtr==NULL && strlen(ptr)>0)
+										{
+											fprintf(fd,"%s\n.br\n",ptr);
+											g_free(ptr);
+											ptr=(char*)"";
+										}
+									else
+										{
+											fprintf(fd,"%s\n.br\n",linePtr);
+											g_free(linePtr);
+											linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,true);
+											holdPtr=deleteSlice(ptr,linePtr);	
+											g_free(linePtr);
+											g_free(ptr);
+											ptr=holdPtr;
+											lastWasNL=false;
+										}
 								}
 							else
 								{
-									printf("%s\n.br\n",linePtr);
-									g_free(linePtr);
-									linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,true);
-									holdPtr=deleteSlice(ptr,linePtr);	
-									g_free(linePtr);
+									holdPtr=deleteSlice(ptr,(char*)"\n");
 									g_free(ptr);
 									ptr=holdPtr;
-									lastWasNL=false;
+
+									if(lastWasNL==false)
+										fprintf(fd,"\n");
+									lastWasNL=true;
 								}
-						}
-					else
-						{
-							holdPtr=deleteSlice(ptr,(char*)"\n");
-							g_free(ptr);
-							ptr=holdPtr;
-
-							if(lastWasNL==false)
-								printf("\n");
-							lastWasNL=true;
-						}
-			}
+					}
+				}
+			fclose(fd);
 		}
-
-	return;
 }
 
 void saveManpage(GtkWidget* widget,gpointer data)
