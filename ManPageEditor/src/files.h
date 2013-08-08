@@ -9,7 +9,6 @@
 #define _FILES_
 
 bool openFile(const gchar *filepath,int linenumber);
-void saveManpage(GtkWidget* widget,gpointer data);
 void newFile(GtkWidget* widget,gpointer data);
 void resetAllFilePrefs(void);
 
@@ -21,5 +20,7 @@ void setFilePrefs(GtkSourceView* sourceview);
 
 void newSection(GtkWidget* widget,gpointer data);
 void newManpage(GtkWidget* widget,gpointer data);
+void openManpage(GtkWidget* widget,gpointer data);
+void saveManpage(GtkWidget* widget,gpointer data);
 
 #endif

@@ -92,6 +92,7 @@ extern char*			manVersion;
 extern char*			manAuthor;
 extern char*			manCategory;
 extern char*			manFilePath;
+extern bool				pageOpen;
 
 extern GtkWidget*		window;
 extern GtkNotebook*		notebook;

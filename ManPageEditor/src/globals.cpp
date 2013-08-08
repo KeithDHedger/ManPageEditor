@@ -37,6 +37,7 @@ char*			manVersion=NULL;
 char*			manAuthor=NULL;
 char*			manCategory=NULL;
 char*			manFilePath=NULL;
+bool			pageOpen=false;
 
 GtkWidget*		window=NULL;
 GtkNotebook*	notebook=NULL;
