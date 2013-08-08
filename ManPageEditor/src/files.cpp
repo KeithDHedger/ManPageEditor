@@ -319,6 +319,15 @@ void saveManpage(GtkWidget* widget,gpointer data)
 			fclose(fd);
 		}
 	g_free(manifest);
+	if(saveFilePath==NULL)
+		{
+			if(getSaveFile()==true)
+				{
+					asprintf(&manifest,"tar -cC %s -f %s.mpz .",manFilename,saveFilePath);
+					system(manifest);
+					g_free(manifest);
+				}
+		}
 }
 
 bool XsaveManpage(GtkWidget* widget,gpointer data)

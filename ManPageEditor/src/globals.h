@@ -91,6 +91,7 @@ extern char*			manSection;
 extern char*			manVersion;
 extern char*			manAuthor;
 extern char*			manCategory;
+extern char*			manFilePath;
 
 extern GtkWidget*		window;
 extern GtkNotebook*		notebook;
