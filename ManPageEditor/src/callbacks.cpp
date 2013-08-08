@@ -128,7 +128,7 @@ void setSensitive(void)
 			gtk_widget_set_sensitive((GtkWidget*)menuclose,false);
 //			gtk_widget_set_sensitive((GtkWidget*)menucloseall,false);
 //			gtk_widget_set_sensitive((GtkWidget*)menusaveall,false);
-			gtk_widget_set_sensitive((GtkWidget*)menurevert,false);
+//			gtk_widget_set_sensitive((GtkWidget*)menurevert,false);
 		}
 	else
 		{
@@ -164,21 +164,16 @@ void setSensitive(void)
 			gtk_widget_set_sensitive((GtkWidget*)menuclose,true);
 //			gtk_widget_set_sensitive((GtkWidget*)menucloseall,true);
 //			gtk_widget_set_sensitive((GtkWidget*)menusaveall,true);
-			gtk_widget_set_sensitive((GtkWidget*)menurevert,true);
+//			gtk_widget_set_sensitive((GtkWidget*)menurevert,true);
 			gtk_widget_show_all(page->tabName);
 		}
 }
-
-bool closingAll=false;
-
 
 void closeTab(GtkWidget* widget,gpointer data)
 {
 
 	long		thispage;
-	int			result;
 	pageStruct*	page;
-
 
 	thispage=0;
 	page=getPageStructPtr(thispage);
@@ -189,10 +184,6 @@ void closeTab(GtkWidget* widget,gpointer data)
 		g_free(page->filePath);
 	if(page->fileName!=NULL)
 		g_free(page->fileName);
-	if(page->gFile!=NULL)
-		g_object_unref(page->gFile);
-	if(page->monitor!=NULL)
-		g_object_unref(page->monitor);
 	if(page!=NULL)
 		g_free(page);
 	currentPage--;
@@ -205,10 +196,7 @@ void closeAllTabs(GtkWidget* widget,gpointer data)
 	int	numtabs=gtk_notebook_get_n_pages(notebook);
 
 	for(int loop=0;loop<numtabs;loop++)
-		{
-			closingAll=true;
-			closeTab(NULL,0);
-		}
+		closeTab(NULL,0);
 }
 
 void switchPage(GtkNotebook *notebook,gpointer arg1,guint thispage,gpointer user_data)

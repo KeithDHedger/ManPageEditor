@@ -292,13 +292,11 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	FILE*		fd=NULL;
 	GtkTextIter	start,end;
 	char*		manifest;
-//	const char*		suffix="";
 
 	if(manFilePath==NULL)
 		{
 			if(getSaveFile()==false)
 				return;
-//			suffix=".mpz";
 			if(g_str_has_suffix(saveFilePath,".mpz"))
 				manFilePath=strdup(saveFilePath);
 			else
@@ -356,80 +354,6 @@ void saveAs(GtkWidget* widget,gpointer data)
 	saveManpage(NULL,NULL);
 }
 
-void reloadFile(GtkWidget* widget,gpointer data)
-{
-	pageStruct*	page=getPageStructPtr(-1);
-	gchar*		buffer;
-	long		filelen;
-	GtkTextIter	start;
-	GtkTextIter	end;
-
-	if(page->filePath!=NULL)
-		{
-			g_file_get_contents(page->filePath,&buffer,(gsize*)&filelen,NULL);
-			gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-			gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&start,&end);
-			gtk_text_buffer_delete_selection((GtkTextBuffer*)page->buffer,true,true);
-			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-			gtk_text_buffer_insert((GtkTextBuffer*)page->buffer,&start,buffer,filelen);
-			g_free(buffer);
-		}
-}
-
-int showFileChanged(char* filename)
-{
-	GtkWidget*	dialog;
-	gint		result;
-	char*		message;
-
-	asprintf(&message,"File %s Has Changed on disk\nDo you want to reload it?",filename);
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_NONE,message);
-
-	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_REFRESH,GTK_RESPONSE_YES,NULL);
-	gtk_window_set_title(GTK_WINDOW(dialog),"Warning file changed!");
-
-	result=gtk_dialog_run(GTK_DIALOG(dialog));
-
-	gtk_widget_destroy(dialog);
-	g_free(message);
-	return(result);
-}
-
-void fileChangedOnDisk(GFileMonitor *monitor,GFile *file,GFile *other_file,GFileMonitorEvent event_type,gpointer user_data)
-{
-	pageStruct*		page=(pageStruct*)user_data;
-	GtkTextIter		start;
-	GtkTextIter		end;
-	gchar*			buffer;
-	long			filelen;
-	int				answer;
-
-	if(G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT==event_type)
-		{
-			if(page->itsMe==false)
-				{
-					answer=showFileChanged(page->fileName);
-					if(answer==GTK_RESPONSE_YES)
-						{
-							g_file_get_contents(page->filePath,&buffer,(gsize*)&filelen,NULL);
-							gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-							gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&start,&end);
-							gtk_text_buffer_delete_selection((GtkTextBuffer*)page->buffer,true,true);
-							gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-							gtk_text_buffer_insert((GtkTextBuffer*)page->buffer,&start,buffer,filelen);
-							g_free(buffer);
-						}
-				}
-			else
-				page->itsMe=false;
-		}
-}
-
-void makeDirty(void)
-{
-	dirty=true;
-}
-
 pageStruct* makeNewPage(void)
 {
 	pageStruct*		page;
@@ -456,10 +380,7 @@ pageStruct* makeNewPage(void)
 
 	page->isFirst=true;
 	page->itsMe=false;
-	page->markList=NULL;
 	page->inTop=true;
-	page->gFile=NULL;
-	page->monitor=NULL;
 	page->isSplit=false;
 	page->lang=NULL;
 	page->tabVbox=NULL;
@@ -519,17 +440,7 @@ bool openFile(const gchar *filepath,int linenumber)
 			}
 	gtk_source_buffer_end_not_undoable_action(page->buffer);
 
-//	page->gFile=g_file_new_for_path(page->filePath);
-//	page->monitor=g_file_monitor(page->gFile,(GFileMonitorFlags)G_FILE_MONITOR_NONE,NULL,NULL);
-//	g_signal_connect(G_OBJECT(page->monitor),"changed",G_CALLBACK(fileChangedOnDisk),(void*)page);
-
-//	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,true);
-
-//	str=g_file_get_path(page->gFile);
-//	recenturi=g_filename_to_uri(str,NULL,NULL);
-//	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	g_free(filename);
-//	g_free(recenturi);
 	g_free(str);
 
 //connect to ntebook
@@ -628,37 +539,6 @@ void newManpage(GtkWidget* widget,gpointer data)
 		}
 
 	gtk_widget_destroy(dialog);
-}
-
-void newFile(GtkWidget* widget,gpointer data)
-{
-	GtkTextIter	iter;
-	GtkWidget*	label;
-	pageStruct*	page;
-
-	page=makeNewPage();
-	page->tabVbox=gtk_vbox_new(true,4);
-	page->filePath=NULL;
-
-	asprintf(&page->fileName,"Untitled-%i",untitledNumber);
-	untitledNumber++;
-
-	label=makeNewTab(page->fileName,NULL,page);
-
-    /* move cursor to the beginning */
-	gtk_text_buffer_get_start_iter(GTK_TEXT_BUFFER(page->buffer),&iter);
-	gtk_text_buffer_place_cursor(GTK_TEXT_BUFFER(page->buffer),&iter);
-
-//connect to ntebook
-	gtk_container_add(GTK_CONTAINER(page->tabVbox),GTK_WIDGET(page->pane));
-	g_object_set_data(G_OBJECT(page->tabVbox),"pagedata",(gpointer)page);
-
-	gtk_notebook_append_page(notebook,page->tabVbox,label);
-	gtk_notebook_set_tab_reorderable(notebook,page->tabVbox,true);
-	gtk_notebook_set_current_page(notebook,currentPage);
-	currentPage++;
-	gtk_widget_show_all((GtkWidget*)notebook);
-
 }
 
 char* getNewSectionName(void)

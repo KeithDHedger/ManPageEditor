@@ -60,10 +60,7 @@ struct pageStruct
 	GtkTextIter			match_end;
 	bool				isFirst;
 	char*				fileName;
-	GFile*				gFile;
-	GFileMonitor*		monitor;
 	bool				itsMe;
-	GList*				markList;
 	bool				inTop;
 	bool				isSplit;
 	const char*			lang;
@@ -118,7 +115,7 @@ extern GtkWidget*		menuprint;
 extern GtkWidget*		menuclose;
 extern GtkWidget*		menucloseall;
 extern GtkWidget*		menusaveall;
-extern GtkWidget*		menurevert;
+
 extern GtkWidget*		menumanpage;
 
 extern GtkWidget*		redoMenu;

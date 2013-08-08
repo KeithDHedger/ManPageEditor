@@ -258,20 +258,6 @@ void buildMainGui(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(redoProps),NULL);
 
-
-//savas
-//	saveAsMenu=gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE_AS,NULL);
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),saveAsMenu);
-//	gtk_signal_connect(GTK_OBJECT(saveAsMenu),"activate",G_CALLBACK(saveFile),(void*)1);
-//	gtk_widget_add_accelerator((GtkWidget *)saveAsMenu,"activate",accgroup,'S',(GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK),GTK_ACCEL_VISIBLE);
-//	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
-//save all
-//	menusaveall=gtk_image_menu_item_new_with_label("Save All");
-//	image=gtk_image_new_from_stock(GTK_STOCK_SAVE,GTK_ICON_SIZE_MENU);
-//	gtk_image_menu_item_set_image((GtkImageMenuItem *)menusaveall,image);
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menusaveall);
-//	gtk_signal_connect(GTK_OBJECT(menusaveall),"activate",G_CALLBACK(doSaveAll),NULL);
-
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 
@@ -293,13 +279,6 @@ void buildMainGui(void)
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)menucloseall,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menucloseall);
 	gtk_signal_connect(GTK_OBJECT(menucloseall),"activate",G_CALLBACK(closeAllTabs),NULL);
-
-	menuitem=gtk_separator_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-//reload file
-	menurevert=gtk_image_menu_item_new_from_stock(GTK_STOCK_REVERT_TO_SAVED,NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menurevert);
-	gtk_signal_connect(GTK_OBJECT(menurevert),"activate",G_CALLBACK(reloadFile),NULL);
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);

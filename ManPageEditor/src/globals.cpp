@@ -64,7 +64,6 @@ GtkWidget*		menuprint;
 GtkWidget*		menuclose;
 GtkWidget*		menucloseall;
 GtkWidget*		menusaveall;
-GtkWidget*		menurevert;
 
 GtkWidget*		redoMenu;
 GtkWidget*		undoMenu;
