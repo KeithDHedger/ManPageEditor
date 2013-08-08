@@ -626,6 +626,7 @@ GtkWidget*	versionBox;
 GtkWidget*	authorBox;
 GtkWidget*	categoryBox;
 
+
 void newManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
