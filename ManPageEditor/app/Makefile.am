@@ -14,6 +14,9 @@ bin_PROGRAMS = manpageeditor
 
 man1_MANS = ../resources/man/manpageeditor.1
 
+helpfilesdir = $(pkgdatadir)/help
+helpfiles_DATA = ../resources/help/*
+
 install-exec-hook:
 	cp ../resources/pixmaps/ManPageEditor.desktop $(DESTDIR)${prefix}/share/applications/ManPageEditor.desktop
 	echo Icon=${prefix}/share/ManPageEditor/pixmaps/ManPageEditor.png >> $(DESTDIR)${prefix}/share/applications/ManPageEditor.desktop
