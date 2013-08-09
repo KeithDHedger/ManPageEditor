@@ -16,3 +16,5 @@ Add proper formatting instead of using text based tags.
 Add optional zipping up of man pages.
 Add preview option.
 Add import manpage.
+Make proper icon.
+Add a mime type for documents.
