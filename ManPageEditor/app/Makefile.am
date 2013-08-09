@@ -20,6 +20,8 @@ man1_MANS = ../resources/man/manpageeditor.1
 helpfilesdir = $(pkgdatadir)/help
 helpfiles_DATA = ../resources/help/*
 
+examplefilesdir = $(pkgdatadir)/examples
+examplefiles_DATA = ../resources/examples/*
 
 install-data-hook:
 	echo Icon=${datarootdir}/pixmaps/ManPageEditor.png >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
