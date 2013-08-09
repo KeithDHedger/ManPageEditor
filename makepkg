@@ -9,6 +9,7 @@ cd /tmp
 svn co file:///media/LinuxData/Development/SVN/ManPageEditor
 find ManPageEditor -name ".svn" -exec rm -r '{}' \; || true
 rm /tmp/ManPageEditor/makepkg
+cp /media/LinuxData/Development/Projects/ScriptLib/ScriptLib/src/script.cpp /media/LinuxData/Development/Projects/ScriptLib/ScriptLib/src/script.h /tmp/ManPageEditor/ManPageEditor/src
 
 mv /tmp/ManPageEditor /tmp/ManPageEditor-${VERSION}
 cd /tmp/ManPageEditor-${VERSION}
