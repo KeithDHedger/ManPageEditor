@@ -1,5 +1,5 @@
-I write a number of my own programs, and have always had a bit of a problem wirting the manpage, I have used the excellent 'ManEdit' but development on this has been stalled for a number of years.
-So I finallay decided to write my own and this is the result.
+I write a number of my own programs, and have always had a bit of a problem writing the manpage, I have used the excellent 'ManEdit' but development on this has been stalled for a number of years.
+So I finally decided to write my own and this is the result.
 This is only the first draft and there is LOTS to be done, so bugs and suggestions are welcome, please click on the 'About' button in the program for my email address.
 
 To install:
@@ -12,3 +12,7 @@ If you don't have aspell installed then don't enable it!
 To Do:
 
 Write a proper help file.
+Add proper formatting instead of using text based tags.
+Add optional zipping up of man pages.
+Add preview option.
+Add import manpage.
