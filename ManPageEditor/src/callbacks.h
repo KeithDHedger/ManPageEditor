@@ -40,5 +40,6 @@ gboolean whatPane(GtkWidget *widget,GdkEvent *event,gpointer data);
 void newEditor(GtkWidget* widget,gpointer data);
 void doFormat(GtkWidget* widget,gpointer data);
 void redoProps(GtkWidget* widget,gpointer data);
+int yesNo(char* question,char* file);
 
 #endif

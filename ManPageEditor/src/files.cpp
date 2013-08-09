@@ -670,3 +670,18 @@ void openManpage(GtkWidget* widget,gpointer data)
 	setSensitive();
 	refreshMainWindow();	
 }
+
+void deleteSection(GtkWidget* widget,gpointer data)
+{
+	pageStruct*	page=getPageStructPtr(-1);
+
+	if(yesNo((char*)"Do you want to permanently delete",page->fileName)==GTK_RESPONSE_YES)
+		{
+			unlink(page->filePath);
+			closeTab(NULL,(void*)1);
+			makeDirty(NULL,NULL);
+		}
+}
+
+
+

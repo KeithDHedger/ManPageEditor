@@ -71,6 +71,7 @@ GtkWidget*		saveMenu;
 GtkWidget*		exportMenu;
 
 GtkWidget*		saveAsMenu;
+GtkWidget*		closeSectionMenu;
 
 
 GtkWidget*		liveSearchWidget;

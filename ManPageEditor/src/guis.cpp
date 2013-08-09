@@ -19,10 +19,6 @@
 #include "searchcallbacks.h"
 #include "spellcheck.h"
 
-#ifdef BUILDDOCVIEWER
-#include <webkit/webkit.h>
-#endif
-
 void doPrefs(void)
 {
 	GtkWidget*	vbox;
@@ -260,10 +256,16 @@ void buildMainGui(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuclose);
 	gtk_signal_connect(GTK_OBJECT(menuclose),"activate",G_CALLBACK(closeTab),NULL);
 	gtk_widget_add_accelerator((GtkWidget *)menuclose,"activate",accgroup,'W',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
+//close section
+	image=gtk_image_new_from_stock(GTK_STOCK_DELETE,GTK_ICON_SIZE_MENU);
+	closeSectionMenu=gtk_image_menu_item_new_with_label("Delete Section");
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)closeSectionMenu,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),closeSectionMenu);
+	gtk_signal_connect(GTK_OBJECT(closeSectionMenu),"activate",G_CALLBACK(deleteSection),NULL);
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-
+//quit
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT,NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doShutdown),NULL);

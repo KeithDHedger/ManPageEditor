@@ -110,7 +110,7 @@ extern GtkWidget*		undoMenu;
 extern GtkWidget*		saveMenu;
 extern GtkWidget*		exportMenu;
 extern GtkWidget*		saveAsMenu;
-
+extern GtkWidget*		closeSectionMenu;
 
 extern GtkWidget*		liveSearchWidget;
 

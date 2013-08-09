@@ -114,7 +114,11 @@ void closeTab(GtkWidget* widget,gpointer data)
 	long		thispage;
 	pageStruct*	page;
 
-	thispage=0;
+	if(data==NULL)
+		thispage=0;
+	else
+		thispage=gtk_notebook_get_current_page(notebook);
+
 	page=getPageStructPtr(thispage);
 	if(page==NULL)
 		return;
