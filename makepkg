@@ -2,7 +2,8 @@
 
 #©keithhedger Wed 22 May 19:55:26 BST 2013 kdhedger68713@gmail.com
 
-VERSION="0.0.7"
+
+VERSION=$(cat config.h|grep "#define VERSION "|awk '{print $3}'|sed 's/\"//g')
 
 svn commit -m ""
 cd /tmp
