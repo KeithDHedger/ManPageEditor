@@ -683,5 +683,33 @@ void deleteSection(GtkWidget* widget,gpointer data)
 		}
 }
 
+void renameSection(GtkWidget* widget,gpointer data)
+{
+	pageStruct*	page=(pageStruct*)data;
+	char*		retval=NULL;
+	char*		command=NULL;
+
+	retval=getNewSectionName();
+	if(retval!=NULL)
+		{
+			//unlink(page->filePath);
+			asprintf(&command,"mv \"%s\" \"%s/%s\"",page->filePath,manFilename,retval);
+			g_free(page->fileName);
+			g_free(page->filePath);
+			page->fileName=retval;
+			asprintf(&page->filePath,"%s/%s",manFilename,page->fileName);
+			system(command);
+			gtk_notebook_set_tab_label_text(notebook,page->tabVbox,page->fileName);
+			makeDirty(NULL,NULL);
+		}
+}
+
+
+
+
+
+
+
+
 
 
