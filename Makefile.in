@@ -667,7 +667,8 @@ install-dvi: install-dvi-recursive
 install-dvi-am:
 
 install-exec-am:
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-recursive
 
 install-html-am:
@@ -707,8 +708,10 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am:
-
-.MAKE: $(am__recursive_targets) all install-am install-strip
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+.MAKE: $(am__recursive_targets) all install-am install-exec-am \
+	install-strip uninstall-am
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-am clean clean-cscope clean-generic \
@@ -718,17 +721,30 @@ uninstall-am:
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am
+	install-exec install-exec-am install-exec-hook install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
+	tags-am uninstall uninstall-am uninstall-hook
 
 
 remake:
 	./remakesourcelist
+
+install-exec-hook:
+	xdg-icon-resource install --context mimetypes --size 128 ManPageEditor/resources/documenticons/maneditdoc.png application-x-maneditdoc
+	xdg-mime install ManPageEditor/resources/documenticons/maneditdoc-mime.xml
+	update-mime-database /usr/share/mime
+	gtk-update-icon-cache --force /usr/share/icons/hicolor
+
+uninstall-hook:
+	xdg-icon-resource uninstall --context mimetypes --size 128 application-x-maneditdoc
+	xdg-mime uninstall ManPageEditor/resources/documenticons/maneditdoc-mime.xml
+	update-mime-database /usr/share/mime
+	gtk-update-icon-cache --force /usr/share/icons/hicolor
+	rm -r $(DESTDIR)${pkgdatadir}
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

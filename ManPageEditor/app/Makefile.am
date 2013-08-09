@@ -28,6 +28,6 @@ install-data-hook:
 	echo Exec=${bindir}/manpageeditor >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
 
 
-uninstall-hook:
-	rm -r $(DESTDIR)${pkgdatadir}
+#uninstall-hook:
+#	rm -r $(DESTDIR)${pkgdatadir}
 

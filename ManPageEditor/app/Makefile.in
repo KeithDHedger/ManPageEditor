@@ -830,11 +830,10 @@ ps-am:
 uninstall-am: uninstall-appfilesDATA uninstall-binPROGRAMS \
 	uninstall-examplefilesDATA uninstall-helpfilesDATA \
 	uninstall-man uninstall-pixfilesDATA
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+
 uninstall-man: uninstall-man1
 
-.MAKE: install-am install-data-am install-strip uninstall-am
+.MAKE: install-am install-data-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
 	clean-binPROGRAMS clean-generic cscopelist-am ctags ctags-am \
@@ -852,16 +851,15 @@ uninstall-man: uninstall-man1
 	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
 	uninstall-am uninstall-appfilesDATA uninstall-binPROGRAMS \
 	uninstall-examplefilesDATA uninstall-helpfilesDATA \
-	uninstall-hook uninstall-man uninstall-man1 \
-	uninstall-pixfilesDATA
+	uninstall-man uninstall-man1 uninstall-pixfilesDATA
 
 
 install-data-hook:
 	echo Icon=${datarootdir}/pixmaps/ManPageEditor.png >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
 	echo Exec=${bindir}/manpageeditor >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
 
-uninstall-hook:
-	rm -r $(DESTDIR)${pkgdatadir}
+#uninstall-hook:
+#	rm -r $(DESTDIR)${pkgdatadir}
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

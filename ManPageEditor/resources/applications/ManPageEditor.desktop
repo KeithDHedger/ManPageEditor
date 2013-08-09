@@ -6,3 +6,4 @@ Comment=©K.D.Hedger 2013 A simple Manpage editor
 Terminal=false
 Type=Application
 Categories=Development;
+MimeType=application/x-maneditdoc
