@@ -7,7 +7,10 @@ manpageeditor_SOURCES = $(COMMONSRC)
 manpageeditor_CFLAGS = -O3 -export-dynamic
 manpageeditor_CXXFLAGS = -O3 -export-dynamic
 
-pixfilesdir = $(pkgdatadir)/pixmaps
+appfilesdir = $(datarootdir)/applications
+appfiles_DATA = ../resources/applications/*
+
+pixfilesdir = $(datarootdir)/pixmaps
 pixfiles_DATA = ../resources/pixmaps/*
 
 bin_PROGRAMS = manpageeditor
