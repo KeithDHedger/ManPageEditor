@@ -688,19 +688,24 @@ void renameSection(GtkWidget* widget,gpointer data)
 	pageStruct*	page=(pageStruct*)data;
 	char*		retval=NULL;
 	char*		command=NULL;
+	GString*	str;
 
 	retval=getNewSectionName();
 	if(retval!=NULL)
 		{
-			//unlink(page->filePath);
-			asprintf(&command,"mv \"%s\" \"%s/%s\"",page->filePath,manFilename,retval);
+			str=g_string_new(retval);
+			g_string_ascii_up(str);
+
+
+			asprintf(&command,"mv \"%s\" \"%s/%s\"",page->filePath,manFilename,str->str);
 			g_free(page->fileName);
 			g_free(page->filePath);
-			page->fileName=retval;
+			page->fileName=g_string_free(str,false);
 			asprintf(&page->filePath,"%s/%s",manFilename,page->fileName);
 			system(command);
 			gtk_notebook_set_tab_label_text(notebook,page->tabVbox,page->fileName);
 			makeDirty(NULL,NULL);
+			g_free(retval);
 		}
 }
 
