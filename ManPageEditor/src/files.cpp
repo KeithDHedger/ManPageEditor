@@ -46,6 +46,7 @@ GtkWidget* makeNewTab(char* name,char* tooltip,pageStruct* page)
 
 void setFilePrefs(GtkSourceView* sourceview)
 {
+/*
 	PangoFontDescription*	font_desc;
 
 	gtk_source_view_set_auto_indent(sourceview,false);
@@ -53,15 +54,16 @@ void setFilePrefs(GtkSourceView* sourceview)
 	gtk_source_view_set_highlight_current_line(sourceview,highLight);
 
 	if(lineWrap==true)
-		gtk_text_view_set_wrap_mode((GtkTextView *)sourceview,GTK_WRAP_WORD_CHAR);
+		gtk_source_view_set_wrap_mode((GtkTextView *)sourceview,GTK_WRAP_WORD_CHAR);
 	else
-		gtk_text_view_set_wrap_mode((GtkTextView *)sourceview,GTK_WRAP_NONE);
+		gtk_source_view_set_wrap_mode((GtkTextView *)sourceview,GTK_WRAP_NONE);
 
 	gtk_source_view_set_tab_width(sourceview,tabWidth);
 
 	font_desc=pango_font_description_from_string(fontAndSize);
 	gtk_widget_modify_font((GtkWidget*)sourceview,font_desc);
 	pango_font_description_free(font_desc);
+*/
 }
 
 void resetAllFilePrefs(void)
@@ -276,27 +278,22 @@ void saveConverted(pageStruct*	page)
 	gsize		length;
 	GtkTextIter	start;
 	GtkTextIter	end;
-	char*		convertedFilename;
 
-	GdkAtom format=gtk_text_buffer_register_serialize_tagset((GtkTextBuffer*)page->buffer,"default");
-
+	GdkAtom	atom=gtk_text_buffer_register_serialize_tagset((GtkTextBuffer*)page->buffer,NULL);
 	gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,format,&start,&end,&length);
+	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
 
-	asprintf(&convertedFilename,"%s-conv",page->filePath);
-	output=fopen(convertedFilename,"wb");
-	fwrite(&length,sizeof(gsize),1,output);
+	output=fopen(page->filePath,"wb");
 	fwrite(data,sizeof(guint8),length,output);
 	fclose(output);
+
 }
 
 void saveManpage(GtkWidget* widget,gpointer data)
 {
 	int			numpages=gtk_notebook_get_n_pages(notebook);
 	pageStruct*	page;
-	gchar*		text;
 	FILE*		fd=NULL;
-	GtkTextIter	start,end;
 	char*		manifest;
 
 	if(manFilePath==NULL)
@@ -314,17 +311,6 @@ void saveManpage(GtkWidget* widget,gpointer data)
 			page=getPageStructPtr(loop);
 			page->itsMe=true;
 			saveConverted(page);
-			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-			text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer, &start, &end, FALSE);
-
-			fd=fopen(page->filePath,"w");
-			if (fd!=NULL)
-				{
-					fputs(text,fd);
-					fclose(fd);
-					gtk_text_buffer_set_modified((GtkTextBuffer*)page->buffer,false);
-				}
 		}
 
 	asprintf(&manifest,"%s/manifest",manFilename);
@@ -403,77 +389,6 @@ pageStruct* makeNewPage(void)
 	gtk_widget_grab_focus((GtkWidget*)page->view);
 
 	return(page);
-}
-
-bool openFile(const gchar *filepath,int linenumber)
-{
-	GtkTextIter		iter;
-	gchar*			buffer=NULL;
-	long			filelen;
-	GtkWidget*		label;
-	gchar*			filename=g_path_get_basename(filepath);
-	pageStruct*		page;
-	GtkTextMark*	scroll2mark=gtk_text_mark_new(NULL,true);
-	char*			str=NULL;
-	int				linenum=linenumber-1;
-
-	if(!g_file_test(filepath,G_FILE_TEST_EXISTS))
-		return(false);
-	if(linenum<0)
-		linenum=0;
-
-	page=makeNewPage();
-	page->tabVbox=gtk_vbox_new(true,4);
-
-	page->filePath=strdup(filepath);
-	page->fileName=strdup(filename);
-
-	label=makeNewTab(page->fileName,page->filePath,page);
-
-	g_file_get_contents(filepath,&buffer,(gsize*)&filelen,NULL);
-
-	gtk_source_buffer_begin_not_undoable_action(page->buffer);
-		gtk_text_buffer_get_end_iter ( GTK_TEXT_BUFFER (page->buffer), &iter);
-		if(g_utf8_validate(buffer,-1,NULL)==false)
-			{
-				str=g_locale_to_utf8(buffer,-1,NULL,NULL,NULL);
-				gtk_text_buffer_insert(GTK_TEXT_BUFFER(page->buffer),&iter,str,-1);
-				g_free(str);
-			}
-		else
-			{
-				gtk_text_buffer_insert(GTK_TEXT_BUFFER(page->buffer),&iter,buffer,-1);
-				g_free(buffer);
-			}
-	gtk_source_buffer_end_not_undoable_action(page->buffer);
-
-	g_free(filename);
-	g_free(str);
-
-//connect to ntebook
-	gtk_container_add(GTK_CONTAINER(page->tabVbox),GTK_WIDGET(page->pane));
-	g_object_set_data(G_OBJECT(page->tabVbox),"pagedata",(gpointer)page);
-
-	gtk_notebook_append_page(notebook,page->tabVbox,label);
-	gtk_notebook_set_tab_reorderable(notebook,page->tabVbox,true);
-	gtk_notebook_set_current_page(notebook,currentPage);
-	currentPage++;
-	gtk_widget_grab_focus((GtkWidget*)page->view);
-
-   /* move cursor to the linenumber */
-	gtk_text_buffer_get_iter_at_line_offset((GtkTextBuffer*)page->buffer,&iter,linenum,0);
-	gtk_text_buffer_place_cursor(GTK_TEXT_BUFFER(page->buffer),&iter);
-	gtk_text_view_scroll_to_iter((GtkTextView*)page->view,&iter,0,true,0,0.5);
-	gtk_text_iter_set_line(&iter,linenum);
-	gtk_text_buffer_add_mark(GTK_TEXT_BUFFER(page->buffer),scroll2mark,&iter);  
-	gtk_text_view_scroll_to_mark((GtkTextView*)page->view,scroll2mark,0,true,0,0.5);
-	gtk_text_buffer_delete_mark(GTK_TEXT_BUFFER(page->buffer),scroll2mark);
-
-	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
-
-	gtk_widget_show_all((GtkWidget*)notebook);
-
-	return TRUE;
 }
 
 void newManpage(GtkWidget* widget,gpointer data)
@@ -614,112 +529,30 @@ void newSection(GtkWidget* widget,gpointer data)
 		}
 }
 
-/*
-static void
-cb_load( GtkButton   *button,
-       struct Save *save )
+void loadBuffer(pageStruct*		page)
 {
-   FILE        *input;
-   guint8      *data;
-   gsize        lenght;
-   GtkTextIter  iter;
-   
-   input = fopen( FILENAME, "rb" );
-   fread( &lenght, sizeof( gsize ), 1, input );
-   data = malloc( sizeof( guint8 ) * lenght );
-   fread( data, sizeof( guint8 ), lenght, input );
-   fclose( input );
-   
-   gtk_text_buffer_get_iter_at_offset( save->buffer, &iter, 0 );
-   gtk_text_buffer_deserialize( save->buffer, save->buffer, save->de_format,
-                         &iter, data, lenght, NULL );
-   
-   free( data );
-}
-
-*/
-/*
-rtf_text_buffer_import_from_string(GtkTextBuffer *buffer, const gchar *string, GError **error)
-{
-	GdkAtom format;
-	GtkTextIter start;
-	gboolean retval;
-
-	osxcart_init();
-	
-	g_return_val_if_fail(buffer != NULL, FALSE);
-	g_return_val_if_fail(GTK_IS_TEXT_BUFFER(buffer), FALSE);
-	g_return_val_if_fail(string != NULL, FALSE);
-	g_return_val_if_fail(error == NULL || *error == NULL, FALSE);
-	
-	gtk_text_buffer_set_text(buffer, "", -1);
-	gtk_text_buffer_get_start_iter(buffer, &start);
-	
-	format = rtf_register_deserialize_format(buffer);
-	retval = gtk_text_buffer_deserialize(buffer, buffer, format, &start, (guint8 *)string, strlen(string), error);
-	gtk_text_buffer_unregister_deserialize_format(buffer, format);
-	
-	return retval;
-}
-
-*/
-void loadBuffer(GtkTextBuffer* buffer,char* filepath)
-{
-	FILE*		input;
-	guint8*		data;
-	gsize		length;
 	GtkTextIter	iter;
-	GtkTextIter	start;
-	GtkTextIter	end;
-	char* text;
+	gchar*		buffer=NULL;
+	long		filelen;
+	GdkAtom		atom=gtk_text_buffer_register_deserialize_tagset((GtkTextBuffer*)page->buffer,NULL);
 
-	//GtkTextBuffer* newbuffer=gtk_text_buffer_new(NULL);
-	//GdkAtom		format=gtk_text_buffer_register_deserialize_tagset(newbuffer,"default");
-	GdkAtom		format=gtk_text_buffer_register_deserialize_tagset(buffer, "default" );
-	input=fopen(filepath,"rb");
-	fread(&length,sizeof(gsize),1,input);
-	data=(guint8*)malloc(sizeof(guint8)*length);
-	fread(data,sizeof(guint8),length,input);
-	fclose(input);
- 
-   text=(char*)(long)&data[31];
-   printf("%s\n",(char*)text);
-	gtk_text_buffer_get_iter_at_offset(buffer,&iter,0);
-	gtk_text_buffer_set_text(buffer,(char*)text, -1);
-	gtk_text_buffer_get_start_iter(buffer, &start);
-gtk_text_buffer_deserialize_set_can_create_tags(buffer, format, TRUE);
-	if(gtk_text_buffer_deserialize(buffer, buffer, format, &start, (guint8 *)text, strlen(text), NULL)==true)
-		printf("ok\n");
-gtk_text_buffer_unregister_deserialize_format(buffer, format);
-	//gtk_text_buffer_insert(GTK_TEXT_BUFFER(buffer),&iter,(char*)data,-1);
-	///if(gtk_text_buffer_deserialize(buffer,buffer,format,&iter,data,length,NULL))
-	//	printf("ok\n");
-	//else
-	//	printf("fail\n");
-   
-   free( data );
-
+	g_file_get_contents(page->filePath,&buffer,(gsize*)&filelen,NULL);
+	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&iter);
+	gtk_text_buffer_deserialize_set_can_create_tags((GtkTextBuffer*)page->buffer,atom,true);
+	gtk_text_buffer_deserialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&iter,(const guint8*)buffer,filelen,NULL);
 }
 
-void openConvertedFile(char* path)
+void openConvertedFile(char* filepath)
 {
 
-	char*			filepath;
-	asprintf(&filepath,"%s-conv",path);
-	GtkTextIter		iter;
-	gchar*			buffer=NULL;
-	long			filelen;
-	GtkWidget*		label;
-	gchar*			filename=g_path_get_basename(filepath);
-	pageStruct*		page;
-	GtkTextMark*	scroll2mark=gtk_text_mark_new(NULL,true);
-	char*			str=NULL;
-//	int				linenum=linenumber-1;
+	GtkWidget*	label;
+	gchar*		filename=g_path_get_basename(filepath);
+	pageStruct*	page;
+	char*		str=NULL;
+
 
 	if(!g_file_test(filepath,G_FILE_TEST_EXISTS))
 		return;
-//	if(linenum<0)
-//		linenum=0;
 
 	page=makeNewPage();
 	page->tabVbox=gtk_vbox_new(true,4);
@@ -728,28 +561,7 @@ void openConvertedFile(char* path)
 	page->fileName=strdup(filename);
 
 	label=makeNewTab(page->fileName,page->filePath,page);
-
-/*
-	g_file_get_contents(path,&buffer,(gsize*)&filelen,NULL);
-
-	gtk_source_buffer_begin_not_undoable_action(page->buffer);
-		gtk_text_buffer_get_end_iter ( GTK_TEXT_BUFFER (page->buffer), &iter);
-		if(g_utf8_validate(buffer,-1,NULL)==false)
-			{
-				str=g_locale_to_utf8(buffer,-1,NULL,NULL,NULL);
-				gtk_text_buffer_insert(GTK_TEXT_BUFFER(page->buffer),&iter,str,-1);
-				g_free(str);
-			}
-		else
-			{
-				gtk_text_buffer_insert(GTK_TEXT_BUFFER(page->buffer),&iter,buffer,-1);
-				g_free(buffer);
-			}
-	gtk_source_buffer_end_not_undoable_action(page->buffer);
-*/		gtk_text_buffer_get_end_iter ( GTK_TEXT_BUFFER (page->buffer), &iter);
-		gtk_text_buffer_insert(GTK_TEXT_BUFFER(page->buffer),&iter,"this is a test",-1);
-		loadBuffer((GtkTextBuffer*)page->buffer,page->filePath);
-
+	loadBuffer(page);
 
 	g_free(filename);
 	g_free(str);
@@ -763,15 +575,6 @@ void openConvertedFile(char* path)
 	gtk_notebook_set_current_page(notebook,currentPage);
 	currentPage++;
 	gtk_widget_grab_focus((GtkWidget*)page->view);
-
-   /* move cursor to the linenumber */
-//	gtk_text_buffer_get_iter_at_line_offset((GtkTextBuffer*)page->buffer,&iter,linenum,0);
-//	gtk_text_buffer_place_cursor(GTK_TEXT_BUFFER(page->buffer),&iter);
-//	gtk_text_view_scroll_to_iter((GtkTextView*)page->view,&iter,0,true,0,0.5);
-//	gtk_text_iter_set_line(&iter,linenum);
-//	gtk_text_buffer_add_mark(GTK_TEXT_BUFFER(page->buffer),scroll2mark,&iter);  
-//	gtk_text_view_scroll_to_mark((GtkTextView*)page->view,scroll2mark,0,true,0,0.5);
-//	gtk_text_buffer_delete_mark(GTK_TEXT_BUFFER(page->buffer),scroll2mark);
 
 	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
 
@@ -819,7 +622,7 @@ void doOpenManpage(char* file)
 			if(strcasecmp(name,"file")==0)
 				{
 					sprintf((char*)&buffer[0],"%s/%s",manFilename,(char*)&strarg[0]);
-					openFile((char*)&buffer,0);
+					//openFile((char*)&buffer,0);
 					openConvertedFile((char*)&buffer);
 				}
 		}
