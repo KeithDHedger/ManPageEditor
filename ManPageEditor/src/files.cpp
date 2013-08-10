@@ -550,7 +550,6 @@ void openConvertedFile(char* filepath)
 	pageStruct*	page;
 	char*		str=NULL;
 
-
 	if(!g_file_test(filepath,G_FILE_TEST_EXISTS))
 		return;
 
@@ -561,7 +560,9 @@ void openConvertedFile(char* filepath)
 	page->fileName=strdup(filename);
 
 	label=makeNewTab(page->fileName,page->filePath,page);
-	loadBuffer(page);
+	gtk_source_buffer_begin_not_undoable_action(page->buffer);
+		loadBuffer(page);
+	gtk_source_buffer_end_not_undoable_action(page->buffer);
 
 	g_free(filename);
 	g_free(str);
@@ -622,7 +623,6 @@ void doOpenManpage(char* file)
 			if(strcasecmp(name,"file")==0)
 				{
 					sprintf((char*)&buffer[0],"%s/%s",manFilename,(char*)&strarg[0]);
-					//openFile((char*)&buffer,0);
 					openConvertedFile((char*)&buffer);
 				}
 		}

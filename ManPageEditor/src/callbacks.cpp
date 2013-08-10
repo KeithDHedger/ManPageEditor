@@ -485,60 +485,6 @@ GtkTextTag *boldtag;
 int	boldnum=0;
 int	breaknum=0;
 
-struct Save
-{
-   GtkTextBuffer *buffer;
-   GdkAtom        se_format;
-   GdkAtom        de_format;
-};
-
-Save save;
-
-
-void cb_save(void)
-      
-{
-	pageStruct*	page=getPageStructPtr(-1);
-   FILE        *output;
-   guint8      *data;
-   gsize        lenght;
-   GtkTextIter  start, end;
-   char*		text=NULL;
-  
-   gtk_text_buffer_get_bounds( (GtkTextBuffer*)page->buffer, &start, &end );
-   data = gtk_text_buffer_serialize( (GtkTextBuffer*)page->buffer, (GtkTextBuffer*)page->buffer,
-                             save.se_format, &start,
-                             &end, &lenght );
-   
-   output = fopen( "./testout", "wb" );
- //  fwrite( &lenght, sizeof( gsize ), 1, output );
-   fwrite( data, sizeof( guint8 ), lenght, output );
-   fclose( output );
-   
-   /*I'm not sure about this one */
-   text=(char*)(long)&data[31];
-  // printf("%s\n",(char*)text);
-//   text=strstr((char*)text,"<text_view_markup>");
-//   printf("--%s--\n",(char*)text);
-   text=sliceBetween((char*)text,"<text>","</text>");
- //  printf("%s\n",(char*)data);
-   printf("%s\n",(char*)text);
-   g_free( data );
-}
-
-
-void testformat()
-{
-pageStruct*	page=getPageStructPtr(-1);
- save.se_format =
-      gtk_text_buffer_register_serialize_tagset( (GtkTextBuffer*)page->buffer, "default" );
-   save.de_format =
-      gtk_text_buffer_register_deserialize_tagset( (GtkTextBuffer*)page->buffer, "default" );
-cb_save();
-	printf("test format\n");
-	
-}
-
 void doFormat(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page=getPageStructPtr(-1);
@@ -547,12 +493,6 @@ void doFormat(GtkWidget* widget,gpointer data)
 	GtkTextIter		start;
 	GtkTextIter		end;
 	char*			name;
-
-if((long)data==4)
-	{
-		testformat();
-		return;
-	}
 
 	mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
 	gtk_text_buffer_get_iter_at_mark((GtkTextBuffer*)page->buffer,&iter,mark);

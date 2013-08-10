@@ -8,7 +8,6 @@
 #ifndef _FILES_
 #define _FILES_
 
-bool openFile(const gchar *filepath,int linenumber);
 void resetAllFilePrefs(void);
 
 void exportFile(GtkWidget* widget,gpointer data);
