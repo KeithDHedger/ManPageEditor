@@ -196,33 +196,6 @@ char* doManFormat(char* srcstr)
 
 char* loadToString(pageStruct* page)
 {
-/*
-	GtkTextIter	iter;
-	gchar*		buffer=NULL;
-	long		filelen;
-	GdkAtom		atom=gtk_text_buffer_register_deserialize_tagset((GtkTextBuffer*)page->buffer,NULL);
-
-	g_file_get_contents(page->filePath,&buffer,(gsize*)&filelen,NULL);
-	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&iter);
-	gtk_text_buffer_deserialize_set_can_create_tags((GtkTextBuffer*)page->buffer,atom,true);
-	gtk_text_buffer_deserialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&iter,(const guint8*)buffer,filelen,NULL);
-
-	FILE		*output;
-	guint8		*data;
-	gsize		length;
-	GtkTextIter	start;
-	GtkTextIter	end;
-
-	
-	gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
-
-	output=fopen(page->filePath,"wb");
-	fwrite(data,sizeof(guint8),length,output);
-	fclose(output);
-
-
-*/
 	guint8*		data;
 	GtkTextIter	start;
 	GtkTextIter	end;
@@ -233,7 +206,8 @@ char* loadToString(pageStruct* page)
 
 	gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
 	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
-	ptr=strdup((char*)&data[31]);
+	//ptr=strdup((char*)&data[31]);
+	ptr=sliceInclude((char*)&data[31],"<text>","</text>",false,false);
 	g_free(data);
 	return(ptr);
 }
@@ -252,14 +226,14 @@ void exportFile(GtkWidget* widget,gpointer data)
 	FILE*		fd=NULL;
 	char*		xmldata=NULL;
 
-	page=getPageStructPtr(3);
-	xmldata=loadToString(page);
-	if(xmldata!=NULL)
-		printf("%s\n",xmldata);
-	else
-		printf("FAIL\n");
+//	page=getPageStructPtr(3);
+//	xmldata=loadToString(page);
+//	if(xmldata!=NULL)
+//		printf("%s\n",xmldata);
+//	else
+//		printf("FAIL\n");
 
-	return;
+//	return;
 
 	if(exportPath==NULL)
 		{
@@ -279,11 +253,12 @@ void exportFile(GtkWidget* widget,gpointer data)
 			for(int loop=0;loop<numpages;loop++)
 				{
 					page=getPageStructPtr(loop);
-					gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-					gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-					text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
-
-					ptr=doManFormat(text);
+					//gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+					//gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+					//text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
+					xmldata=loadToString(page);
+					//ptr=doManFormat(text);
+					ptr=doManFormat(xmldata);
 					fprintf(fd,".SH \"%s\"\n",page->fileName);
 					while(strlen(ptr)>0)
 						{
