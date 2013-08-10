@@ -194,6 +194,50 @@ char* doManFormat(char* srcstr)
 	return(srcstr);
 }
 
+char* loadToString(pageStruct* page)
+{
+/*
+	GtkTextIter	iter;
+	gchar*		buffer=NULL;
+	long		filelen;
+	GdkAtom		atom=gtk_text_buffer_register_deserialize_tagset((GtkTextBuffer*)page->buffer,NULL);
+
+	g_file_get_contents(page->filePath,&buffer,(gsize*)&filelen,NULL);
+	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&iter);
+	gtk_text_buffer_deserialize_set_can_create_tags((GtkTextBuffer*)page->buffer,atom,true);
+	gtk_text_buffer_deserialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&iter,(const guint8*)buffer,filelen,NULL);
+
+	FILE		*output;
+	guint8		*data;
+	gsize		length;
+	GtkTextIter	start;
+	GtkTextIter	end;
+
+	
+	gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
+
+	output=fopen(page->filePath,"wb");
+	fwrite(data,sizeof(guint8),length,output);
+	fclose(output);
+
+
+*/
+	guint8*		data;
+	GtkTextIter	start;
+	GtkTextIter	end;
+	gsize		length;
+	char*		ptr=NULL;
+
+	GdkAtom	atom=gtk_text_buffer_register_serialize_tagset((GtkTextBuffer*)page->buffer,NULL);
+
+	gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
+	ptr=strdup((char*)&data[31]);
+	g_free(data);
+	return(ptr);
+}
+
 void exportFile(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page;
@@ -206,6 +250,16 @@ void exportFile(GtkWidget* widget,gpointer data)
 	char*		holdPtr;
 	bool		lastWasNL=false;
 	FILE*		fd=NULL;
+	char*		xmldata=NULL;
+
+	page=getPageStructPtr(3);
+	xmldata=loadToString(page);
+	if(xmldata!=NULL)
+		printf("%s\n",xmldata);
+	else
+		printf("FAIL\n");
+
+	return;
 
 	if(exportPath==NULL)
 		{
@@ -286,7 +340,6 @@ void saveConverted(pageStruct*	page)
 	output=fopen(page->filePath,"wb");
 	fwrite(data,sizeof(guint8),length,output);
 	fclose(output);
-
 }
 
 void saveManpage(GtkWidget* widget,gpointer data)
@@ -529,7 +582,7 @@ void newSection(GtkWidget* widget,gpointer data)
 		}
 }
 
-void loadBuffer(pageStruct*		page)
+void loadBuffer(pageStruct* page)
 {
 	GtkTextIter	iter;
 	gchar*		buffer=NULL;
@@ -544,7 +597,6 @@ void loadBuffer(pageStruct*		page)
 
 void openConvertedFile(char* filepath)
 {
-
 	GtkWidget*	label;
 	gchar*		filename=g_path_get_basename(filepath);
 	pageStruct*	page;

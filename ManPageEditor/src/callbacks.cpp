@@ -294,7 +294,6 @@ bool tabPopUp(GtkWidget *widget, GdkEventButton *event,gpointer user_data)
 		return(false);
 }
 
-
 void writeExitData(void)
 {
 	GtkAllocation	alloc;
@@ -480,19 +479,14 @@ void newEditor(GtkWidget* widget,gpointer data)
 	system("manpageeditor");
 }
 
-bool bold=false;
-GtkTextTag *boldtag;
-int	boldnum=0;
-int	breaknum=0;
-
 void doFormat(GtkWidget* widget,gpointer data)
 {
-	pageStruct*	page=getPageStructPtr(-1);
+	pageStruct*		page=getPageStructPtr(-1);
 	GtkTextMark*	mark;
 	GtkTextIter		iter;
 	GtkTextIter		start;
 	GtkTextIter		end;
-	char*			name;
+	GtkTextTag*		tag;
 
 	mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
 	gtk_text_buffer_get_iter_at_mark((GtkTextBuffer*)page->buffer,&iter,mark);
@@ -500,28 +494,17 @@ void doFormat(GtkWidget* widget,gpointer data)
 	switch((long)data)
 		{
 			case 1:
-					asprintf(&name,"bold-%i",boldnum);
-					boldtag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,name,"weight",PANGO_WEIGHT_BOLD,NULL);
+					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,NULL,"weight",PANGO_WEIGHT_BOLD,NULL);
 					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,boldtag,&start,&end);
-					bold=true;
-					boldnum++;
-					tagList[currentTagNum]=(tagStruct*)malloc(sizeof(tagStruct));
-					tagList[currentTagNum]->name=strdup(name);
-					tagList[currentTagNum]->startLine=gtk_text_iter_get_line(&start);
-					tagList[currentTagNum]->startOffset=gtk_text_iter_get_line_offset(&start);
-					tagList[currentTagNum]->endLine=gtk_text_iter_get_line(&end);
-					tagList[currentTagNum]->endOffset=gtk_text_iter_get_line_offset(&end);
-					tagList[currentTagNum]->isTag=true;
-					currentTagNum++;
-					g_free(name);
+					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
 				break;
 			case 2:
 //				asprintf(&name,"BOLDOFF",marknum);
-				bold=false;
+//				bold=false;
 				break;
 
 			case 3:
+/*
 				asprintf(&name,"break-%i",breaknum);
 				breaknum++;
 				tagList[currentTagNum]=(tagStruct*)malloc(sizeof(tagStruct));
@@ -534,6 +517,7 @@ void doFormat(GtkWidget* widget,gpointer data)
 				gtk_text_mark_set_visible(tagList[currentTagNum]->mark,true);
 				currentTagNum++;
 				g_free(name);
+*/
 				break;
 		}
 		

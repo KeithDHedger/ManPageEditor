@@ -54,20 +54,6 @@ struct pageStruct
 	GtkWidget*			tabVbox;
 };
 
-struct tagStruct
-{
-	GtkTextIter		start;
-	GtkTextIter		end;
-	char*			name;
-	int				startLine;
-	int				startOffset;
-	int				endLine;
-	int				endOffset;
-	PangoWeight		weight;
-	bool			isTag;
-	GtkTextMark*	mark;
-};
-
 //manpage stuff
 extern char*			manFilename;
 extern char*			manName;
@@ -197,9 +183,6 @@ extern AspellConfig*	aspellConfig;
 extern AspellSpeller*	spellChecker;
 #endif
 
-//tags
-extern tagStruct*		tagList[100];
-extern int				currentTagNum;
 
 pageStruct* getPageStructPtr(int pagenum);
 

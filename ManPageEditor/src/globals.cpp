@@ -159,10 +159,6 @@ AspellConfig*	aspellConfig;
 AspellSpeller*	spellChecker=0;
 #endif
 
-//tags
-tagStruct*		tagList[100]={NULL,};
-int				currentTagNum=0;
-
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter)
 {
 	if(page->inTop==true)
