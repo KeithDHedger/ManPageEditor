@@ -46,24 +46,24 @@ GtkWidget* makeNewTab(char* name,char* tooltip,pageStruct* page)
 
 void setFilePrefs(GtkSourceView* sourceview)
 {
-/*
+
 	PangoFontDescription*	font_desc;
 
-	gtk_source_view_set_auto_indent(sourceview,false);
+	gtk_source_view_set_auto_indent(sourceview,true);
 	gtk_source_view_set_show_line_numbers(sourceview,false);
 	gtk_source_view_set_highlight_current_line(sourceview,highLight);
 
 	if(lineWrap==true)
-		gtk_source_view_set_wrap_mode((GtkTextView *)sourceview,GTK_WRAP_WORD_CHAR);
+		gtk_text_view_set_wrap_mode((GtkTextView*)sourceview,GTK_WRAP_WORD_CHAR);
 	else
-		gtk_source_view_set_wrap_mode((GtkTextView *)sourceview,GTK_WRAP_NONE);
+		gtk_text_view_set_wrap_mode((GtkTextView*)sourceview,GTK_WRAP_NONE);
 
 	gtk_source_view_set_tab_width(sourceview,tabWidth);
 
 	font_desc=pango_font_description_from_string(fontAndSize);
 	gtk_widget_modify_font((GtkWidget*)sourceview,font_desc);
 	pango_font_description_free(font_desc);
-*/
+
 }
 
 void resetAllFilePrefs(void)
