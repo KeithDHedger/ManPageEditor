@@ -1,0 +1,8 @@
+0.0.4
+First release into the wild.
+
+0.0.5
+Added document icon and mime type.
+Added bold/italic to format menu now displays as bold and italic same as manpage.
+Format for files changed to save bold/italic test.
+Code clean.
