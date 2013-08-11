@@ -7,3 +7,5 @@ Added bold/italic to format menu now displays as bold and italic same as manpage
 Format for files changed to save bold/italic test.
 Code clean.
 Fixed loads of bugs in string slicing.
+Fixed icon path not getting added to desktop file.
+Fixed exec path not getting added to desktop file.
