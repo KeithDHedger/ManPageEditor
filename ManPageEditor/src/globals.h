@@ -32,6 +32,8 @@
 #define VALIDFILENAMECHARS "[A-Za-z0-9_-./ ]"
 #define VALIDFUNCTIONCHARS "[A-Za-z0-9_*]"
 
+enum {BOLD,ITALIC,NORMAL};
+
 struct pageStruct
 {
 	GtkWidget*			pane;
@@ -78,7 +80,7 @@ extern GtkNotebook*		notebook;
 extern GtkWidget*		menubar;
 extern GtkWidget*		menufile;
 extern GtkWidget*		menuedit;
-
+extern GtkWidget*		menuformat;
 
 
 

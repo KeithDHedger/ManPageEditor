@@ -184,20 +184,6 @@ char* escapeString(char* ptr)
 	return(g_string_free(deststr,false));
 }
 
-/*
-//const char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]","<apply_tag name=","</apply_tag>"};
-//const char* textTo[]={"\\fB","\\fI","\\fR",">"};
-
-
-char* doManFormat(char* srcstr)
-{
-	for(int j=0;j<3;j++)
-		srcstr=replaceAllSlice(srcstr,(char*)textFrom[j],(char*)textTo[j]);
-	return(srcstr);
-}
-
-*/
-
 char* doReplaceTags(char* str)
 {
 	char*		newstr=strdup(str);
@@ -214,21 +200,24 @@ char* doReplaceTags(char* str)
 				flag=false;
 			else
 				{
+				printf("boldtag--%s--\n",tagstr);
 				replaceAllSlice(&newstr,tagstr,"\\fB");
 				}
 		}
 
-//	flag=true;
-//	while(flag==true)
-//		{
-//			tagstr=sliceInclude(newstr,"<apply_tag id=","\">",true,true);
-//			if(tagstr==NULL)
-//				flag=false;
-//			else
-//				{
-//				replaceAllSlice(&newstr,"<apply_tag id=\"0\">","");
-//				}
-//		}
+	flag=true;
+	tagstr=NULL;
+	while(flag==true)
+		{
+			tagstr=sliceInclude(newstr,"<apply_tag name=\"italic","\">",true,true);
+			if(tagstr==NULL)
+				flag=false;
+			else
+				{
+				printf("italictag--%s--\n",tagstr);
+				replaceAllSlice(&newstr,tagstr,"\\fI");
+				}
+		}
 	
 	replaceAllSlice(&newstr,"</apply_tag>","\\fR");
 	for(int j=0;j<4;j++)
@@ -237,22 +226,7 @@ char* doReplaceTags(char* str)
 	g_free(str);
 	return(newstr);
 }
-/*
-const char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]"};
-const char* textTo[]={"\\fB","\\fI","\\fR"};
 
-char* doManFormat(char* srcstr)
-{
-	char*	detaggedstr=strdup(srcstr);
-
-	g_free(srcstr);
-	detaggedstr=doReplaceTags(detaggedstr);
-
-	for(int j=0;j<3;j++)
-		detaggedstr=replaceAllSlice(detaggedstr,(char*)textFrom[j],(char*)textTo[j]);
-	return(srcstr);
-}
-*/
 char* loadToString(pageStruct* page)
 {
 	guint8*		data;
@@ -265,10 +239,8 @@ char* loadToString(pageStruct* page)
 
 	gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
 	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
-	//ptr=strdup((char*)&data[31]);
 	ptr=sliceInclude((char*)&data[31],"<text>","</text>",false,false);
-//	g_free(data);
-//	printf("%s\n",ptr);
+	g_free(data);
 	return(ptr);
 }
 
@@ -285,15 +257,6 @@ void exportFile(GtkWidget* widget,gpointer data)
 	bool		lastWasNL=false;
 	FILE*		fd=NULL;
 	char*		xmldata=NULL;
-
-//	page=getPageStructPtr(3);
-//	xmldata=loadToString(page);
-//	if(xmldata!=NULL)
-//		printf("%s\n",xmldata);
-//	else
-//		printf("FAIL\n");
-
-//	return;
 
 	if(exportPath==NULL)
 		{
@@ -315,17 +278,11 @@ void exportFile(GtkWidget* widget,gpointer data)
 					page=getPageStructPtr(loop);
 					gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
 					gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
-					//text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
 					gtk_text_buffer_place_cursor((GtkTextBuffer*)page->buffer,&start);
 					xmldata=loadToString(page);
 
-					//ptr=doManFormat(text);
-					//ptr=doManFormat(xmldata);
 					ptr=doReplaceTags(xmldata);
-
 					fprintf(fd,".SH \"%s\"\n",page->fileName);
-					//fprintf(fd,"%s\n.br\n",ptr);
-#if 1
 					while(strlen(ptr)>0)
 						{
 							startChar[0]=ptr[0];
@@ -361,7 +318,6 @@ void exportFile(GtkWidget* widget,gpointer data)
 									lastWasNL=true;
 								}
 						}
-#endif
 				}
 			fclose(fd);
 		}

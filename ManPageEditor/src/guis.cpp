@@ -325,8 +325,6 @@ void buildMainGui(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doPrefs),NULL);
 
-
-GtkWidget*		menuformat;
 //formattin menu
 	menuformat=gtk_menu_item_new_with_label("Formating");
 	menu=gtk_menu_new();
@@ -334,20 +332,19 @@ GtkWidget*		menuformat;
 //bold
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_BOLD,NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)1);
+	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)BOLD);
+//italic
+	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_ITALIC,NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)ITALIC);
 //normal
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_CLEAR,NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)2);
+	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)NORMAL);
 //break
-	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM,NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)3);
-
-//test
-	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT,NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)4);
+//	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM,NULL);
+//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+//	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)3);
 
 //help
 	menuhelp=gtk_menu_item_new_with_label("Help");

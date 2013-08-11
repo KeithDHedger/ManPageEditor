@@ -52,7 +52,7 @@ GtkNotebook*	notebook=NULL;
 GtkWidget*		menubar=NULL;
 GtkWidget*		menufile;
 GtkWidget*		menuedit;
-
+GtkWidget*		menuformat;
 
 
 GtkWidget*		menuhelp;

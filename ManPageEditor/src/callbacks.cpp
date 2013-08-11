@@ -19,6 +19,8 @@
 
 GtkWidget*			tabMenu;
 GtkPrintSettings*	settings=NULL;
+int					boldnum=0;
+int					italicnum=0;
 
 void showHideWidget(GtkWidget* widget,bool show)
 {
@@ -474,8 +476,6 @@ void printFile(GtkWidget* widget,gpointer data)
 	g_object_unref(printview);
 }
 
-int	boldnum=0;
-
 void newEditor(GtkWidget* widget,gpointer data)
 {
 	system("manpageeditor");
@@ -492,16 +492,12 @@ void doFormat(GtkWidget* widget,gpointer data)
 	char*				tagname=NULL;
 	GtkTextTagTable*	tagtable=gtk_text_buffer_get_tag_table((GtkTextBuffer*)page->buffer);
 
-//	asprintf(&tagname,"bold-%i",boldnum);
-//	boldnum++;
-
 	mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
 	gtk_text_buffer_get_iter_at_mark((GtkTextBuffer*)page->buffer,&iter,mark);
 
 	switch((long)data)
 		{
-			case 1:
-					//tag=
+			case BOLD:
 					boldnum++;
 					asprintf(&tagname,"bold-%i",boldnum);
 					tag=gtk_text_tag_table_lookup(tagtable,tagname);
@@ -509,46 +505,34 @@ void doFormat(GtkWidget* widget,gpointer data)
 						{
 							boldnum++;
 							asprintf(&tagname,"bold-%i",boldnum);
-							printf("%i\n",boldnum);
 							tag=gtk_text_tag_table_lookup(tagtable,tagname);
-						//tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL);
 						}
 					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL);
-					//if(tag==NULL)
-					//	return;
 					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-					//gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&start,&start);
 					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
 				break;
-			case 2:
-//				asprintf(&name,"BOLDOFF",marknum);
-//				bold=false;
+
+			case NORMAL:
 					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
 					gtk_text_buffer_remove_all_tags((GtkTextBuffer*)page->buffer,&start,&end);
 				break;
 
-			case 3:
-/*
-				asprintf(&name,"break-%i",breaknum);
-				breaknum++;
-				tagList[currentTagNum]=(tagStruct*)malloc(sizeof(tagStruct));
-				tagList[currentTagNum]->name=strdup(name);
-				tagList[currentTagNum]->startLine=gtk_text_iter_get_line(&iter);
-				tagList[currentTagNum]->startOffset=0;
-				tagList[currentTagNum]->isTag=false;
-				gtk_text_iter_set_offset(&iter,0);
-				tagList[currentTagNum]->mark=gtk_text_buffer_create_mark((GtkTextBuffer*)page->buffer,name,&iter,true);
-				gtk_text_mark_set_visible(tagList[currentTagNum]->mark,true);
-				currentTagNum++;
-				g_free(name);
-*/
+			case ITALIC:
+					italicnum++;
+					asprintf(&tagname,"italic-%i",italicnum);
+					tag=gtk_text_tag_table_lookup(tagtable,tagname);
+					while(tag!=NULL)
+						{
+							italicnum++;
+							asprintf(&tagname,"bold-%i",italicnum);
+							tag=gtk_text_tag_table_lookup(tagtable,tagname);
+						}
+					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL);
+					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
 				break;
 		}
-		
-//	gtk_text_buffer_create_mark((GtkTextBuffer*)page->buffer,name,&iter,true);
-//	printf("thing=%i\n",(int)(long)data);
-//	printf("start line - %i\nchar -%i\n",gtk_text_iter_get_line(&start),gtk_text_iter_get_line_offset(&start));
-//	printf("end line - %i\nchar -%i\n",gtk_text_iter_get_line(&end),gtk_text_iter_get_line_offset(&end));
+
 	dirty=true;
 	setSensitive();
 	refreshMainWindow();
