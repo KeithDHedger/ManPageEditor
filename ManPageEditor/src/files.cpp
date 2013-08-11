@@ -202,17 +202,37 @@ char* doReplaceTags(char* str)
 {
 	char*		newstr=strdup(str);
 	char*		tagstr=NULL;
-	const char*	tagfrom[]={""};
-	const char*	tagto[]={""};
+	char*	tagfrom[]={"&gt;","&lt;","&apos;","&quot;"};
+	char*	tagto[]={">","<","'","\""};
+	bool		flag=true;
 
-	tagstr=sliceInclude(newstr,"<apply_tag name=\"bold",">",true,true);
-	if(tagstr==NULL)
-		return(newstr);
-	else
-		printf("tagstr=%s\n",tagstr);
+
+	while(flag==true)
+		{
+			tagstr=sliceInclude(newstr,"<apply_tag name=\"bold","\">",true,true);
+			if(tagstr==NULL)
+				flag=false;
+			else
+				{
+				replaceAllSlice(&newstr,tagstr,"\\fB");
+				}
+		}
+
+//	flag=true;
+//	while(flag==true)
+//		{
+//			tagstr=sliceInclude(newstr,"<apply_tag id=","\">",true,true);
+//			if(tagstr==NULL)
+//				flag=false;
+//			else
+//				{
+//				replaceAllSlice(&newstr,"<apply_tag id=\"0\">","");
+//				}
+//		}
 	
-	replaceAllSlice(&newstr,tagstr,"\\fB");
 	replaceAllSlice(&newstr,"</apply_tag>","\\fR");
+	for(int j=0;j<4;j++)
+		replaceAllSlice(&newstr,tagfrom[j],tagto[j]);
 
 	g_free(str);
 	return(newstr);
@@ -293,10 +313,10 @@ void exportFile(GtkWidget* widget,gpointer data)
 			for(int loop=0;loop<numpages;loop++)
 				{
 					page=getPageStructPtr(loop);
-					//gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-					//gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
+					gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
+					gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
 					//text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
-
+					gtk_text_buffer_place_cursor((GtkTextBuffer*)page->buffer,&start);
 					xmldata=loadToString(page);
 
 					//ptr=doManFormat(text);
@@ -370,6 +390,9 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	pageStruct*	page;
 	FILE*		fd=NULL;
 	char*		manifest;
+	GtkTextIter	start;
+	GtkTextIter	end;
+
 
 	if(manFilePath==NULL)
 		{
@@ -385,6 +408,8 @@ void saveManpage(GtkWidget* widget,gpointer data)
 		{
 			page=getPageStructPtr(loop);
 			page->itsMe=true;
+			//gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+			//gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&start,&start);
 			saveConverted(page);
 		}
 
@@ -634,6 +659,8 @@ void openConvertedFile(char* filepath)
 	page->fileName=strdup(filename);
 
 	label=makeNewTab(page->fileName,page->filePath,page);
+	gtk_source_buffer_set_highlight_syntax(page->buffer,false);
+	gtk_source_buffer_set_highlight_matching_brackets(page->buffer,false);
 	gtk_source_buffer_begin_not_undoable_action(page->buffer);
 		loadBuffer(page);
 	gtk_source_buffer_end_not_undoable_action(page->buffer);
