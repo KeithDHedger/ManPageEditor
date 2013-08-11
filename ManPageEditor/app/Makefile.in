@@ -782,8 +782,7 @@ info-am:
 
 install-data-am: install-appfilesDATA install-examplefilesDATA \
 	install-helpfilesDATA install-man install-pixfilesDATA
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
+
 install-dvi: install-dvi-am
 
 install-dvi-am:
@@ -833,30 +832,30 @@ uninstall-am: uninstall-appfilesDATA uninstall-binPROGRAMS \
 
 uninstall-man: uninstall-man1
 
-.MAKE: install-am install-data-am install-strip
+.MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
 	clean-binPROGRAMS clean-generic cscopelist-am ctags ctags-am \
 	distclean distclean-compile distclean-generic distclean-tags \
 	distdir dvi dvi-am html html-am info info-am install \
 	install-am install-appfilesDATA install-binPROGRAMS \
-	install-data install-data-am install-data-hook install-dvi \
-	install-dvi-am install-examplefilesDATA install-exec \
-	install-exec-am install-helpfilesDATA install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-pixfilesDATA \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-appfilesDATA uninstall-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-examplefilesDATA install-exec install-exec-am \
+	install-helpfilesDATA install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-pdf install-pdf-am install-pixfilesDATA install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-appfilesDATA uninstall-binPROGRAMS \
 	uninstall-examplefilesDATA uninstall-helpfilesDATA \
 	uninstall-man uninstall-man1 uninstall-pixfilesDATA
 
 
-install-data-hook:
-	echo Icon=${datarootdir}/pixmaps/ManPageEditor.png >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
-	echo Exec=${bindir}/manpageeditor >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
+#install-data-hook:
+#	Icon=${datarootdir}/pixmaps/ManPageEditor.png >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
+#	Exec=${bindir}/manpageeditor >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
 
 #uninstall-hook:
 #	rm -r $(DESTDIR)${pkgdatadir}
