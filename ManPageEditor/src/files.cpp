@@ -199,10 +199,7 @@ char* doReplaceTags(char* str)
 			if(tagstr==NULL)
 				flag=false;
 			else
-				{
-				printf("boldtag--%s--\n",tagstr);
 				replaceAllSlice(&newstr,tagstr,"\\fB");
-				}
 		}
 
 	flag=true;
@@ -213,10 +210,7 @@ char* doReplaceTags(char* str)
 			if(tagstr==NULL)
 				flag=false;
 			else
-				{
-				printf("italictag--%s--\n",tagstr);
 				replaceAllSlice(&newstr,tagstr,"\\fI");
-				}
 		}
 	
 	replaceAllSlice(&newstr,"</apply_tag>","\\fR");
