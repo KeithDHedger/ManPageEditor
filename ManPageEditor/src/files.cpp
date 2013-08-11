@@ -184,8 +184,10 @@ char* escapeString(char* ptr)
 	return(g_string_free(deststr,false));
 }
 
-const char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]"};
-const char* textTo[]={"\\fB","\\fI","\\fR"};
+/*
+//const char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]","<apply_tag name=","</apply_tag>"};
+//const char* textTo[]={"\\fB","\\fI","\\fR",">"};
+
 
 char* doManFormat(char* srcstr)
 {
@@ -194,6 +196,43 @@ char* doManFormat(char* srcstr)
 	return(srcstr);
 }
 
+*/
+
+char* doReplaceTags(char* str)
+{
+	char*		newstr=strdup(str);
+	char*		tagstr=NULL;
+	const char*	tagfrom[]={""};
+	const char*	tagto[]={""};
+
+	tagstr=sliceInclude(newstr,"<apply_tag name=\"bold",">",true,true);
+	if(tagstr==NULL)
+		return(newstr);
+	else
+		printf("tagstr=%s\n",tagstr);
+	
+	replaceAllSlice(&newstr,tagstr,"\\fB");
+	replaceAllSlice(&newstr,"</apply_tag>","\\fR");
+
+	g_free(str);
+	return(newstr);
+}
+/*
+const char* textFrom[]={"[BOLD]","[ITALIC]","[NORMAL]"};
+const char* textTo[]={"\\fB","\\fI","\\fR"};
+
+char* doManFormat(char* srcstr)
+{
+	char*	detaggedstr=strdup(srcstr);
+
+	g_free(srcstr);
+	detaggedstr=doReplaceTags(detaggedstr);
+
+	for(int j=0;j<3;j++)
+		detaggedstr=replaceAllSlice(detaggedstr,(char*)textFrom[j],(char*)textTo[j]);
+	return(srcstr);
+}
+*/
 char* loadToString(pageStruct* page)
 {
 	guint8*		data;
@@ -208,7 +247,8 @@ char* loadToString(pageStruct* page)
 	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
 	//ptr=strdup((char*)&data[31]);
 	ptr=sliceInclude((char*)&data[31],"<text>","</text>",false,false);
-	g_free(data);
+//	g_free(data);
+//	printf("%s\n",ptr);
 	return(ptr);
 }
 
@@ -256,10 +296,16 @@ void exportFile(GtkWidget* widget,gpointer data)
 					//gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
 					//gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&end);
 					//text=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,FALSE);
+
 					xmldata=loadToString(page);
+
 					//ptr=doManFormat(text);
-					ptr=doManFormat(xmldata);
+					//ptr=doManFormat(xmldata);
+					ptr=doReplaceTags(xmldata);
+
 					fprintf(fd,".SH \"%s\"\n",page->fileName);
+					//fprintf(fd,"%s\n.br\n",ptr);
+#if 1
 					while(strlen(ptr)>0)
 						{
 							startChar[0]=ptr[0];
@@ -295,6 +341,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 									lastWasNL=true;
 								}
 						}
+#endif
 				}
 			fclose(fd);
 		}

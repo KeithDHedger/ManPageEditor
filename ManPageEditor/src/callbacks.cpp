@@ -474,6 +474,8 @@ void printFile(GtkWidget* widget,gpointer data)
 	g_object_unref(printview);
 }
 
+int	boldnum=0;
+
 void newEditor(GtkWidget* widget,gpointer data)
 {
 	system("manpageeditor");
@@ -487,6 +489,10 @@ void doFormat(GtkWidget* widget,gpointer data)
 	GtkTextIter		start;
 	GtkTextIter		end;
 	GtkTextTag*		tag;
+	char*			tagname=NULL;
+
+	asprintf(&tagname,"bold-%i",boldnum);
+	boldnum++;
 
 	mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
 	gtk_text_buffer_get_iter_at_mark((GtkTextBuffer*)page->buffer,&iter,mark);
@@ -494,13 +500,15 @@ void doFormat(GtkWidget* widget,gpointer data)
 	switch((long)data)
 		{
 			case 1:
-					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,NULL,"weight",PANGO_WEIGHT_BOLD,NULL);
+					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL);
 					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
 					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
 				break;
 			case 2:
 //				asprintf(&name,"BOLDOFF",marknum);
 //				bold=false;
+					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+					gtk_text_buffer_remove_all_tags((GtkTextBuffer*)page->buffer,&start,&end);
 				break;
 
 			case 3:
