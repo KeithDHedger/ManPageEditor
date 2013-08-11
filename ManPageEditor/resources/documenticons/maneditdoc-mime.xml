@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+ <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+   <mime-type type="application/x-maneditdoc">  
+   <comment>Doc icon for Manpage Editor</comment>
+   <glob pattern="*.mpz"/>
+  </mime-type>
+ </mime-info>
