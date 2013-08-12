@@ -87,7 +87,6 @@ void setSensitive(void)
 
 void closeTab(GtkWidget* widget,gpointer data)
 {
-
 	long		thispage;
 	pageStruct*	page;
 
@@ -117,6 +116,21 @@ void closeAllTabs(GtkWidget* widget,gpointer data)
 
 	for(int loop=0;loop<numtabs;loop++)
 		closeTab(NULL,0);
+}
+
+void closePage(GtkWidget* widget,gpointer data)
+{
+	int	retval;
+
+	if(dirty==true)
+		{
+			retval=yesNo("Do you want to save?",manName);
+			if(retval==GTK_RESPONSE_YES)
+				saveManpage(NULL,NULL);
+		}
+
+	if(manFilename!=NULL)
+		closeAllTabs(NULL,NULL);
 }
 
 void copyToClip(GtkWidget* widget,gpointer data)

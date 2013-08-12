@@ -262,7 +262,7 @@ void buildMainGui(void)
 //close
 	menuclose=gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE,NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuclose);
-	gtk_signal_connect(GTK_OBJECT(menuclose),"activate",G_CALLBACK(closeTab),NULL);
+	gtk_signal_connect(GTK_OBJECT(menuclose),"activate",G_CALLBACK(closePage),NULL);
 	gtk_widget_add_accelerator((GtkWidget *)menuclose,"activate",accgroup,'W',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 //close section
 	image=gtk_image_new_from_stock(GTK_STOCK_DELETE,GTK_ICON_SIZE_MENU);
