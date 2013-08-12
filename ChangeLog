@@ -12,7 +12,7 @@ Fixed exec path not getting added to desktop file.
 
 0.0.6
 Fixed MAJOR memory leak.
-Added 'Export As' to save exported man page to different file/folder.
 Added gpl-3 licence to docs and about box.
 Fixed bug when 'Category' not set in properties.
 Export manpage now automatically sets the name of the manpage to the lowercased name in properties and creates it in the same dir as the opened file and appends the category number.
+Added 'Export As' to save exported man page to different file/folder.
