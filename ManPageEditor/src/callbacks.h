@@ -7,7 +7,6 @@
 */
 
 #include <gtk/gtk.h>
-//#include <unique/unique.h>
 
 #include "globals.h"
 #include "files.h"
