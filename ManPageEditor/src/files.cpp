@@ -639,7 +639,9 @@ void doOpenManpage(char* file)
 	char		name[256];
 	char		strarg[256];
 	char*		recenturi;
-	
+	char*		dirname;
+	char*		lowername;
+
 	if(manFilename!=NULL)
 		{
 			sprintf((char*)&buffer[0],"rm -r \"%s\"",manFilename);
@@ -680,7 +682,14 @@ void doOpenManpage(char* file)
 	if(manFilePath!=NULL)
 		g_free(manFilePath);
 	manFilePath=strdup(file);
+	if(exportPath!=NULL)
+		g_free(exportPath);
 
+	dirname=g_path_get_dirname(manFilePath);
+	lowername=g_ascii_strdown(manName,-1);
+	asprintf(&exportPath,"%s/%s.%s",dirname,lowername,manSection);
+	g_free(dirname);
+	g_free(lowername);
 	recenturi=g_filename_to_uri(manFilePath,NULL,NULL);
 	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	pageOpen=true;
