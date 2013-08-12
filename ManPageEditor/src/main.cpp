@@ -126,7 +126,6 @@ void init(void)
 
 int main(int argc,char **argv)
 {
-
 	gtk_init(&argc,&argv);
 
 	init();
