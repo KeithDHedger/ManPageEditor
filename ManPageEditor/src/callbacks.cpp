@@ -489,7 +489,7 @@ void doFormat(GtkWidget* widget,gpointer data)
 	GtkTextIter			start;
 	GtkTextIter			end;
 	GtkTextTag*			tag=NULL;
-	char*				tagname=NULL;
+	char				tagname[64];
 	GtkTextTagTable*	tagtable=gtk_text_buffer_get_tag_table((GtkTextBuffer*)page->buffer);
 
 	mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
@@ -499,12 +499,12 @@ void doFormat(GtkWidget* widget,gpointer data)
 		{
 			case BOLD:
 					boldnum++;
-					asprintf(&tagname,"bold-%i",boldnum);
+					sprintf((char*)&tagname,"bold-%i",boldnum);
 					tag=gtk_text_tag_table_lookup(tagtable,tagname);
 					while(tag!=NULL)
 						{
 							boldnum++;
-							asprintf(&tagname,"bold-%i",boldnum);
+							sprintf((char*)&tagname,"bold-%i",boldnum);
 							tag=gtk_text_tag_table_lookup(tagtable,tagname);
 						}
 					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL);
@@ -519,12 +519,12 @@ void doFormat(GtkWidget* widget,gpointer data)
 
 			case ITALIC:
 					italicnum++;
-					asprintf(&tagname,"italic-%i",italicnum);
+					sprintf((char*)&tagname,"italic-%i",italicnum);
 					tag=gtk_text_tag_table_lookup(tagtable,tagname);
 					while(tag!=NULL)
 						{
 							italicnum++;
-							asprintf(&tagname,"bold-%i",italicnum);
+							sprintf((char*)&tagname,"bold-%i",italicnum);
 							tag=gtk_text_tag_table_lookup(tagtable,tagname);
 						}
 					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL);

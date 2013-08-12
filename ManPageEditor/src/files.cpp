@@ -188,34 +188,34 @@ char* doReplaceTags(char* str)
 {
 	char*		newstr=strdup(str);
 	char*		tagstr=NULL;
-	char*	tagfrom[]={"&gt;","&lt;","&apos;","&quot;"};
-	char*	tagto[]={">","<","'","\""};
+	const char*	tagfrom[]={"&gt;","&lt;","&apos;","&quot;"};
+	const char*	tagto[]={">","<","'","\""};
 	bool		flag=true;
 
 
 	while(flag==true)
 		{
-			tagstr=sliceInclude(newstr,"<apply_tag name=\"bold","\">",true,true);
+			tagstr=sliceInclude(newstr,(char*)"<apply_tag name=\"bold",(char*)"\">",true,true);
 			if(tagstr==NULL)
 				flag=false;
 			else
-				replaceAllSlice(&newstr,tagstr,"\\fB");
+				replaceAllSlice(&newstr,tagstr,(char*)"\\fB");
 		}
 
 	flag=true;
 	tagstr=NULL;
 	while(flag==true)
 		{
-			tagstr=sliceInclude(newstr,"<apply_tag name=\"italic","\">",true,true);
+			tagstr=sliceInclude(newstr,(char*)"<apply_tag name=\"italic",(char*)"\">",true,true);
 			if(tagstr==NULL)
 				flag=false;
 			else
-				replaceAllSlice(&newstr,tagstr,"\\fI");
+				replaceAllSlice(&newstr,tagstr,(char*)"\\fI");
 		}
 	
-	replaceAllSlice(&newstr,"</apply_tag>","\\fR");
+	replaceAllSlice(&newstr,(char*)"</apply_tag>",(char*)"\\fR");
 	for(int j=0;j<4;j++)
-		replaceAllSlice(&newstr,tagfrom[j],tagto[j]);
+		replaceAllSlice(&newstr,(char*)tagfrom[j],(char*)tagto[j]);
 
 	g_free(str);
 	return(newstr);
@@ -233,7 +233,7 @@ char* loadToString(pageStruct* page)
 
 	gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
 	data=gtk_text_buffer_serialize((GtkTextBuffer*)page->buffer,(GtkTextBuffer*)page->buffer,atom,&start,&end,&length);
-	ptr=sliceInclude((char*)&data[31],"<text>","</text>",false,false);
+	ptr=sliceInclude((char*)&data[31],(char*)"<text>",(char*)"</text>",false,false);
 	g_free(data);
 	return(ptr);
 }
@@ -340,8 +340,6 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	pageStruct*	page;
 	FILE*		fd=NULL;
 	char*		manifest;
-	GtkTextIter	start;
-	GtkTextIter	end;
 
 
 	if(manFilePath==NULL)
@@ -358,8 +356,6 @@ void saveManpage(GtkWidget* widget,gpointer data)
 		{
 			page=getPageStructPtr(loop);
 			page->itsMe=true;
-			//gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-			//gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&start,&start);
 			saveConverted(page);
 		}
 
