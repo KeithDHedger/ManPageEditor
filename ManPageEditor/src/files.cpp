@@ -656,6 +656,7 @@ void doOpenManpage(char* file)
 	fp=fopen(command, "r");
 	while(fgets(buffer,4096,fp))
 		{
+			strarg[0]=0;
 			sscanf(buffer,"%s %"VALIDFILENAMECHARS"s",(char*)&name,(char*)&strarg);
 			if(strcasecmp(name,"manname")==0)
 				manName=strdup((char*)&strarg);
