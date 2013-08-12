@@ -446,7 +446,7 @@ void newManpage(GtkWidget* widget,gpointer data)
 	GtkWidget*	hbox;
 
 	if(pageOpen==true)
-		saveManpage(NULL,NULL);
+		closePage(NULL,NULL);
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Create New Manpage");
 

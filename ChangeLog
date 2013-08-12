@@ -16,3 +16,5 @@ Added gpl-3 licence to docs and about box.
 Fixed bug when 'Category' not set in properties.
 Export manpage now automatically sets the name of the manpage to the lowercased name in properties and creates it in the same dir as the opened file and appends the category number.
 Added 'Export As' to save exported man page to different file/folder.
+Fixed 'Close'.
+Fixed 'New'.

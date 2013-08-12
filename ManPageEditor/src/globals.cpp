@@ -28,7 +28,6 @@
 #include "callbacks.h"
 #include "script.h"
 
-
 //manpage
 char*			manFilename=NULL;
 char*			manName=NULL;
@@ -53,73 +52,36 @@ GtkWidget*		menubar=NULL;
 GtkWidget*		menufile;
 GtkWidget*		menuedit;
 GtkWidget*		menuformat;
-
-
 GtkWidget*		menuhelp;
-
-
-
-
 GtkWidget*		menuprint;
 GtkWidget*		menuclose;
-
-GtkWidget*		menusaveall;
 
 GtkWidget*		redoMenu;
 GtkWidget*		undoMenu;
 GtkWidget*		saveMenu;
 GtkWidget*		exportMenu;
 GtkWidget*		exportAsMenu;
-
 GtkWidget*		saveAsMenu;
 GtkWidget*		closeSectionMenu;
-
 
 GtkWidget*		liveSearchWidget;
 
 int				currentPage=0;
+int				currentTabNumber;
 
+//prefs
 GtkWidget*		prefswin;
-
+GtkWidget*		fontBox;
 
 bool			lineWrap;
 bool			highLight;
-
 int				tabWidth;
 char*			fontAndSize;
-
-
-
-
-
-
-
 bool			showLiveSearch;
-
-GtkWidget*		fontBox;
-
-
-
 bool			tmpLineWrap;
 bool			tmpHighLight;
-
 int				tmpTabWidth;
-
-
-
-
-
-
 bool			tmpShowLiveSearch;
-
-
-
-
-
-
-
-
-
 
 int				windowWidth;
 int				windowHeight;
@@ -129,26 +91,20 @@ bool			wrapSearch;
 bool			insensitiveSearch;
 bool			replaceAll;
 
-int				currentTabNumber;
-
-
+//toolbar
 GtkToolItem*	newButton;
 GtkToolItem*	openButton;
 GtkToolItem*	saveButton;
-
 GtkToolItem*	closeButton;
 GtkToolItem*	redoButton;
 GtkToolItem*	undoButton;
 
-
+//find replace
 GtkWidget*		findReplaceDialog;
 GtkWidget*		findBox;
 GtkWidget*		replaceBox;
 
 char*			thePage=NULL;
-
-
-
 
 //spellcheck
 GtkWidget*		spellCheckWord;

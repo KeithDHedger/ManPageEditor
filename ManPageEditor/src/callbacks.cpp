@@ -120,17 +120,48 @@ void closeAllTabs(GtkWidget* widget,gpointer data)
 
 void closePage(GtkWidget* widget,gpointer data)
 {
-	int	retval;
+	int		retval;
+	char*	command;
 
 	if(dirty==true)
 		{
-			retval=yesNo("Do you want to save?",manName);
+			retval=yesNo((char*)"Do you want to save?",manName);
 			if(retval==GTK_RESPONSE_YES)
 				saveManpage(NULL,NULL);
 		}
 
 	if(manFilename!=NULL)
-		closeAllTabs(NULL,NULL);
+		{
+			closeAllTabs(NULL,NULL);
+			asprintf(&command,"rm -r \"%s\"",manFilename);
+			system(command);
+			g_free(command);
+			g_free(manFilename);
+		}
+
+	if(manName!=NULL)
+		g_free(manName);
+	if(manSection!=NULL)
+		g_free(manSection);
+	if(manVersion!=NULL)
+		g_free(manVersion);
+	if(manAuthor!=NULL)
+		g_free(manAuthor);
+	if(manFilePath!=NULL)
+		g_free(manFilePath);
+	if(exportPath!=NULL)
+		g_free(exportPath);
+
+	manName=NULL;
+	manSection=NULL;
+	manVersion=NULL;
+	manAuthor=NULL;
+	manFilePath=NULL;
+	exportPath=NULL;
+	manFilename=NULL;
+	pageOpen=false;
+	dirty=false;
+	setSensitive();
 }
 
 void copyToClip(GtkWidget* widget,gpointer data)

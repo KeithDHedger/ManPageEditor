@@ -81,17 +81,9 @@ extern GtkWidget*		menubar;
 extern GtkWidget*		menufile;
 extern GtkWidget*		menuedit;
 extern GtkWidget*		menuformat;
-
-
-
-
 extern GtkWidget*		menuhelp;
 extern GtkWidget*		menuprint;
 extern GtkWidget*		menuclose;
-
-extern GtkWidget*		menusaveall;
-
-
 
 extern GtkWidget*		redoMenu;
 extern GtkWidget*		undoMenu;
@@ -102,51 +94,20 @@ extern GtkWidget*		saveAsMenu;
 extern GtkWidget*		closeSectionMenu;
 
 extern GtkWidget*		liveSearchWidget;
-
 extern int				currentPage;
 
 extern GtkWidget*		prefswin;
 
-
 extern bool				lineWrap;
 extern bool				highLight;
-
 extern int				tabWidth;
 extern char*			fontAndSize;
-
-
-
-
-
-
-
 extern bool				showLiveSearch;
-
 extern GtkWidget*		fontBox;
-
-
-
 extern bool				tmpLineWrap;
 extern bool				tmpHighLight;
-
 extern int				tmpTabWidth;
-
-
-
-
-
-
 extern bool				tmpShowLiveSearch;
-
-
-
-
-
-
-
-
-
-
 
 extern int				windowWidth;
 extern int				windowHeight;
@@ -158,24 +119,18 @@ extern bool				replaceAll;
 
 extern int				currentTabNumber;
 
-
 extern GtkToolItem*		newButton;
 extern GtkToolItem*		openButton;
 extern GtkToolItem*		saveButton;
-
 extern GtkToolItem*		closeButton;
 extern GtkToolItem*		redoButton;
 extern GtkToolItem*		undoButton;
-
 
 extern GtkWidget*		findReplaceDialog;
 extern GtkWidget*		findBox;
 extern GtkWidget*		replaceBox;
 
 extern char*			thePage;
-
-
-
 
 extern GtkWidget*		spellCheckWord;
 extern GtkWidget*		wordListDropbox;
@@ -186,11 +141,7 @@ extern AspellConfig*	aspellConfig;
 extern AspellSpeller*	spellChecker;
 #endif
 
-
 pageStruct* getPageStructPtr(int pagenum);
-
-
-
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter);
 
 #endif
