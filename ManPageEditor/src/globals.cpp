@@ -69,6 +69,7 @@ GtkWidget*		redoMenu;
 GtkWidget*		undoMenu;
 GtkWidget*		saveMenu;
 GtkWidget*		exportMenu;
+GtkWidget*		exportAsMenu;
 
 GtkWidget*		saveAsMenu;
 GtkWidget*		closeSectionMenu;

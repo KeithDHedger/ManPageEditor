@@ -252,7 +252,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 	FILE*		fd=NULL;
 	char*		xmldata=NULL;
 
-	if(exportPath==NULL)
+	if(exportPath==NULL || data!=NULL)
 		{
 			if(getSaveFile()==false)
 				return;

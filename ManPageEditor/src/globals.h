@@ -97,6 +97,7 @@ extern GtkWidget*		redoMenu;
 extern GtkWidget*		undoMenu;
 extern GtkWidget*		saveMenu;
 extern GtkWidget*		exportMenu;
+extern GtkWidget*		exportAsMenu;
 extern GtkWidget*		saveAsMenu;
 extern GtkWidget*		closeSectionMenu;
 

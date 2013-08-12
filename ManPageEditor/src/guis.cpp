@@ -231,10 +231,18 @@ void buildMainGui(void)
 
 //export
 	image=gtk_image_new_from_stock(GTK_STOCK_SAVE,GTK_ICON_SIZE_MENU);
-	exportMenu=gtk_image_menu_item_new_with_label("Export Man Page");
+	exportAsMenu=gtk_image_menu_item_new_with_label("Export Man Page");
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)exportAsMenu,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),exportAsMenu);
+	gtk_signal_connect(GTK_OBJECT(exportAsMenu),"activate",G_CALLBACK(exportFile),NULL);
+
+//export as
+	image=gtk_image_new_from_stock(GTK_STOCK_SAVE,GTK_ICON_SIZE_MENU);
+	exportMenu=gtk_image_menu_item_new_with_label("Export As");
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)exportMenu,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),exportMenu);
-	gtk_signal_connect(GTK_OBJECT(exportMenu),"activate",G_CALLBACK(exportFile),NULL);
+	gtk_signal_connect(GTK_OBJECT(exportMenu),"activate",G_CALLBACK(exportFile),(void*)1);
+
 
 //properties
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES,NULL);
