@@ -142,5 +142,6 @@ int main(int argc,char **argv)
 
 	dirty=false;
 	setSensitive();
+	printf("%s\n",manFilepath);
 	gtk_main();
 }
