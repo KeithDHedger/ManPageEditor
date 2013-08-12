@@ -22,6 +22,9 @@ helpfiles_DATA = ../resources/help/*
 examplefilesdir = $(pkgdatadir)/examples
 examplefiles_DATA = ../resources/examples/*
 
+docfilesdir = $(pkgdatadir)/docs
+docfiles_DATA = ../resources/docs/*
+
 #install-data-hook:
 #	Icon=${datarootdir}/pixmaps/ManPageEditor.png >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop
 #	Exec=${bindir}/manpageeditor >> $(DESTDIR)${datarootdir}/applications/ManPageEditor.desktop

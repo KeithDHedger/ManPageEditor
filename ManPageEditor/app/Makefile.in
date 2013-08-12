@@ -63,8 +63,9 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
-	"$(DESTDIR)$(appfilesdir)" "$(DESTDIR)$(examplefilesdir)" \
-	"$(DESTDIR)$(helpfilesdir)" "$(DESTDIR)$(pixfilesdir)"
+	"$(DESTDIR)$(appfilesdir)" "$(DESTDIR)$(docfilesdir)" \
+	"$(DESTDIR)$(examplefilesdir)" "$(DESTDIR)$(helpfilesdir)" \
+	"$(DESTDIR)$(pixfilesdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 = manpageeditor-callbacks.$(OBJEXT) \
 	manpageeditor-files.$(OBJEXT) manpageeditor-globals.$(OBJEXT) \
@@ -147,8 +148,8 @@ am__uninstall_files_from_dir = { \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(man1_MANS)
-DATA = $(appfiles_DATA) $(examplefiles_DATA) $(helpfiles_DATA) \
-	$(pixfiles_DATA)
+DATA = $(appfiles_DATA) $(docfiles_DATA) $(examplefiles_DATA) \
+	$(helpfiles_DATA) $(pixfiles_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -292,6 +293,8 @@ helpfilesdir = $(pkgdatadir)/help
 helpfiles_DATA = ../resources/help/*
 examplefilesdir = $(pkgdatadir)/examples
 examplefiles_DATA = ../resources/examples/*
+docfilesdir = $(pkgdatadir)/docs
+docfiles_DATA = ../resources/docs/*
 all: all-am
 
 .SUFFIXES:
@@ -575,6 +578,27 @@ uninstall-appfilesDATA:
 	@list='$(appfiles_DATA)'; test -n "$(appfilesdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(appfilesdir)'; $(am__uninstall_files_from_dir)
+install-docfilesDATA: $(docfiles_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(docfiles_DATA)'; test -n "$(docfilesdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(docfilesdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(docfilesdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(docfilesdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(docfilesdir)" || exit $$?; \
+	done
+
+uninstall-docfilesDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(docfiles_DATA)'; test -n "$(docfilesdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(docfilesdir)'; $(am__uninstall_files_from_dir)
 install-examplefilesDATA: $(examplefiles_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(examplefiles_DATA)'; test -n "$(examplefilesdir)" || list=; \
@@ -725,7 +749,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(MANS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(appfilesdir)" "$(DESTDIR)$(examplefilesdir)" "$(DESTDIR)$(helpfilesdir)" "$(DESTDIR)$(pixfilesdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(appfilesdir)" "$(DESTDIR)$(docfilesdir)" "$(DESTDIR)$(examplefilesdir)" "$(DESTDIR)$(helpfilesdir)" "$(DESTDIR)$(pixfilesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -780,8 +804,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-appfilesDATA install-examplefilesDATA \
-	install-helpfilesDATA install-man install-pixfilesDATA
+install-data-am: install-appfilesDATA install-docfilesDATA \
+	install-examplefilesDATA install-helpfilesDATA install-man \
+	install-pixfilesDATA
 
 install-dvi: install-dvi-am
 
@@ -827,8 +852,8 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-appfilesDATA uninstall-binPROGRAMS \
-	uninstall-examplefilesDATA uninstall-helpfilesDATA \
-	uninstall-man uninstall-pixfilesDATA
+	uninstall-docfilesDATA uninstall-examplefilesDATA \
+	uninstall-helpfilesDATA uninstall-man uninstall-pixfilesDATA
 
 uninstall-man: uninstall-man1
 
@@ -839,18 +864,19 @@ uninstall-man: uninstall-man1
 	distclean distclean-compile distclean-generic distclean-tags \
 	distdir dvi dvi-am html html-am info info-am install \
 	install-am install-appfilesDATA install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-examplefilesDATA install-exec install-exec-am \
-	install-helpfilesDATA install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-pdf install-pdf-am install-pixfilesDATA install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-appfilesDATA uninstall-binPROGRAMS \
-	uninstall-examplefilesDATA uninstall-helpfilesDATA \
-	uninstall-man uninstall-man1 uninstall-pixfilesDATA
+	install-data install-data-am install-docfilesDATA install-dvi \
+	install-dvi-am install-examplefilesDATA install-exec \
+	install-exec-am install-helpfilesDATA install-html \
+	install-html-am install-info install-info-am install-man \
+	install-man1 install-pdf install-pdf-am install-pixfilesDATA \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
+	uninstall-am uninstall-appfilesDATA uninstall-binPROGRAMS \
+	uninstall-docfilesDATA uninstall-examplefilesDATA \
+	uninstall-helpfilesDATA uninstall-man uninstall-man1 \
+	uninstall-pixfilesDATA
 
 
 #install-data-hook:

@@ -9,3 +9,9 @@ Code clean.
 Fixed loads of bugs in string slicing.
 Fixed icon path not getting added to desktop file.
 Fixed exec path not getting added to desktop file.
+
+0.0.6
+Fixed MAJOR memory leak.
+Added 'Export As'.
+Added gpl-3 licence to docs and about box.
+Fixed bug when 'Category' not set in properties.
