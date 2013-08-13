@@ -717,6 +717,7 @@ void openManpage(GtkWidget* widget,gpointer data)
 	gtk_widget_destroy (dialog);
 	dirty=false;
 	setSensitive();
+
 	refreshMainWindow();	
 }
 

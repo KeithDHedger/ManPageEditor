@@ -18,3 +18,9 @@ Export manpage now automatically sets the name of the manpage to the lowercased 
 Added 'Export As' to save exported man page to different file/folder.
 Fixed 'Close'.
 Fixed 'New'.
+
+0.0.7
+Added preview.
+Added 'Terminal Command' to prefs for showing preview, defaults to 'xterm -e '.
+'Export Man Page' etc now dimmed/undimmed properly depending if file open.
+Added import manpage.

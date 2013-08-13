@@ -60,7 +60,12 @@ void readConfig(void)
 							sscanf(buffer,"%*s %s %i",(char*)&strarg,(int*)&intarg);
 							asprintf(&fontAndSize,"%s %i",strarg,intarg);
 						}
-
+					if(strcasecmp(name,"terminalcommand")==0)
+						{
+							g_free(terminalCommand);
+							sscanf(buffer,"%*s %"VALIDCHARS"s",(char*)&strarg);
+							terminalCommand=strdup(strarg);
+						}
 				}
 			fclose(fd);
 		}
@@ -93,6 +98,7 @@ void init(void)
 	highLight=true;
 	tabWidth=4;
 	fontAndSize=strdup("mono 10");
+	terminalCommand=strdup("xterm -e");
 	windowWidth=800;
 	windowHeight=400;
 	windowX=-1;
@@ -131,16 +137,14 @@ int main(int argc,char **argv)
 	init();
 
 	buildMainGui();
+	buildFindReplace();
 
 	if(argc>1)
 		doOpenManpage(argv[1]);
 
-	refreshMainWindow();
-
-	buildFindReplace();
-
 	dirty=false;
 	setSensitive();
+	refreshMainWindow();
 
 	gtk_main();
 }

@@ -41,5 +41,6 @@ void doFormat(GtkWidget* widget,gpointer data);
 void redoProps(GtkWidget* widget,gpointer data);
 int yesNo(char* question,char* file);
 void closePage(GtkWidget* widget,gpointer data);
+void previewPage(GtkWidget* widget,gpointer data);
 
 #endif

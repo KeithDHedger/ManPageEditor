@@ -68,6 +68,15 @@ void doPrefs(void)
 	gtk_box_pack_start(GTK_BOX(vbox),hbox,true,true,0);
 	gtk_entry_set_text((GtkEntry*)fontBox,fontAndSize);
 
+//terminalcommand
+	terminalBox=gtk_entry_new();
+	hbox=gtk_hbox_new(true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),gtk_label_new("Terminal Command: "),true,true,0);
+	gtk_container_add(GTK_CONTAINER(hbox),terminalBox);
+	gtk_box_pack_start(GTK_BOX(vbox),hbox,true,true,0);
+	gtk_entry_set_text((GtkEntry*)terminalBox,terminalCommand);
+	gtk_widget_show_all(hbox);
+
 //buttons
 	gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(),true,true,0);
 
@@ -230,19 +239,25 @@ void buildMainGui(void)
 	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,false);
 
 //export
-	image=gtk_image_new_from_stock(GTK_STOCK_SAVE,GTK_ICON_SIZE_MENU);
+	image=gtk_image_new_from_stock(GTK_STOCK_CONVERT,GTK_ICON_SIZE_MENU);
 	exportAsMenu=gtk_image_menu_item_new_with_label("Export Man Page");
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)exportAsMenu,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),exportAsMenu);
 	gtk_signal_connect(GTK_OBJECT(exportAsMenu),"activate",G_CALLBACK(exportFile),NULL);
 
 //export as
-	image=gtk_image_new_from_stock(GTK_STOCK_SAVE,GTK_ICON_SIZE_MENU);
+	image=gtk_image_new_from_stock(GTK_STOCK_CONVERT,GTK_ICON_SIZE_MENU);
 	exportMenu=gtk_image_menu_item_new_with_label("Export As");
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)exportMenu,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),exportMenu);
 	gtk_signal_connect(GTK_OBJECT(exportMenu),"activate",G_CALLBACK(exportFile),(void*)1);
 
+//preview
+	image=gtk_image_new_from_stock(GTK_STOCK_FIND,GTK_ICON_SIZE_MENU);
+	previewMenu=gtk_image_menu_item_new_with_label("Preview Page");
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)previewMenu,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),previewMenu);
+	gtk_signal_connect(GTK_OBJECT(previewMenu),"activate",G_CALLBACK(previewPage),NULL);
 
 //properties
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES,NULL);

@@ -81,8 +81,11 @@ void setSensitive(void)
 	gtk_widget_set_sensitive((GtkWidget*)undoMenu,dirty);
 	gtk_widget_set_sensitive((GtkWidget*)redoMenu,dirty);
 	gtk_widget_set_sensitive((GtkWidget*)saveMenu,dirty);
+
 	gtk_widget_set_sensitive((GtkWidget*)saveAsMenu,pageOpen);
 	gtk_widget_set_sensitive((GtkWidget*)exportMenu,pageOpen);
+	gtk_widget_set_sensitive((GtkWidget*)exportAsMenu,pageOpen);
+	gtk_widget_set_sensitive((GtkWidget*)previewMenu,pageOpen);
 }
 
 void closeTab(GtkWidget* widget,gpointer data)
@@ -390,6 +393,7 @@ void writeConfig(void)
 			fprintf(fd,"showlivesearch	%i\n",(int)showLiveSearch);
 			fprintf(fd,"tabwidth	%i\n",tabWidth);
 			fprintf(fd,"font	%s\n",fontAndSize);
+			fprintf(fd,"terminalcommand	%s\n",terminalCommand);
 			fclose(fd);
 		}
 	g_free(filename);
@@ -454,6 +458,12 @@ void setPrefs(GtkWidget* widget,gpointer data)
 			highLight=tmpHighLight;
 			showLiveSearch=tmpShowLiveSearch;
 			showHideWidget(liveSearchWidget,showLiveSearch);
+
+			if(terminalCommand!=NULL)
+				{
+					g_free(terminalCommand);
+					terminalCommand=strdup(gtk_entry_get_text((GtkEntry*)terminalBox));
+				}
 
 			if(fontAndSize!=NULL)
 				{
@@ -659,3 +669,26 @@ void redoProps(GtkWidget* widget,gpointer data)
 		}
 	gtk_widget_destroy(dialog);
 }
+
+void previewPage(GtkWidget* widget,gpointer data)
+{
+
+	char	command[1024];
+	char*	holdpath=exportPath;
+
+	exportPath="/tmp/previewpage";
+	exportFile(NULL,NULL);
+	sprintf((char*)&command,"%s man /tmp/previewpage",terminalCommand);
+	system(command);
+	exportPath=holdpath;
+	unlink("/tmp/previewpage");
+}
+
+
+
+
+
+
+
+
+

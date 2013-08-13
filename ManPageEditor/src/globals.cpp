@@ -56,6 +56,7 @@ GtkWidget*		undoMenu;
 GtkWidget*		saveMenu;
 GtkWidget*		exportMenu;
 GtkWidget*		exportAsMenu;
+GtkWidget*		previewMenu;
 GtkWidget*		saveAsMenu;
 GtkWidget*		closeSectionMenu;
 
@@ -67,11 +68,13 @@ int				currentTabNumber;
 //prefs
 GtkWidget*		prefswin;
 GtkWidget*		fontBox;
+GtkWidget*		terminalBox;
 
 bool			lineWrap;
 bool			highLight;
 int				tabWidth;
 char*			fontAndSize;
+char*			terminalCommand;
 bool			showLiveSearch;
 bool			tmpLineWrap;
 bool			tmpHighLight;

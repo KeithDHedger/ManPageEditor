@@ -90,6 +90,7 @@ extern GtkWidget*		undoMenu;
 extern GtkWidget*		saveMenu;
 extern GtkWidget*		exportMenu;
 extern GtkWidget*		exportAsMenu;
+extern GtkWidget*		previewMenu;
 extern GtkWidget*		saveAsMenu;
 extern GtkWidget*		closeSectionMenu;
 
@@ -97,11 +98,13 @@ extern GtkWidget*		liveSearchWidget;
 extern int				currentPage;
 
 extern GtkWidget*		prefswin;
+extern GtkWidget*		terminalBox;
 
 extern bool				lineWrap;
 extern bool				highLight;
 extern int				tabWidth;
 extern char*			fontAndSize;
+extern char*			terminalCommand;
 extern bool				showLiveSearch;
 extern GtkWidget*		fontBox;
 extern bool				tmpLineWrap;
