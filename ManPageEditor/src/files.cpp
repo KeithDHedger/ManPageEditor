@@ -808,8 +808,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 														gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 														gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,str->str,str->len);
 													gtk_source_buffer_end_not_undoable_action(importPage->buffer);
-
-													//printf("%s\n",str->str);
 													str=g_string_new(NULL);
 												}
 											importSection(buffer);
@@ -818,8 +816,13 @@ void importManpage(GtkWidget* widget,gpointer data)
 								}
 							else
 								g_string_append(str,buffer);
-								//printf("%s\n",buffer);
 						}
+					if(str!=NULL)
+						gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
+							gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
+							gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,str->str,str->len);
+						gtk_source_buffer_end_not_undoable_action(importPage->buffer);
+						
 					fclose(fd);
 				}
 			g_free(filename);
