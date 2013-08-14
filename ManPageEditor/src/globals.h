@@ -32,7 +32,7 @@
 #define VALIDFILENAMECHARS "[A-Za-z0-9_-./ ]"
 #define VALIDFUNCTIONCHARS "[A-Za-z0-9_*]"
 
-enum {BOLD,ITALIC,NORMAL};
+enum {BOLD=0,ITALIC,NORMAL};
 
 struct pageStruct
 {

@@ -538,7 +538,7 @@ void printFile(GtkWidget* widget,gpointer data)
 
 void newEditor(GtkWidget* widget,gpointer data)
 {
-	system("manpageeditor");
+	system("manpageeditor &");
 }
 
 void doFormat(GtkWidget* widget,gpointer data)

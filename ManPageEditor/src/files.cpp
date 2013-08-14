@@ -14,6 +14,7 @@
 
 #include <gtksourceview/gtksourceview.h>
 #include <gtksourceview/gtksourcebuffer.h>
+#include <gtksourceview/gtksourceiter.h>
 
 #include "globals.h"
 #include "callbacks.h"
@@ -776,6 +777,85 @@ void importSection(char* line)
 	newSection(NULL,name);
 }
 
+int						tagboldnum=0;
+int						tagitalicnum=0;
+
+GtkTextTag*	getNamedTag(int tagType)
+{
+	char					tagname[64];
+	GtkTextTag*			tag=NULL;
+	GtkTextTagTable*	tagtable=gtk_text_buffer_get_tag_table((GtkTextBuffer*)importPage->buffer);
+
+	switch(tagType)
+		{
+			case BOLD:
+				tagboldnum++;
+				sprintf((char*)&tagname,"bold-%i",tagboldnum);
+				tag=gtk_text_tag_table_lookup(tagtable,tagname);
+				while(tag!=NULL)
+					{
+						tagboldnum++;
+						sprintf((char*)&tagname,"bold-%i",tagboldnum);
+						tag=gtk_text_tag_table_lookup(tagtable,tagname);
+					}
+				return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL));
+				break;
+			case ITALIC:
+					tagitalicnum++;
+					sprintf((char*)&tagname,"italic-%i",tagitalicnum);
+					tag=gtk_text_tag_table_lookup(tagtable,tagname);
+					while(tag!=NULL)
+						{
+							tagitalicnum++;
+							sprintf((char*)&tagname,"bold-%i",tagitalicnum);
+							tag=gtk_text_tag_table_lookup(tagtable,tagname);
+						}
+					return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL));
+				break;
+		}
+}
+
+void replaceTags(void)
+{
+	GtkTextIter			start;
+	GtkTextIter			endtag;
+	GtkTextIter			starttag;
+	GtkTextIter			endtag2;
+	GtkTextIter			starttag2;
+	char				tagname[64];
+	int					boldnum=0;
+	GtkTextTagTable*	tagtable=gtk_text_buffer_get_tag_table((GtkTextBuffer*)importPage->buffer);
+	GtkTextTag*			tag=NULL;
+	bool				flag=true;
+	const char*			texttags[]={"\\fB","\\fI"};
+
+	GtkSourceSearchFlags	flags=(GtkSourceSearchFlags)(GTK_SOURCE_SEARCH_TEXT_ONLY|GTK_SOURCE_SEARCH_CASE_INSENSITIVE);
+
+	for(int j=0;j<2;j++)
+		{
+			flag=true;
+			while(flag==true)
+				{
+					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
+						{
+							if(gtk_source_iter_forward_search(&endtag,"\\fR",flags,&starttag2,&endtag2,NULL))
+								{
+									tag=getNamedTag(j);
+									gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
+									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
+									if(gtk_source_iter_forward_search(&endtag,"\\fR",flags,&starttag2,&endtag2,NULL))
+										gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
+								}
+							else
+								flag=false;
+						}
+					else
+						flag=false;
+				}
+		}
+}
+
 void importManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
@@ -798,21 +878,32 @@ void importManpage(GtkWidget* widget,gpointer data)
 							fgets(buffer,2048,fd);
 							if(buffer[0]=='.')
 								{
-									if(strncmp(buffer,".SH",3)==0)
+									if((strncmp(buffer,".SH",3)==0) || (strncmp(buffer,".SS",3)==0))
 										{
 											if(str==NULL)
 												str=g_string_new(NULL);
 											else
 												{
+													//replaceAllSlice(&str->str,"\n","");
 													gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 														gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 														gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,str->str,str->len);
+														replaceTags();
 													gtk_source_buffer_end_not_undoable_action(importPage->buffer);
 													str=g_string_new(NULL);
 												}
 											importSection(buffer);
 										}
-									
+									//else
+									//{
+									//if(strncmp(buffer,".IP",3)==0)
+									//	{
+									//		g_string_append(str,"\t");
+									//		g_string_append(str,buffer);
+									//	}
+									else
+										g_string_append(str,buffer);
+								//	}
 								}
 							else
 								g_string_append(str,buffer);
