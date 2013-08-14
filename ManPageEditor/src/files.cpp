@@ -864,6 +864,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char		buffer[2048];
 	GString*	str=NULL;
 	GtkTextIter	iter;
+	char*		text;
+	int			textlen;
 
 	dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
 
@@ -884,16 +886,24 @@ void importManpage(GtkWidget* widget,gpointer data)
 												str=g_string_new(NULL);
 											else
 												{
-													//replaceAllSlice(&str->str,"\n","");
+													textlen=str->len;
+													text=g_string_free(str,false);
+													replaceAllSlice(&text,"\n"," ");
 													gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 														gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-														gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,str->str,str->len);
+														gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,text,textlen);
 														replaceTags();
 													gtk_source_buffer_end_not_undoable_action(importPage->buffer);
 													str=g_string_new(NULL);
 												}
 											importSection(buffer);
 										}
+									else if(strncmp(buffer,".PP",3)==0)
+										{
+											g_string_append(str,"\n.br\n\t");
+											g_string_append_printf(str,"%s",&buffer[3]);
+										}
+									
 									//else
 									//{
 									//if(strncmp(buffer,".IP",3)==0)
