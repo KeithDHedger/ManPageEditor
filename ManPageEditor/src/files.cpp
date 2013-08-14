@@ -22,6 +22,7 @@
 char*		saveFileName=NULL;
 char*		saveFilePath=NULL;
 bool		dropTextFile=false;
+pageStruct* importPage=NULL;
 
 void makeDirty(GtkWidget* widget,gpointer data)
 {
@@ -546,7 +547,11 @@ void newSection(GtkWidget* widget,gpointer data)
 	char*		retval=NULL;
 	GString*	str;
 
-	retval=getNewSectionName();
+	if(data==NULL)
+		retval=getNewSectionName();
+	else
+		retval=strdup((char*)data);
+
 	if(retval!=NULL)
 		{
 			page=makeNewPage();
@@ -572,6 +577,8 @@ void newSection(GtkWidget* widget,gpointer data)
 			gtk_notebook_set_current_page(notebook,currentPage);
 			currentPage++;
 			gtk_widget_show_all((GtkWidget*)notebook);
+			if(data!=NULL)
+				importPage=page;
 		}
 }
 
@@ -759,12 +766,24 @@ void renameSection(GtkWidget* widget,gpointer data)
 		}
 }
 
+void importSection(char* line)
+{
+	char*	name;
+
+	name=strdup(g_strchug((char*)&line[3]));
+	replaceAllSlice(&name,"\"","");
+	replaceAllSlice(&name,"\n","");
+	newSection(NULL,name);
+}
+
 void importManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
 	char*		filename;
 	FILE*		fd;
 	char		buffer[2048];
+	GString*	str=NULL;
+	GtkTextIter	iter;
 
 	dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
 
@@ -779,10 +798,27 @@ void importManpage(GtkWidget* widget,gpointer data)
 							fgets(buffer,2048,fd);
 							if(buffer[0]=='.')
 								{
-									printf("command - %s\n",buffer);
+									if(strncmp(buffer,".SH",3)==0)
+										{
+											if(str==NULL)
+												str=g_string_new(NULL);
+											else
+												{
+													gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
+														gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
+														gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,str->str,str->len);
+													gtk_source_buffer_end_not_undoable_action(importPage->buffer);
+
+													//printf("%s\n",str->str);
+													str=g_string_new(NULL);
+												}
+											importSection(buffer);
+										}
+									
 								}
 							else
-								printf("%s\n",buffer);
+								g_string_append(str,buffer);
+								//printf("%s\n",buffer);
 						}
 					fclose(fd);
 				}
