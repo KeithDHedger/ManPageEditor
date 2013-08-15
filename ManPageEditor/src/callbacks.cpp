@@ -86,6 +86,8 @@ void setSensitive(void)
 	gtk_widget_set_sensitive((GtkWidget*)exportMenu,pageOpen);
 	gtk_widget_set_sensitive((GtkWidget*)exportAsMenu,pageOpen);
 	gtk_widget_set_sensitive((GtkWidget*)previewMenu,pageOpen);
+
+	refreshMainWindow();
 }
 
 void closeTab(GtkWidget* widget,gpointer data)
@@ -684,7 +686,11 @@ void previewPage(GtkWidget* widget,gpointer data)
 	unlink("/tmp/previewpage");
 }
 
-
+void reorderDirty(GtkNotebook *notebook,GtkWidget *child,guint page_num,gpointer user_data)
+{
+	pageStruct* page=getPageStructPtr(page_num);
+	makeDirty(NULL,(void*)page);
+}
 
 
 

@@ -42,5 +42,6 @@ void redoProps(GtkWidget* widget,gpointer data);
 int yesNo(char* question,char* file);
 void closePage(GtkWidget* widget,gpointer data);
 void previewPage(GtkWidget* widget,gpointer data);
+void reorderDirty(GtkNotebook *notebook,GtkWidget *child,guint page_num,gpointer user_data);
 
 #endif

@@ -28,7 +28,11 @@ bool		isSubsection=false;
 
 void makeDirty(GtkWidget* widget,gpointer data)
 {
+	pageStruct*	page=(pageStruct*)data;
+
 	dirty=true;
+	if(page!=NULL)
+		gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
 	setSensitive();
 }
 
@@ -377,7 +381,10 @@ void saveManpage(GtkWidget* widget,gpointer data)
 			for(int loop=0;loop<numpages;loop++)
 				{
 					page=getPageStructPtr(loop);
-					fprintf(fd,"file %s\n",page->fileName);
+					if(page->isSubsection==false)
+						fprintf(fd,"file %s\n",page->fileName);
+					else
+						fprintf(fd,"subsection %s\n",page->fileName);
 				}
 			fclose(fd);
 		}
@@ -437,7 +444,7 @@ pageStruct* makeNewPage(void)
 	g_signal_connect_after(G_OBJECT(page->view),"drag-data-received",G_CALLBACK(dropText),(void*)page);
 
 	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
-	g_signal_connect(G_OBJECT(page->buffer),"modified-changed",G_CALLBACK(makeDirty),NULL);
+	g_signal_connect(G_OBJECT(page->buffer),"modified-changed",G_CALLBACK(makeDirty),(void*)page);
 	gtk_widget_grab_focus((GtkWidget*)page->view);
 
 	return(page);
@@ -515,7 +522,7 @@ void newManpage(GtkWidget* widget,gpointer data)
 	gtk_widget_destroy(dialog);
 }
 
-char* getNewSectionName(void)
+char* getNewSectionName(char* name)
 {
 	GtkWidget*	dialog;
 	gint		result;
@@ -531,10 +538,13 @@ char* getNewSectionName(void)
 
 	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
 	entrybox=gtk_entry_new();
+	if(name!=NULL)
+		gtk_entry_set_text((GtkEntry*)entrybox,name);
 	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
 	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
 	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
 	checkbox=gtk_check_button_new_with_label("Make Subsection");
+	gtk_toggle_button_set_active((GtkToggleButton*)checkbox,isSubsection);
 	gtk_container_add(GTK_CONTAINER(content_area),checkbox);
 
 	gtk_widget_show_all(content_area);
@@ -559,8 +569,9 @@ void newSection(GtkWidget* widget,gpointer data)
 	char*		retval=NULL;
 	GString*	str;
 
+	isSubsection=false;
 	if(data==NULL)
-		retval=getNewSectionName();
+		retval=getNewSectionName(NULL);
 	else
 		retval=strdup((char*)data);
 
@@ -623,6 +634,7 @@ void openConvertedFile(char* filepath)
 
 	page->filePath=strdup(filepath);
 	page->fileName=strdup(filename);
+	page->isSubsection=isSubsection;
 
 	label=makeNewTab(page->fileName,page->filePath,page);
 	gtk_source_buffer_set_highlight_syntax(page->buffer,false);
@@ -647,8 +659,6 @@ void openConvertedFile(char* filepath)
 	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
 
 	gtk_widget_show_all((GtkWidget*)notebook);
-
-
 }
 
 void doOpenManpage(char* file)
@@ -693,6 +703,13 @@ void doOpenManpage(char* file)
 			if(strcasecmp(name,"file")==0)
 				{
 					sprintf((char*)&buffer[0],"%s/%s",manFilename,(char*)&strarg[0]);
+					isSubsection=false;
+					openConvertedFile((char*)&buffer);
+				}
+			if(strcasecmp(name,"subsection")==0)
+				{
+					sprintf((char*)&buffer[0],"%s/%s",manFilename,(char*)&strarg[0]);
+					isSubsection=true;
 					openConvertedFile((char*)&buffer);
 				}
 		}
@@ -760,12 +777,16 @@ void renameSection(GtkWidget* widget,gpointer data)
 	char*		command=NULL;
 	GString*	str;
 
-	retval=getNewSectionName();
+	isSubsection=page->isSubsection;
+	retval=getNewSectionName(page->fileName);
 	if(retval!=NULL)
 		{
+			page->isSubsection=isSubsection;
 			str=g_string_new(retval);
-			g_string_ascii_up(str);
-
+			if(page->isSubsection==false)
+				g_string_ascii_up(str);
+			else
+				g_string_ascii_down(str);
 
 			asprintf(&command,"mv \"%s\" \"%s/%s\"",page->filePath,manFilename,str->str);
 			g_free(page->fileName);
@@ -773,8 +794,8 @@ void renameSection(GtkWidget* widget,gpointer data)
 			page->fileName=g_string_free(str,false);
 			asprintf(&page->filePath,"%s/%s",manFilename,page->fileName);
 			system(command);
-			gtk_notebook_set_tab_label_text(notebook,page->tabVbox,page->fileName);
-			makeDirty(NULL,NULL);
+			gtk_label_set_text((GtkLabel*)page->tabName,page->fileName);
+			makeDirty(NULL,(void*)page);
 			g_free(retval);
 		}
 }
