@@ -937,31 +937,28 @@ void importManpage(GtkWidget* widget,gpointer data)
 					if(start==NULL)
 						break;
 					end=strstr((char*)&start[4],"\n.S");
-					if(end==NULL)
-						{
-							sect=strdup(start);
-							ptr=sliceInclude(sect,".S","\n",true,false);
-							importSection(ptr);
-							gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
-								gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-								gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
-								replaceTags();
-							gtk_source_buffer_end_not_undoable_action(importPage->buffer);
 
-							break;
-						}
+					if(end==NULL)
+						sect=strdup(start);
 					else
 						{
 							len=(long)end-(long)start;
 							sect=strndup(start,len);
-							ptr=sliceInclude(sect,".S","\n",true,false);
-							importSection(ptr);
-							gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
-								gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-								gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
-								replaceTags();
-							gtk_source_buffer_end_not_undoable_action(importPage->buffer);
 						}
+
+					ptr=sliceInclude(sect,".S","\n",true,false);
+					importSection(ptr);
+					ptr=sliceInclude(sect,".S","\n",true,true);
+					replaceAllSlice(&sect,ptr,"");
+					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
+						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
+						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
+						replaceTags();
+					gtk_source_buffer_end_not_undoable_action(importPage->buffer);
+
+					if(end==NULL)
+						break;
+
 					ptr=end;
 				}
 		}
