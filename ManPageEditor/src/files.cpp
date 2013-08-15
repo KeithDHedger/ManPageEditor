@@ -910,8 +910,6 @@ void replaceTags(void)
 		}
 }
 
-char* sections=NULL;
-
 void importManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
@@ -946,9 +944,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 							sect=strndup(start,len);
 						}
 
-					ptr=sliceInclude(sect,".S","\n",true,false);
-					importSection(ptr);
 					ptr=sliceInclude(sect,".S","\n",true,true);
+					importSection(ptr);
+//					ptr=sliceInclude(sect,".S","\n",true,true);
 					replaceAllSlice(&sect,ptr,"");
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
