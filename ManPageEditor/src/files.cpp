@@ -921,6 +921,7 @@ char* cleanText(char* text)
 	firstchar=sliceInclude(data,".IP","\n",true,true);
 
 
+/*
 	firstchar=strstr(data,"\n");
 	while(firstchar!=NULL)
 		{
@@ -933,8 +934,14 @@ char* cleanText(char* text)
 				}
 			firstchar=strstr(firstchar,"\n");
 		}
+*/
+	for(int j=0;j<strlen(data)-1;j++)
+		{
+			if(data[j]=='\n' && data[j+1]!='.')
+				data[j]=' ';
+		}
 
-
+	firstchar=sliceInclude(data,".IP","\n",true,true);
 	while(firstchar!=NULL)
 		{
 			nextline=sliceInclude(data,".IP","\n",false,false);
