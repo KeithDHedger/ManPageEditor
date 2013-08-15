@@ -24,7 +24,7 @@ Added preview.
 Added 'Terminal Command' to prefs for showing preview, defaults to 'xterm -e '.
 'Export Man Page' etc now dimmed/undimmed properly depending if file open.
 Fixed various 'dirty' bugs ie 'Save' buttons not getting undimmed.
-Added subsection support, subsection tab names are now shown as lowercase ( but are still uppercased fo manpage ).
+Added subsection support, subsection tab names are now shown as lowercase ( but are still uppercased for manpage ).
 Rename dialog now shows old name!
+Add file filter for 'Open' ( *.mpz/application/x-maneditdoc ).
 
-Added import manpage.
