@@ -678,7 +678,7 @@ void previewPage(GtkWidget* widget,gpointer data)
 	char	command[1024];
 	char*	holdpath=exportPath;
 
-	exportPath="/tmp/previewpage";
+	exportPath=(char*)"/tmp/previewpage";
 	exportFile(NULL,NULL);
 	sprintf((char*)&command,"%s man /tmp/previewpage",terminalCommand);
 	system(command);

@@ -741,9 +741,13 @@ void openManpage(GtkWidget* widget,gpointer data)
 	GtkWidget*		dialog;
 	char*			filename;
 	GtkFileFilter*	filter=gtk_file_filter_new();
+	GtkFileFilter*	filterall=gtk_file_filter_new();
 
 	gtk_file_filter_add_pattern(filter,"*.mpz");
-	gtk_file_filter_add_mime_type(filter,"application/x-maneditdoc");
+	gtk_file_filter_add_pattern(filterall,"*");
+	gtk_file_filter_set_name(filter,"Manpage Editor Docs \"*.mpz\"");
+	gtk_file_filter_set_name(filterall,"All Files");
+
 	if(dirty==true)
 		saveManpage(NULL,NULL);
 
@@ -753,6 +757,7 @@ void openManpage(GtkWidget* widget,gpointer data)
 	dialog=gtk_file_chooser_dialog_new("Open File",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
 
 	gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filter);
+	gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filterall);
 	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 		{
 			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
@@ -813,8 +818,8 @@ void importSection(char* line)
 	char*	name;
 
 	name=strdup(g_strchug((char*)&line[3]));
-	replaceAllSlice(&name,"\"","");
-	replaceAllSlice(&name,"\n","");
+	replaceAllSlice(&name,(char*)"\"",(char*)"");
+	replaceAllSlice(&name,(char*)"\n",(char*)"");
 	newSection(NULL,name);
 }
 
@@ -854,6 +859,7 @@ GtkTextTag*	getNamedTag(int tagType)
 					return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL));
 				break;
 		}
+	return(NULL);
 }
 
 void replaceTags(void)
@@ -863,9 +869,6 @@ void replaceTags(void)
 	GtkTextIter			starttag;
 	GtkTextIter			endtag2;
 	GtkTextIter			starttag2;
-	char				tagname[64];
-	int					boldnum=0;
-	GtkTextTagTable*	tagtable=gtk_text_buffer_get_tag_table((GtkTextBuffer*)importPage->buffer);
 	GtkTextTag*			tag=NULL;
 	bool				flag=true;
 	const char*			texttags[]={"\\fB","\\fI"};
@@ -906,7 +909,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 	GString*	str=NULL;
 	GtkTextIter	iter;
 	char*		text;
-	int			textlen;
 
 	dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
 
@@ -927,10 +929,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 												str=g_string_new(NULL);
 											else
 												{
-													textlen=str->len;
 													text=g_string_free(str,false);
 													//replaceAllSlice(&text,"\n"," ");
-													replaceAllSlice(&text,".PP","\n");
+													replaceAllSlice(&text,(char*)".PP",(char*)"\n");
 													gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 														gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 														gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,text,strlen(text));
