@@ -258,6 +258,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 	bool		lastWasNL=false;
 	FILE*		fd=NULL;
 	char*		xmldata=NULL;
+	GString*	str=g_string_new(NULL);
 
 	if(exportPath==NULL || data!=NULL)
 		{
@@ -283,10 +284,13 @@ void exportFile(GtkWidget* widget,gpointer data)
 					xmldata=loadToString(page);
 
 					ptr=doReplaceTags(xmldata);
+					g_string_assign(str,page->fileName);
+					g_string_ascii_up(str);
 					if(page->isSubsection==false)
-						fprintf(fd,".SH \"%s\"\n",page->fileName);
+						fprintf(fd,".SH \"%s\"\n",str->str);
 					else
-						fprintf(fd,".SS \"%s\"\n",page->fileName);
+						fprintf(fd,".SS \"%s\"\n",str->str);
+
 					while(strlen(ptr)>0)
 						{
 							startChar[0]=ptr[0];
