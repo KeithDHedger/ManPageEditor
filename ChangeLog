@@ -28,3 +28,5 @@ Added subsection support, subsection tab names are now shown as lowercase ( but 
 Rename dialog now shows old name!
 Add file filter for 'Open' ( *.mpz/application/x-maneditdoc ).
 
+0.0.8
+Added imprt manpage.
