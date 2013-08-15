@@ -910,6 +910,49 @@ void replaceTags(void)
 		}
 }
 
+char* cleanText(char* text)
+{
+	int		charpos;
+	char*	firstchar=NULL;
+	char*	nextline=NULL;
+	char*	line=NULL;
+	char*	data=text;
+
+	firstchar=sliceInclude(data,".IP","\n",true,true);
+
+
+	firstchar=strstr(data,"\n");
+	while(firstchar!=NULL)
+		{
+			charpos=(int)((long)firstchar-(long)data);
+			if(data[charpos+1]!='.')
+				{
+					printf("XXX%sZZZ\n",firstchar);
+					data[charpos]=' ';
+					firstchar++;
+				}
+			firstchar=strstr(firstchar,"\n");
+		}
+
+
+	while(firstchar!=NULL)
+		{
+			nextline=sliceInclude(data,".IP","\n",false,false);
+			asprintf(&line,"%s\n\t",nextline);
+			replaceFirstSlice(&data,firstchar,line);
+
+			nextline=sliceInclude(data,line,"\n",true,true);
+			g_free(line);
+			asprintf(&line,"%s\n",nextline);
+			replaceFirstSlice(&data,nextline,line);
+			g_free(line);
+	
+			firstchar=sliceInclude(data,".IP","\n",true,true);
+		}
+
+	return(data);
+}
+
 void importManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
@@ -945,9 +988,10 @@ void importManpage(GtkWidget* widget,gpointer data)
 						}
 
 					ptr=sliceInclude(sect,".S","\n",true,true);
-					importSection(ptr);
-//					ptr=sliceInclude(sect,".S","\n",true,true);
+					importSection(strdup(ptr));
 					replaceAllSlice(&sect,ptr,"");
+					sect=cleanText(sect);
+					//replaceAllSlice(&sect,"\n","");
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
