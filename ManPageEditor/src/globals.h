@@ -54,6 +54,7 @@ struct pageStruct
 	bool				isSplit;
 	const char*			lang;
 	GtkWidget*			tabVbox;
+	bool				isSubsection;
 };
 
 //manpage stuff

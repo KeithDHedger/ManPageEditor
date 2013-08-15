@@ -24,6 +24,7 @@ char*		saveFileName=NULL;
 char*		saveFilePath=NULL;
 bool		dropTextFile=false;
 pageStruct* importPage=NULL;
+bool		isSubsection=false;
 
 void makeDirty(GtkWidget* widget,gpointer data)
 {
@@ -278,7 +279,10 @@ void exportFile(GtkWidget* widget,gpointer data)
 					xmldata=loadToString(page);
 
 					ptr=doReplaceTags(xmldata);
-					fprintf(fd,".SH \"%s\"\n",page->fileName);
+					if(page->isSubsection==false)
+						fprintf(fd,".SH \"%s\"\n",page->fileName);
+					else
+						fprintf(fd,".SS \"%s\"\n",page->fileName);
 					while(strlen(ptr)>0)
 						{
 							startChar[0]=ptr[0];
@@ -518,6 +522,7 @@ char* getNewSectionName(void)
 	GtkWidget*	content_area;
 	GtkWidget*	entrybox;
 	char*		retval=NULL;
+	GtkWidget*	checkbox;
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Enter Section Name");
 
@@ -529,11 +534,17 @@ char* getNewSectionName(void)
 	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
 	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
 	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
+	checkbox=gtk_check_button_new_with_label("Make Subsection");
+	gtk_container_add(GTK_CONTAINER(content_area),checkbox);
+
 	gtk_widget_show_all(content_area);
 	result=gtk_dialog_run(GTK_DIALOG(dialog));
 
 	if(result==GTK_RESPONSE_YES)
-		retval=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
+		{
+			isSubsection=gtk_toggle_button_get_active((GtkToggleButton*)checkbox);
+			retval=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
+		}
 
 	gtk_widget_destroy(dialog);
 
@@ -578,6 +589,7 @@ void newSection(GtkWidget* widget,gpointer data)
 			gtk_notebook_set_current_page(notebook,currentPage);
 			currentPage++;
 			gtk_widget_show_all((GtkWidget*)notebook);
+			page->isSubsection=isSubsection;
 			if(data!=NULL)
 				importPage=page;
 		}
