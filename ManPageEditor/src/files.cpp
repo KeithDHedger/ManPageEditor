@@ -910,17 +910,72 @@ void replaceTags(void)
 		}
 }
 
+char*	getLineFromString(char* bigStr)
+{
+	char*	nl=strchr(bigStr,'\n');
+	char*	retval=NULL;
+	char	startchar[2];
+
+	startchar[0]=bigStr[0];
+	startchar[1]=0;
+
+	if(nl!=NULL)
+		retval=sliceInclude(bigStr,(char*)&startchar[0],"\n",true,true);
+	else
+		retval=strdup(bigStr);
+
+	return(retval);
+}
+
+char		tabs[64]={0,};
+
+void makeTabs(int numtabs)
+{
+	for(int j=0;j<numtabs;j++)
+		tabs[j]='\t';
+	tabs[numtabs]=0;
+}
+
 char* cleanText(char* text)
 {
-	int		charpos;
-	char*	firstchar=NULL;
-	char*	nextline=NULL;
-	char*	line=NULL;
-	char*	data=text;
+	char*		firstchar=NULL;
+	char*		nextline=NULL;
+	char*		data=text;
+	GString*	srcstr=g_string_new(data);
+	GString*	deststr=g_string_new(NULL);
+	int			numtabs=0;
+	bool		isfirstchar=true;
+	int			charpos=0;
+	char		func[4];
+	char*		line;
 
-	firstchar=sliceInclude(data,".IP","\n",true,true);
+	while(charpos<srcstr->len)
+		{
+			if(srcstr->str[charpos]=='\n')
+				{
+					charpos++;
+					continue;
+				}
 
+			if(srcstr->str[charpos]=='.')
+				{
+					if(strncmp((char*)&srcstr->str[charpos],".IP",3)==0)
+						{//do ip
+							numtabs=2;
+							charpos=charpos+3;
+							line=getLineFromString((char*)&srcstr->str[charpos]);
+							g_string_append_printf(deststr,"\t%s",line);
+							charpos=charpos+strlen(line);
+							makeTabs(numtabs);
+							continue;
+						}
+				}
 
+			line=getLineFromString((char*)&srcstr->str[charpos]);
+			g_string_append_printf(deststr,"%s%s",tabs,line);
+			charpos=charpos+strlen(line);
+		}
+	
 /*
 	firstchar=strstr(data,"\n");
 	while(firstchar!=NULL)
@@ -935,6 +990,8 @@ char* cleanText(char* text)
 			firstchar=strstr(firstchar,"\n");
 		}
 */
+
+/*	
 	for(int j=0;j<strlen(data)-1;j++)
 		{
 			if(data[j]=='\n' && data[j+1]!='.')
@@ -956,8 +1013,9 @@ char* cleanText(char* text)
 	
 			firstchar=sliceInclude(data,".IP","\n",true,true);
 		}
-
 	return(data);
+*/
+	return(g_string_free(deststr,false));
 }
 
 void importManpage(GtkWidget* widget,gpointer data)
@@ -997,7 +1055,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 					ptr=sliceInclude(sect,".S","\n",true,true);
 					importSection(strdup(ptr));
 					replaceAllSlice(&sect,ptr,"");
+					printf("ININ%s\n",sect);
 					sect=cleanText(sect);
+					printf("OUTOUT%s\n",sect);
 					//replaceAllSlice(&sect,"\n","");
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
