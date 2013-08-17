@@ -927,13 +927,15 @@ char*	getLineFromString(char* bigStr)
 	return(retval);
 }
 
-char		tabs[64]={0,};
+char	tabs[64]={0,};
+int		currenttabs=0;
 
 void makeTabs(int numtabs)
 {
 	for(int j=0;j<numtabs;j++)
 		tabs[j]='\t';
 	tabs[numtabs]=0;
+	currenttabs=numtabs;
 }
 
 char* cleanText(char* text)
@@ -943,11 +945,11 @@ char* cleanText(char* text)
 	char*		data=text;
 	GString*	srcstr=g_string_new(data);
 	GString*	deststr=g_string_new(NULL);
-	int			numtabs=0;
 	bool		isfirstchar=true;
 	int			charpos=0;
 	char		func[4];
 	char*		line;
+	bool		replacenls=true;
 
 	while(charpos<srcstr->len)
 		{
@@ -961,21 +963,89 @@ char* cleanText(char* text)
 				{
 					if(strncmp((char*)&srcstr->str[charpos],".IP",3)==0)
 						{//do ip
-							numtabs=2;
 							charpos=charpos+3;
 							line=getLineFromString((char*)&srcstr->str[charpos]);
-							g_string_append_printf(deststr,"\t%s",line);
 							charpos=charpos+strlen(line);
-							makeTabs(numtabs);
+							replaceAllSlice(&line,"\"","");
+							g_string_append_printf(deststr,"%s",line);
+							makeTabs(1);
+							g_free(line);
+							replacenls=false;
 							continue;
 						}
+					if(strncmp((char*)&srcstr->str[charpos],".PP",3)==0)
+						{//do pp
+							makeTabs(0);
+							charpos=charpos+4;
+							replacenls=true;
+							g_string_append_c(deststr,'\n');
+							g_string_append_c(deststr,'\n');
+							continue;
+						}
+
+					if(strncmp((char*)&srcstr->str[charpos],".br",3)==0)
+						{//do br
+							charpos=charpos+4;
+							g_string_append_c(deststr,'\n');
+							charpos++;
+							replacenls=true;
+							continue;
+						}
+
+					if(strncmp((char*)&srcstr->str[charpos],".RS",3)==0)
+						{//do rs
+							makeTabs(currenttabs+1);
+							charpos=charpos+4;
+							g_string_append_c(deststr,'\n');
+							continue;							
+						}
+
+					if(strncmp((char*)&srcstr->str[charpos],".RE",3)==0)
+						{//do rs
+							makeTabs(currenttabs-1);
+							charpos=charpos+4;
+							g_string_append_c(deststr,'\n');
+							continue;							
+						}
+
+					if(strncmp((char*)&srcstr->str[charpos],".nf",3)==0)
+						{//do rs
+							//makeTabs(currenttabs+1);
+							charpos=charpos+4;
+							//g_string_append_c(deststr,'\n');
+							replacenls=false;
+							continue;							
+						}
+
+					if(strncmp((char*)&srcstr->str[charpos],".fi",3)==0)
+						{//do rs
+							//makeTabs(currenttabs+1);
+							charpos=charpos+4;
+							//g_string_append_c(deststr,'\n');
+							//replacenls=false;
+							continue;							
+						}
+
 				}
+//			else
+//				{
+//					if((charpos>0) && (charpos<srcstr->len-1))
+//						{
+//							if((srcstr->str[charpos-1]=='\n') && (srcstr->str[charpos]!='\n'))
+//								{
+//									g_string_truncate(deststr,deststr->len-1);
+//								}
+//						}
+//				}
 
 			line=getLineFromString((char*)&srcstr->str[charpos]);
-			g_string_append_printf(deststr,"%s%s",tabs,line);
 			charpos=charpos+strlen(line);
+			if(replacenls==true)
+				replaceAllSlice(&line,"\n"," ");
+			g_string_append_printf(deststr,"%s%s",tabs,line);
 		}
-	
+
+	tabs[0]=0;
 /*
 	firstchar=strstr(data,"\n");
 	while(firstchar!=NULL)
