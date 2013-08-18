@@ -1073,7 +1073,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 					importSection(strdup(ptr));
 					replaceAllSlice(&sect,ptr,"");
 					sect=cleanText(sect);
-					//replaceAllSlice(&sect,"\n","");
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
