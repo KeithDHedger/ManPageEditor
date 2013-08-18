@@ -885,17 +885,81 @@ void replaceTags(void)
 	GtkTextTag*			tag=NULL;
 	bool				flag=true;
 	const char*			texttags[]={"\\fB","\\fI"};
+	const char*			endtexttags[]={"\\fP","\\fR","\\fB","\\fI","\n"};
+	bool				noendfound=true;
 
-	GtkSourceSearchFlags	flags=(GtkSourceSearchFlags)(GTK_SOURCE_SEARCH_TEXT_ONLY|GTK_SOURCE_SEARCH_CASE_INSENSITIVE);
+	GtkSourceSearchFlags	flags=(GtkSourceSearchFlags)(GTK_SOURCE_SEARCH_TEXT_ONLY);
 
+	flag=true;
 	for(int j=0;j<2;j++)
 		{
-			flag=true;
 			while(flag==true)
 				{
 					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
 					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
 						{
+							noendfound=true;
+							for(int k=0;k<5;k++)
+								{
+									if(gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
+										{
+											noendfound=false;
+											tag=getNamedTag(j);
+											gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&endtag,&starttag2);
+											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
+											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
+											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+											if(k!=4)
+												{
+													gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL);
+													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
+												}
+											break;
+										}
+								}
+							if(noendfound==true)
+								{
+									gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&endtag2);
+									gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
+									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
+									break;
+								}
+						}
+					else
+						break;
+				}
+		}
+
+#if 0
+	for(int j=0;j<2;j++)
+		{
+			flag=true;
+
+			while(flag==true)
+				{
+					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
+						{
+							for(int k=0;k<5;k++)
+								{
+									if(gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
+										{
+											tag=getNamedTag(j);
+											gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
+											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
+											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
+											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
+											//gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+											//if(gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL))
+											//	gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
+											break;
+										}
+									else
+										flag=false;
+								}
+						/*
 							if(gtk_source_iter_forward_search(&endtag,"\\f",flags,&starttag2,&endtag2,NULL))
 								{
 									tag=getNamedTag(j);
@@ -903,17 +967,20 @@ void replaceTags(void)
 									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
 									if(gtk_source_iter_forward_search(&endtag,"\\fP",flags,&starttag2,&endtag2,NULL))
 										gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-									else
-										if(gtk_source_iter_forward_search(&endtag,"\\fR",flags,&starttag2,&endtag2,NULL))
+									else if(gtk_source_iter_forward_search(&endtag,"\\fR",flags,&starttag2,&endtag2,NULL))
+											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
+									else if(gtk_source_iter_forward_search(&endtag,"\n",flags,&starttag2,&endtag2,NULL))
 											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
 								}
 							else
 								flag=false;
+						*/
 						}
 					else
 						flag=false;
 				}
 		}
+#endif
 }
 
 char*	getLineFromString(char* bigStr)
