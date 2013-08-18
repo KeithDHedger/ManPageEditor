@@ -912,7 +912,7 @@ void replaceTags(void)
 											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
 											if(k!=4)
 												{
-													gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL);
+													gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL);
 													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
 												}
 											break;
@@ -930,6 +930,22 @@ void replaceTags(void)
 						break;
 				}
 		}
+
+	for(int j=0;j<4;j++)
+		{
+			gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+			while(true)
+				{
+					if(gtk_source_iter_forward_search(&start,endtexttags[j],flags,&start,&endtag,NULL))
+						{
+							gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&start,&endtag);
+						}
+					else
+						break;
+				}
+		}
+
+
 }
 
 char*	getLineFromString(char* bigStr)
@@ -1041,9 +1057,16 @@ char* cleanText(char* text)
 						}
 
 					if(strncmp((char*)&srcstr->str[charpos],".B",2)==0)
-						{//do rs
-							charpos=charpos+3;
-							g_string_append("\fB\n")
+						{//do .B
+							g_string_append(deststr,"\\fB");
+							charpos=charpos+2;
+							continue;							
+						}
+
+					if(strncmp((char*)&srcstr->str[charpos],".I",2)==0)
+						{//do .B
+							g_string_append(deststr,"\\fI");
+							charpos=charpos+2;
 							continue;							
 						}
 				}
@@ -1127,6 +1150,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 					importSection(strdup(ptr));
 					replaceAllSlice(&sect,ptr,(char*)"");
 					sect=cleanText(sect);
+
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
