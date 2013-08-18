@@ -885,7 +885,7 @@ void replaceTags(void)
 	GtkTextTag*			tag=NULL;
 	bool				flag=true;
 	const char*			texttags[]={"\\fB","\\fI"};
-	const char*			endtexttags[]={"\\fP","\\fR","\\fB","\\fI","\n"};
+	const char*			endtexttags[]={"\\fP","\\fR","\n","\\fB","\\fI"};
 	bool				noendfound=true;
 
 	GtkSourceSearchFlags	flags=(GtkSourceSearchFlags)(GTK_SOURCE_SEARCH_TEXT_ONLY);
@@ -910,7 +910,7 @@ void replaceTags(void)
 											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
 											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
 											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											if(k!=4)
+											if(k!=2)
 												{
 													gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL);
 													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
@@ -931,21 +931,20 @@ void replaceTags(void)
 				}
 		}
 
-	for(int j=0;j<4;j++)
+	for(int j=0;j<5;j++)
 		{
-			gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-			while(true)
+			if(j!=2)
 				{
-					if(gtk_source_iter_forward_search(&start,endtexttags[j],flags,&start,&endtag,NULL))
+					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+					while(true)
 						{
-							gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&start,&endtag);
+							if(gtk_source_iter_forward_search(&start,endtexttags[j],flags,&start,&endtag,NULL))
+								gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&start,&endtag);
+							else
+								break;
 						}
-					else
-						break;
 				}
 		}
-
-
 }
 
 char*	getLineFromString(char* bigStr)
@@ -1149,6 +1148,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 					ptr=sliceInclude(sect,(char*)".S",(char*)"\n",true,true);
 					importSection(strdup(ptr));
 					replaceAllSlice(&sect,ptr,(char*)"");
+					replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
 					sect=cleanText(sect);
 
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
