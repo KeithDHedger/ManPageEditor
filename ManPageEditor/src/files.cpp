@@ -967,7 +967,7 @@ char* cleanText(char* text)
 							line=getLineFromString((char*)&srcstr->str[charpos]);
 							charpos=charpos+strlen(line);
 							replaceAllSlice(&line,"\"","");
-							g_string_append_printf(deststr,"%s",line);
+							g_string_append_printf(deststr,"\n%s",line);
 							makeTabs(1);
 							g_free(line);
 							replacenls=false;
@@ -987,7 +987,8 @@ char* cleanText(char* text)
 						{//do br
 							charpos=charpos+4;
 							g_string_append_c(deststr,'\n');
-							charpos++;
+							if(srcstr->str[charpos]=='\n')
+								g_string_append_c(deststr,'\n');
 							replacenls=true;
 							continue;
 						}
@@ -1010,33 +1011,17 @@ char* cleanText(char* text)
 
 					if(strncmp((char*)&srcstr->str[charpos],".nf",3)==0)
 						{//do rs
-							//makeTabs(currenttabs+1);
 							charpos=charpos+4;
-							//g_string_append_c(deststr,'\n');
 							replacenls=false;
 							continue;							
 						}
 
 					if(strncmp((char*)&srcstr->str[charpos],".fi",3)==0)
 						{//do rs
-							//makeTabs(currenttabs+1);
 							charpos=charpos+4;
-							//g_string_append_c(deststr,'\n');
-							//replacenls=false;
 							continue;							
 						}
-
 				}
-//			else
-//				{
-//					if((charpos>0) && (charpos<srcstr->len-1))
-//						{
-//							if((srcstr->str[charpos-1]=='\n') && (srcstr->str[charpos]!='\n'))
-//								{
-//									g_string_truncate(deststr,deststr->len-1);
-//								}
-//						}
-//				}
 
 			line=getLineFromString((char*)&srcstr->str[charpos]);
 			charpos=charpos+strlen(line);
@@ -1046,45 +1031,7 @@ char* cleanText(char* text)
 		}
 
 	tabs[0]=0;
-/*
-	firstchar=strstr(data,"\n");
-	while(firstchar!=NULL)
-		{
-			charpos=(int)((long)firstchar-(long)data);
-			if(data[charpos+1]!='.')
-				{
-					printf("XXX%sZZZ\n",firstchar);
-					data[charpos]=' ';
-					firstchar++;
-				}
-			firstchar=strstr(firstchar,"\n");
-		}
-*/
 
-/*	
-	for(int j=0;j<strlen(data)-1;j++)
-		{
-			if(data[j]=='\n' && data[j+1]!='.')
-				data[j]=' ';
-		}
-
-	firstchar=sliceInclude(data,".IP","\n",true,true);
-	while(firstchar!=NULL)
-		{
-			nextline=sliceInclude(data,".IP","\n",false,false);
-			asprintf(&line,"%s\n\t",nextline);
-			replaceFirstSlice(&data,firstchar,line);
-
-			nextline=sliceInclude(data,line,"\n",true,true);
-			g_free(line);
-			asprintf(&line,"%s\n",nextline);
-			replaceFirstSlice(&data,nextline,line);
-			g_free(line);
-	
-			firstchar=sliceInclude(data,".IP","\n",true,true);
-		}
-	return(data);
-*/
 	return(g_string_free(deststr,false));
 }
 
@@ -1125,9 +1072,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 					ptr=sliceInclude(sect,".S","\n",true,true);
 					importSection(strdup(ptr));
 					replaceAllSlice(&sect,ptr,"");
-					printf("ININ%s\n",sect);
 					sect=cleanText(sect);
-					printf("OUTOUT%s\n",sect);
 					//replaceAllSlice(&sect,"\n","");
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
@@ -1143,84 +1088,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 		}
 	gtk_widget_destroy (dialog);
 
-//realloc
-//strdup
 }
 
-void importManpageX(GtkWidget* widget,gpointer data)
-{
-	GtkWidget*	dialog;
-	char*		filename;
-	FILE*		fd;
-	char		buffer[2048];
-	GString*	str=NULL;
-	GtkTextIter	iter;
-	char*		text;
-
-	dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
-
-	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
-		{
-			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			fd=fopen(filename,"r");
-			if(fd!=NULL)
-				{
-					while(feof(fd)==0)
-						{
-							fgets(buffer,2048,fd);
-							if(buffer[0]=='.')
-								{
-									if((strncmp(buffer,".SH",3)==0) || (strncmp(buffer,".SS",3)==0))
-										{
-											if(str==NULL)
-												str=g_string_new(NULL);
-											else
-												{
-													text=g_string_free(str,false);
-													//replaceAllSlice(&text,"\n"," ");
-													replaceAllSlice(&text,(char*)".PP",(char*)"\n");
-													gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
-														gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-														gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,text,strlen(text));
-														replaceTags();
-													gtk_source_buffer_end_not_undoable_action(importPage->buffer);
-													str=g_string_new(NULL);
-												}
-											importSection(buffer);
-										}
-									//else if(strncmp(buffer,".PP",3)==0)
-									//	{
-									//		g_string_append(str,"\n.br\n\t");
-									//		g_string_append_printf(str,"XXXXXXXXXx%sXXXXXXXXXX",&buffer[3]);
-									//	}
-									
-									//else
-									//{
-									//if(strncmp(buffer,".IP",3)==0)
-									//	{
-									//		g_string_append(str,"\t");
-									//		g_string_append(str,buffer);
-									//	}
-									else
-										g_string_append(str,buffer);
-								//	}
-								}
-							else
-								g_string_append(str,buffer);
-						}
-					if(str!=NULL)
-						gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
-							gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-							gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,str->str,str->len);
-						gtk_source_buffer_end_not_undoable_action(importPage->buffer);
-						
-					fclose(fd);
-				}
-			g_free(filename);
-		}
-	gtk_widget_destroy (dialog);
-
-}
 
 
 
