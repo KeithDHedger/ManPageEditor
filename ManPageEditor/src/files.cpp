@@ -930,57 +930,6 @@ void replaceTags(void)
 						break;
 				}
 		}
-
-#if 0
-	for(int j=0;j<2;j++)
-		{
-			flag=true;
-
-			while(flag==true)
-				{
-					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
-						{
-							for(int k=0;k<5;k++)
-								{
-									if(gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
-										{
-											tag=getNamedTag(j);
-											gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
-											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
-											//gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											//if(gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL))
-											//	gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-											break;
-										}
-									else
-										flag=false;
-								}
-						/*
-							if(gtk_source_iter_forward_search(&endtag,"\\f",flags,&starttag2,&endtag2,NULL))
-								{
-									tag=getNamedTag(j);
-									gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
-									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-									if(gtk_source_iter_forward_search(&endtag,"\\fP",flags,&starttag2,&endtag2,NULL))
-										gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-									else if(gtk_source_iter_forward_search(&endtag,"\\fR",flags,&starttag2,&endtag2,NULL))
-											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-									else if(gtk_source_iter_forward_search(&endtag,"\n",flags,&starttag2,&endtag2,NULL))
-											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-								}
-							else
-								flag=false;
-						*/
-						}
-					else
-						flag=false;
-				}
-		}
-#endif
 }
 
 char*	getLineFromString(char* bigStr)
@@ -1013,14 +962,10 @@ void makeTabs(int numtabs)
 
 char* cleanText(char* text)
 {
-
-
 	char*			data=text;
 	GString*		srcstr=g_string_new(data);
 	GString*		deststr=g_string_new(NULL);
-
 	unsigned int	charpos=0;
-
 	char*			line;
 	bool			replacenls=true;
 
@@ -1092,6 +1037,13 @@ char* cleanText(char* text)
 					if(strncmp((char*)&srcstr->str[charpos],".fi",3)==0)
 						{//do rs
 							charpos=charpos+4;
+							continue;							
+						}
+
+					if(strncmp((char*)&srcstr->str[charpos],".B",2)==0)
+						{//do rs
+							charpos=charpos+3;
+							g_string_append("\fB\n")
 							continue;							
 						}
 				}
