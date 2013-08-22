@@ -32,6 +32,16 @@
 #define VALIDFILENAMECHARS "[A-Za-z0-9_-./ ]"
 #define VALIDFUNCTIONCHARS "[A-Za-z0-9_*]"
 
+#define BOLDESC "\e[1m"
+#define ITALICESC "\e[4m"
+//#define ITALIC1ESC "\e[22m"
+//#define ITALIC2ESC "\e[24m"
+
+#define NORMALESC "\e[0m"
+#define NORMALESC1 "\e[4m"
+#define NORMALESC2 "\e[24m"
+#define NORMALESC3 "\e[22m"
+
 enum {BOLD=0,ITALIC,NORMAL};
 
 struct pageStruct
