@@ -34,8 +34,8 @@
 
 #define BOLDESC "\e[1m"
 #define ITALICESC "\e[4m"
-//#define ITALIC1ESC "\e[22m"
-//#define ITALIC2ESC "\e[24m"
+#define ITALIC1ESC "\e[22m"
+#define ITALIC2ESC "\e[24m"
 
 #define NORMALESC "\e[0m"
 #define NORMALESC1 "\e[4m"
