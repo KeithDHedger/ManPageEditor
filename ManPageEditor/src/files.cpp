@@ -900,11 +900,13 @@ void replaceTags(void)
 	GtkTextIter				starttag2;
 	GtkTextTag*				tag=NULL;
 	bool					flag=true;
-	const char*				texttags[]={BOLDESC,ITALICESC,ITALIC1ESC,ITALIC2ESC};
-	const char*				endtexttags[]={NORMALESC,NORMALESC1,NORMALESC2,NORMALESC3,"\n"};
+//	const char*				texttags[]={BOLDESC,ITALICESC,ITALIC1ESC,ITALIC2ESC};
+	const char*				texttags[]={"\e[1m","\e[22m"};
+//	const char*				endtexttags[]={NORMALESC,NORMALESC1,NORMALESC2,NORMALESC3,"\n"};
+	const char*				endtexttags[]={"\e[4m","\e[24m","\e[0m","\e[0m","xx"};
 	bool					noendfound=true;
 
-	int						numstarttags=4;
+	int						numstarttags=2;
 	int						numendtags=5;
 	int						nltag=numendtags-1;
 
