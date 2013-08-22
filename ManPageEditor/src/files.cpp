@@ -930,11 +930,11 @@ void replaceTags(void)
 											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
 											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
 											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											//if(k!=nltag)
-											//	{
-											//		gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL);
-											//		gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-											//	}
+											if(k!=nltag)
+												{
+													gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL);
+													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
+												}
 											break;
 										}
 								}
