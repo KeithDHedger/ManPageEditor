@@ -1288,7 +1288,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 			g_free(command);
 //			asprintf(&command,"MANWIDTH=2000 man --no-justification --no-hyphenation /tmp/x|cat >/tmp/xx");
 //			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[1m/BOLD/g;s/\\x1b\\[0m/NORMAL/g;s/\\x1b\\[22m/ITALIC/g;s/\\x1b\\[4m/NORMAL/g;s/\\x1b\\[24m/NORMAL/g'> /tmp/xx");
-			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[22m/\\x1b\\[1m;\\x1b\\[0m/g'|sed 's/\\x1b\\[4m/\\x1b\\[0m\\x1b\\[4m/g;s/\\x1b\\[24m//g' > /tmp/xx");
+//			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[22m/\\x1b\\[1m;\\x1b\\[0m/g'|sed 's/\\x1b\\[4m/\\x1b\\[0m\\x1b\\[4m/g;s/\\x1b\\[24m//g' > /tmp/xx");
+			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g'|sed 's/\\x1b\\[24m/\\x1b\\[0m/g'|sed 's/\\x1b\\[22m/\\x1b\\[0m/g' > /tmp/xx");
 			printf("\n%s\n",command);
 			fp=popen(command,"r");
 			if(fp!=NULL)
@@ -1352,8 +1353,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
 						replaceTags();
-						gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&iter);
-						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
+						//gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&iter);
+						//gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
 						
 					gtk_source_buffer_end_not_undoable_action(importPage->buffer);
 
