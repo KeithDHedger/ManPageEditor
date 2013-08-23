@@ -903,15 +903,15 @@ void replaceTags(void)
 //	const char*				texttags[]={BOLDESC,ITALICESC,ITALIC1ESC,ITALIC2ESC};
 	const char*				texttags[]={"\e[1m","\e[22m"};
 //	const char*				endtexttags[]={NORMALESC,NORMALESC1,NORMALESC2,NORMALESC3,"\n"};
-	const char*				endtexttags[]={"\e[4m","\e[24m","\e[0m","\e[0m","xx"};
+	const char*				endtexttags[]={"\e[4m","\e[24m","\e[0m","\n","\e[0m"};
 	bool					noendfound=true;
 
 	int						numstarttags=2;
 	int						numendtags=5;
-	int						nltag=numendtags-1;
+	int						nltag=numendtags-2;
 
-	GtkSourceSearchFlags	flags=(GtkSourceSearchFlags)(GTK_SOURCE_SEARCH_TEXT_ONLY);
-
+	GtkSourceSearchFlags	flags=GTK_SOURCE_SEARCH_TEXT_ONLY;
+bool flag2;
 	flag=true;
 	for(int j=0;j<numstarttags;j++)
 		{
@@ -921,6 +921,7 @@ void replaceTags(void)
 					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
 						{
 							noendfound=true;
+							flag2=false;
 							for(int k=0;k<numendtags;k++)
 								{
 									if(gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
@@ -937,11 +938,23 @@ void replaceTags(void)
 													gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL);
 													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
 												}
+											flag2=true;
+											break;
+										}
+									if(flag2==true)
+										{
+											printf("XXXXXXXXX\n");
 											break;
 										}
 								}
+
 							if(noendfound==true)
 								{
+									if(flag2==true)
+										{
+											printf("XXXXXXXXX\n");
+											break;
+										}
 									gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&endtag2);
 									gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
 									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
@@ -1249,6 +1262,9 @@ char* cleanText(char* text)
 	return(g_string_free(deststr,false));
 }
 
+
+
+
 void importManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
@@ -1283,7 +1299,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 				pclose(fp);
 			g_free(command);
 //			asprintf(&command,"MANWIDTH=2000 man --no-justification --no-hyphenation /tmp/x|cat >/tmp/xx");
-			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g> /tmp/xx");
+//			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[1m/BOLD/g;s/\\x1b\\[0m/NORMAL/g;s/\\x1b\\[22m/ITALIC/g;s/\\x1b\\[4m/NORMAL/g;s/\\x1b\\[24m/NORMAL/g'> /tmp/xx");
+			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' > /tmp/xx");
 			fp=popen(command,"r");
 			if(fp!=NULL)
 				pclose(fp);
@@ -1340,6 +1357,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 					replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
 					//sect=cleanText(sect);
 					sect=sect;
+					//replaceAllSlice(&sect,".SH ","");
+
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
 						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
