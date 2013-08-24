@@ -987,103 +987,29 @@ char* cleanText(char* text)
 	GString*		deststr=g_string_new(NULL);
 	unsigned int	charpos=0;
 	char*			line;
-	bool			replacenls=true;
+	int				numSpaces=0;
+
+	line=getLineFromString(srcstr->str);
+	while(line[numSpaces]==' ')
+		numSpaces++;
 
 	while(charpos<srcstr->len)
 		{
 			if(srcstr->str[charpos]=='\n')
 				{
+					g_string_append(deststr,"\n");
 					charpos++;
-					continue;
 				}
-
-			if(srcstr->str[charpos]=='.')
+			else
 				{
-					if(strncmp((char*)&srcstr->str[charpos],".IP",3)==0)
-						{//do ip
-							charpos=charpos+3;
-							line=getLineFromString((char*)&srcstr->str[charpos]);
-							charpos=charpos+strlen(line);
-							replaceAllSlice(&line,(char*)"\"",(char*)"");
-							g_string_append_printf(deststr,"\n%s",line);
-							makeTabs(1);
-							g_free(line);
-							replacenls=false;
-							continue;
-						}
-					if(strncmp((char*)&srcstr->str[charpos],".PP",3)==0)
-						{//do pp
-							makeTabs(0);
-							charpos=charpos+4;
-							replacenls=true;
-							g_string_append_c(deststr,'\n');
-							g_string_append_c(deststr,'\n');
-							continue;
-						}
-
-					if(strncmp((char*)&srcstr->str[charpos],".br",3)==0)
-						{//do br
-							charpos=charpos+4;
-							g_string_append_c(deststr,'\n');
-							if(srcstr->str[charpos]=='\n')
-								g_string_append_c(deststr,'\n');
-							replacenls=true;
-							continue;
-						}
-
-					if(strncmp((char*)&srcstr->str[charpos],".RS",3)==0)
-						{//do rs
-							makeTabs(currenttabs+1);
-							charpos=charpos+4;
-							g_string_append_c(deststr,'\n');
-							continue;							
-						}
-
-					if(strncmp((char*)&srcstr->str[charpos],".RE",3)==0)
-						{//do rs
-							makeTabs(currenttabs-1);
-							charpos=charpos+4;
-							g_string_append_c(deststr,'\n');
-							continue;							
-						}
-
-					if(strncmp((char*)&srcstr->str[charpos],".nf",3)==0)
-						{//do rs
-							charpos=charpos+4;
-							replacenls=false;
-							continue;							
-						}
-
-					if(strncmp((char*)&srcstr->str[charpos],".fi",3)==0)
-						{//do rs
-							charpos=charpos+4;
-							continue;							
-						}
-
-					if(strncmp((char*)&srcstr->str[charpos],".B",2)==0)
-						{//do .B
-							g_string_append(deststr,"\\fB");
-							charpos=charpos+2;
-							continue;							
-						}
-
-					if(strncmp((char*)&srcstr->str[charpos],".I",2)==0)
-						{//do .B
-							g_string_append(deststr,"\\fI");
-							charpos=charpos+2;
-							continue;							
-						}
+					line=getLineFromString((char*)&srcstr->str[charpos]);
+					g_string_append(deststr,(char*)&line[numSpaces]);
+					charpos=charpos+strlen(line);
+					g_free(line);
 				}
-
-			line=getLineFromString((char*)&srcstr->str[charpos]);
-			charpos=charpos+strlen(line);
-			if(replacenls==true)
-				replaceAllSlice(&line,(char*)"\n",(char*)" ");
-			g_string_append_printf(deststr,"%s%s",tabs,line);
 		}
 
-	tabs[0]=0;
-
+	g_string_free(srcstr,true);
 	return(g_string_free(deststr,false));
 }
 
@@ -1109,22 +1035,24 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char*		commandBuffer=(char*)malloc(2048);
 
 	closePage(NULL,NULL);
+	manFilename=tempnam(NULL,"ManEd");
+	g_mkdir_with_parents(manFilename,493);
 
 	dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
 
 	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 		{
 			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' >/tmp/x",filename);
+			sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' > %s/x",filename,manFilename);
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				pclose(fp);
-			sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g'|sed 's/\\x1b\\[24m/\\x1b\\[0m/g'|sed 's/\\x1b\\[22m/\\x1b\\[0m/g' > /tmp/xx");
+			sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g'|sed 's/\\x1b\\[24m/\\x1b\\[0m/g'|sed 's/\\x1b\\[22m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				pclose(fp);
 
-			sprintf(commandBuffer,"cat /tmp/x|grep \"\\.TH\"");
+			sprintf(commandBuffer,"cat %s/x|grep \"\\.TH\"",manFilename);
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				{
@@ -1132,13 +1060,14 @@ void importManpage(GtkWidget* widget,gpointer data)
 					pclose(fp);
 				}
 
-			g_file_get_contents("/tmp/xx",&contents,NULL,NULL);
+			sprintf(commandBuffer,"%s/xx",manFilename);
+			g_file_get_contents(commandBuffer,&contents,NULL,NULL);
 			ptr=contents;
 
 			props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
 			if(props!=NULL)
 				{
-					manFilename=tempnam(NULL,"ManEd");
+					//manFilename=tempnam(NULL,"ManEd");
 					sscanf(props,"%s %s %s %s %s",manNameBuffer,manSectionBuffer,manVersionBuffer,manAuthorBuffer,manCategoryBuffer);
 					
 					manName=strdup(manNameBuffer);
@@ -1152,7 +1081,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 					manCategory=strdup(manCategoryBuffer);
 					replaceAllSlice(&manCategory,(char*)"\"",(char*)"");
 					pageOpen=true;
-					g_mkdir_with_parents(manFilename,493);
+					//g_mkdir_with_parents(manFilename,493);
 				}
 
 			while(true)
