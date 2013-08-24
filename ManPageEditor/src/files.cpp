@@ -25,6 +25,8 @@ char*		saveFilePath=NULL;
 bool		dropTextFile=false;
 pageStruct* importPage=NULL;
 bool		isSubsection=false;
+int			tagboldnum=0;
+int			tagitalicnum=0;
 
 void makeDirty(GtkWidget* widget,gpointer data)
 {
@@ -834,27 +836,6 @@ void importSection(char* line)
 	newSection(NULL,name);
 }
 
-void importSectionXX(char* line)
-{
-	char*	name;
-
-	if(strncmp(line,".SS",3)==0)
-		isSubsection=true;
-	else
-		isSubsection=false;
-
-	name=strdup(g_strchug((char*)&line[3]));
-	replaceAllSlice(&name,(char*)"\"",(char*)"");
-	replaceAllSlice(&name,(char*)"\n",(char*)"");
-	replaceAllSlice(&name,(char*)"\\fP",(char*)"");
-	replaceAllSlice(&name,(char*)"\\fB",(char*)"");
-	replaceAllSlice(&name,(char*)"\\fR",(char*)"");
-	newSection(NULL,name);
-}
-
-int						tagboldnum=0;
-int						tagitalicnum=0;
-
 GtkTextTag*	getNamedTag(int tagType)
 {
 	char					tagname[64];
@@ -969,150 +950,6 @@ void replaceTags(void)
 				}
 		}
 */
-}
-void replaceTagsXXXX(void)
-{
-	GtkTextIter			start;
-	GtkTextIter			endtag;
-	GtkTextIter			starttag;
-	GtkTextIter			endtag2;
-	GtkTextIter			starttag2;
-	GtkTextTag*			tag=NULL;
-	bool				flag=true;
-	const char*			texttags[]={"@BOLD@","@ITALIC@"};
-	const char*			endtexttags[]={"@NORMAL@","\n","@BOLD@","@ITALIC@"};
-	bool				noendfound=true;
-
-	GtkSourceSearchFlags	flags=(GtkSourceSearchFlags)(GTK_SOURCE_SEARCH_TEXT_ONLY);
-
-	flag=true;
-	for(int j=0;j<2;j++)
-		{
-			while(flag==true)
-				{
-					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
-						{
-							noendfound=true;
-							for(int k=0;k<4;k++)
-								{
-									if(gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
-										{
-											noendfound=false;
-											tag=getNamedTag(j);
-											gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&endtag,&starttag2);
-											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
-											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											if(k!=1)
-												{
-													gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL);
-													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-												}
-											break;
-										}
-								}
-							if(noendfound==true)
-								{
-									gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&endtag2);
-									gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
-									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-									break;
-								}
-						}
-					else
-						break;
-				}
-		}
-
-	for(int j=0;j<4;j++)
-		{
-			if(j!=1)
-				{
-					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					while(true)
-						{
-							if(gtk_source_iter_forward_search(&start,endtexttags[j],flags,&start,&endtag,NULL))
-								gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&start,&endtag);
-							else
-								break;
-						}
-				}
-		}
-
-}
-
-void replaceTagsXX(void)
-{
-	GtkTextIter			start;
-	GtkTextIter			endtag;
-	GtkTextIter			starttag;
-	GtkTextIter			endtag2;
-	GtkTextIter			starttag2;
-	GtkTextTag*			tag=NULL;
-	bool				flag=true;
-	const char*			texttags[]={"\\fB","\\fI"};
-	const char*			endtexttags[]={"\\fP","\\fR","\n","\\fB","\\fI"};
-	bool				noendfound=true;
-
-	GtkSourceSearchFlags	flags=(GtkSourceSearchFlags)(GTK_SOURCE_SEARCH_TEXT_ONLY);
-
-	flag=true;
-	for(int j=0;j<2;j++)
-		{
-			while(flag==true)
-				{
-					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
-						{
-							noendfound=true;
-							for(int k=0;k<5;k++)
-								{
-									if(gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
-										{
-											noendfound=false;
-											tag=getNamedTag(j);
-											gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&endtag,&starttag2);
-											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
-											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											if(k!=2)
-												{
-													gtk_source_iter_forward_search(&start,endtexttags[k],flags,&starttag2,&endtag2,NULL);
-													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
-												}
-											break;
-										}
-								}
-							if(noendfound==true)
-								{
-									gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&endtag2);
-									gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
-									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-									break;
-								}
-						}
-					else
-						break;
-				}
-		}
-
-	for(int j=0;j<5;j++)
-		{
-			if(j!=2)
-				{
-					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					while(true)
-						{
-							if(gtk_source_iter_forward_search(&start,endtexttags[j],flags,&start,&endtag,NULL))
-								gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&start,&endtag);
-							else
-								break;
-						}
-				}
-		}
 }
 
 char*	getLineFromString(char* bigStr)
@@ -1250,9 +1087,6 @@ char* cleanText(char* text)
 	return(g_string_free(deststr,false));
 }
 
-
-
-
 void importManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog;
@@ -1270,9 +1104,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char		manVersionBuffer[64];
 	char		manAuthorBuffer[64];
 	char		manCategoryBuffer[64];
-	char*		command=NULL;
 	FILE*		fp;
 	char		buffer[256]={0,};
+	char*		commandBuffer=(char*)malloc(2048);
 
 	closePage(NULL,NULL);
 
@@ -1281,29 +1115,23 @@ void importManpage(GtkWidget* widget,gpointer data)
 	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 		{
 			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			asprintf(&command,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' >/tmp/x",filename);
-			fp=popen(command,"r");
+			sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' >/tmp/x",filename);
+			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				pclose(fp);
-			g_free(command);
-//			asprintf(&command,"MANWIDTH=2000 man --no-justification --no-hyphenation /tmp/x|cat >/tmp/xx");
-//			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[1m/BOLD/g;s/\\x1b\\[0m/NORMAL/g;s/\\x1b\\[22m/ITALIC/g;s/\\x1b\\[4m/NORMAL/g;s/\\x1b\\[24m/NORMAL/g'> /tmp/xx");
-//			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[22m/\\x1b\\[1m;\\x1b\\[0m/g'|sed 's/\\x1b\\[4m/\\x1b\\[0m\\x1b\\[4m/g;s/\\x1b\\[24m//g' > /tmp/xx");
-			asprintf(&command,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g'|sed 's/\\x1b\\[24m/\\x1b\\[0m/g'|sed 's/\\x1b\\[22m/\\x1b\\[0m/g' > /tmp/xx");
-			printf("\n%s\n",command);
-			fp=popen(command,"r");
+			sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation /tmp/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g'|sed 's/\\x1b\\[24m/\\x1b\\[0m/g'|sed 's/\\x1b\\[22m/\\x1b\\[0m/g' > /tmp/xx");
+			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				pclose(fp);
-			g_free(command);
-			asprintf(&command,"cat /tmp/x|grep \"\\.TH\"");
-			fp=popen(command,"r");
+
+			sprintf(commandBuffer,"cat /tmp/x|grep \"\\.TH\"");
+			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				{
 					fgets((char*)&buffer[0],256,fp);
 					pclose(fp);
 				}
-			g_free(command);
-//			g_file_get_contents(filename,&contents,NULL,NULL);
+
 			g_file_get_contents("/tmp/xx",&contents,NULL,NULL);
 			ptr=contents;
 
@@ -1342,214 +1170,11 @@ void importManpage(GtkWidget* widget,gpointer data)
 							sect=strndup(start,len);
 						}
 					ptr=sliceCaseInclude(sect,(char*)"@SECTION@",(char*)"\n",true,true);
-					importSection(strdup(ptr));
-					replaceAllSlice(&sect,ptr,(char*)"");
-					replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
-					//sect=cleanText(sect);
-					sect=sect;
-					//replaceAllSlice(&sect,".SH ","");
-
-					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
-						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
-						replaceTags();
-						//gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&iter);
-						//gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
-						
-					gtk_source_buffer_end_not_undoable_action(importPage->buffer);
-
-					if(end==NULL)
-						break;
-
-					ptr=end;
-				}
-			pageOpen=true;
-			dirty=true;
-			setSensitive();
-			refreshMainWindow();
-		}
-	gtk_widget_destroy (dialog);
-
-}
-
-void importManpageXXXX(GtkWidget* widget,gpointer data)
-{
-	GtkWidget*	dialog;
-	char*		filename;
-	char*		contents;
-	char*		start=NULL;
-	char*		end=NULL;
-	long		len;
-	char*		sect=NULL;
-	char*		ptr;
-	GtkTextIter	iter;
-	char*		props;
-	char		manNameBuffer[64];
-	char		manSectionBuffer[64];
-	char		manVersionBuffer[64];
-	char		manAuthorBuffer[64];
-	char		manCategoryBuffer[64];
-	char*		command=NULL;
-	FILE*		fp;
-	char		buffer[256]={0,};
-
-	closePage(NULL,NULL);
-
-	dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
-
-	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
-		{
-			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			asprintf(&command,"cat %s |sed 's/\\\\fB/@BOLD@/g;s/\\\\fP/@NORMAL@/g;s/\\\\fI/@ITALIC@/g;s/\\\\fR/@NORMAL@/g;s/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/^\\.BR/@BOLD@/g;s/^\\.B/@BOLD@/g;s/^\\.I/@ITALIC@/g' >/tmp/x",filename);
-			fp=popen(command,"r");
-			if(fp!=NULL)
-				pclose(fp);
-			g_free(command);
-			asprintf(&command,"MANWIDTH=2000 man --no-justification --no-hyphenation /tmp/x|cat >/tmp/xx");
-			fp=popen(command,"r");
-			if(fp!=NULL)
-				pclose(fp);
-			g_free(command);
-			asprintf(&command,"cat /tmp/x|grep \"\\.TH\"");
-			fp=popen(command,"r");
-			if(fp!=NULL)
-				{
-					fgets((char*)&buffer[0],256,fp);
-					pclose(fp);
-				}
-			g_free(command);
-//			g_file_get_contents(filename,&contents,NULL,NULL);
-			g_file_get_contents("/tmp/xx",&contents,NULL,NULL);
-			ptr=contents;
-
-			props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
-			if(props!=NULL)
-				{
-					manFilename=tempnam(NULL,"ManEd");
-					sscanf(props,"%s %s %s %s %s",manNameBuffer,manSectionBuffer,manVersionBuffer,manAuthorBuffer,manCategoryBuffer);
-					
-					manName=strdup(manNameBuffer);
-					replaceAllSlice(&manName,(char*)"\"",(char*)"");
-					manSection=strdup(manSectionBuffer);
-					replaceAllSlice(&manSection,(char*)"\"",(char*)"");
-					manVersion=strdup(manVersionBuffer);
-					replaceAllSlice(&manVersion,(char*)"\"",(char*)"");
-					manAuthor=strdup(manAuthorBuffer);
-					replaceAllSlice(&manAuthor,(char*)"\"",(char*)"");
-					manCategory=strdup(manCategoryBuffer);
-					replaceAllSlice(&manCategory,(char*)"\"",(char*)"");
-					pageOpen=true;
-					g_mkdir_with_parents(manFilename,493);
-				}
-
-			while(true)
-				{
-					start=strcasestr(ptr,"@SECTION@");
-					if(start==NULL)
-						break;
-					end=strcasestr((char*)&start[9],"@SECTION@");
-
-					if(end==NULL)
-						sect=strdup(start);
-					else
-						{
-							len=(long)end-(long)start;
-							sect=strndup(start,len);
-						}
-					ptr=sliceCaseInclude(sect,(char*)"@SECTION@",(char*)"\n",true,true);
-					importSection(strdup(ptr));
-					replaceAllSlice(&sect,ptr,(char*)"");
-					replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
-					//sect=cleanText(sect);
-					sect=sect;
-					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
-						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-						gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
-						replaceTags();
-					gtk_source_buffer_end_not_undoable_action(importPage->buffer);
-
-					if(end==NULL)
-						break;
-
-					ptr=end;
-				}
-			pageOpen=true;
-			dirty=true;
-			setSensitive();
-			refreshMainWindow();
-		}
-	gtk_widget_destroy (dialog);
-
-}
-
-void importManpageXX(GtkWidget* widget,gpointer data)
-{
-	GtkWidget*	dialog;
-	char*		filename;
-	char*		contents;
-	char*		start=NULL;
-	char*		end=NULL;
-	long		len;
-	char*		sect=NULL;
-	char*		ptr;
-	GtkTextIter	iter;
-	char*		props;
-	char		manNameBuffer[64];
-	char		manSectionBuffer[64];
-	char		manVersionBuffer[64];
-	char		manAuthorBuffer[64];
-	char		manCategoryBuffer[64];
-
-	closePage(NULL,NULL);
-
-	dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
-
-	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
-		{
-			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			g_file_get_contents(filename,&contents,NULL,NULL);
-			ptr=contents;
-
-			props=sliceBetween(ptr,(char*)".TH",(char*)"\n");
-			if(props!=NULL)
-				{
-					manFilename=tempnam(NULL,"ManEd");
-					sscanf(props,"%s %s %s %s %s",manNameBuffer,manSectionBuffer,manVersionBuffer,manAuthorBuffer,manCategoryBuffer);
-					
-					manName=strdup(manNameBuffer);
-					replaceAllSlice(&manName,(char*)"\"",(char*)"");
-					manSection=strdup(manSectionBuffer);
-					replaceAllSlice(&manSection,(char*)"\"",(char*)"");
-					manVersion=strdup(manVersionBuffer);
-					replaceAllSlice(&manVersion,(char*)"\"",(char*)"");
-					manAuthor=strdup(manAuthorBuffer);
-					replaceAllSlice(&manAuthor,(char*)"\"",(char*)"");
-					manCategory=strdup(manCategoryBuffer);
-					replaceAllSlice(&manCategory,(char*)"\"",(char*)"");
-					pageOpen=true;
-					g_mkdir_with_parents(manFilename,493);
-				}
-
-			while(true)
-				{
-					start=strstr(ptr,"\n.S");
-					if(start==NULL)
-						break;
-					end=strstr((char*)&start[4],"\n.S");
-
-					if(end==NULL)
-						sect=strdup(start);
-					else
-						{
-							len=(long)end-(long)start;
-							sect=strndup(start,len);
-						}
-
-					ptr=sliceInclude(sect,(char*)".S",(char*)"\n",true,true);
 					importSection(strdup(ptr));
 					replaceAllSlice(&sect,ptr,(char*)"");
 					replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
 					sect=cleanText(sect);
+					//sect=sect;
 
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
@@ -1562,7 +1187,12 @@ void importManpageXX(GtkWidget* widget,gpointer data)
 
 					ptr=end;
 				}
+			pageOpen=true;
+			dirty=true;
+			setSensitive();
+			refreshMainWindow();
 		}
+	g_free(commandBuffer);
 	gtk_widget_destroy (dialog);
 
 }
