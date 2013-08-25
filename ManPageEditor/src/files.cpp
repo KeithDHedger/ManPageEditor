@@ -866,7 +866,10 @@ GtkTextTag*	getNamedTag(int tagType)
 							sprintf((char*)&tagname,"bold-%i",tagitalicnum);
 							tag=gtk_text_tag_table_lookup(tagtable,tagname);
 						}
-					return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL));
+					if(useUnderline==true)
+						return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"underline",PANGO_UNDERLINE_SINGLE,NULL));
+					else
+						return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL));
 				break;
 		}
 	return(NULL);
@@ -881,10 +884,8 @@ void replaceTags(void)
 	GtkTextIter				starttag2;
 	GtkTextTag*				tag=NULL;
 	bool					flag=true;
-//	const char*				texttags[]={BOLDESC,ITALICESC,ITALIC1ESC,ITALIC2ESC};
-	const char*				texttags[]={"\e[1m","\e[4m"};
-//	const char*				endtexttags[]={NORMALESC,NORMALESC1,NORMALESC2,NORMALESC3,"\n"};
-	const char*				endtexttags[]={"\e[0m","\n"};
+	const char*				texttags[]={BOLDESC,ITALICESC};
+	const char*				endtexttags[]={NORMALESC,"\n"};
 	bool					noendfound=true;
 
 	int						numstarttags=2;
@@ -912,7 +913,6 @@ void replaceTags(void)
 											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
 											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
 											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-											//gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
 											if(k!=nltag)
 												{
 													gtk_source_iter_forward_search(&starttag,endtexttags[k],flags,&starttag2,&endtag2,NULL);
@@ -934,22 +934,6 @@ void replaceTags(void)
 						break;
 				}
 		}
-/*
-	for(int j=0;j<4;j++)
-		{
-			if(j!=1)
-				{
-					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					while(true)
-						{
-							if(gtk_source_iter_forward_search(&start,endtexttags[j],flags,&start,&endtag,NULL))
-								gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&start,&endtag);
-							else
-								break;
-						}
-				}
-		}
-*/
 }
 
 char*	getLineFromString(char* bigStr)
@@ -1067,7 +1051,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 			props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
 			if(props!=NULL)
 				{
-					//manFilename=tempnam(NULL,"ManEd");
 					sscanf(props,"%s %s %s %s %s",manNameBuffer,manSectionBuffer,manVersionBuffer,manAuthorBuffer,manCategoryBuffer);
 					
 					manName=strdup(manNameBuffer);
@@ -1081,7 +1064,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 					manCategory=strdup(manCategoryBuffer);
 					replaceAllSlice(&manCategory,(char*)"\"",(char*)"");
 					pageOpen=true;
-					//g_mkdir_with_parents(manFilename,493);
 				}
 
 			while(true)
@@ -1103,7 +1085,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 					replaceAllSlice(&sect,ptr,(char*)"");
 					replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
 					sect=cleanText(sect);
-					//sect=sect;
 
 					gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 						gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);

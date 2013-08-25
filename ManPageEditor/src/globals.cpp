@@ -76,10 +76,12 @@ int				tabWidth;
 char*			fontAndSize;
 char*			terminalCommand;
 bool			showLiveSearch;
+bool			useUnderline;
 bool			tmpLineWrap;
 bool			tmpHighLight;
 int				tmpTabWidth;
 bool			tmpShowLiveSearch;
+bool			tmpUseUnderline;
 
 int				windowWidth;
 int				windowHeight;

@@ -43,6 +43,14 @@ void doPrefs(void)
 	gtk_box_pack_start(GTK_BOX(vbox),item,true,true,0);
 	g_signal_connect(G_OBJECT(item),"toggled",G_CALLBACK(setPrefs),(void*)item);
 
+//use underline
+	item=gtk_check_button_new_with_label("Use Underline");
+	gtk_widget_set_name(item,"underline");
+	gtk_toggle_button_set_active((GtkToggleButton*)item,useUnderline);
+	gtk_box_pack_start(GTK_BOX(vbox),item,true,true,0);
+	g_signal_connect(G_OBJECT(item),"toggled",G_CALLBACK(setPrefs),(void*)item);
+
+
 //show live search in toolbar
 	item=gtk_check_button_new_with_label("Show 'Live Search' in toolbar");
 	gtk_widget_set_name(item,"livesearch");

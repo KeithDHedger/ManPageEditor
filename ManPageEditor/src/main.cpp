@@ -44,8 +44,12 @@ void readConfig(void)
 					if(strcasecmp(name,"highlightcurrentline")==0)
 							highLight=(bool)atoi(strarg);
 
+					if(strcasecmp(name,"useundeline")==0)
+							useUnderline=(bool)atoi(strarg);
+
 					if(strcasecmp(name,"insenssearch")==0)
 							insensitiveSearch=(bool)atoi(strarg);
+
 					if(strcasecmp(name,"wrapsearch")==0)
 							wrapSearch=(bool)atoi(strarg);
 
@@ -96,6 +100,8 @@ void init(void)
 #endif
 	lineWrap=true;
 	highLight=true;
+	useUnderline=true;
+
 	tabWidth=4;
 	fontAndSize=strdup("mono 10");
 	terminalCommand=strdup("xterm -e");
@@ -115,7 +121,9 @@ void init(void)
 	readConfig();
 
 	tmpHighLight=highLight;
+	tmpLineWrap=lineWrap;
 	tmpTabWidth=tabWidth;
+	tmpUseUnderline=useUnderline;
 	tmpShowLiveSearch=showLiveSearch;
 
 #ifdef _ASPELL_

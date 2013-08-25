@@ -390,6 +390,7 @@ void writeConfig(void)
 		{
 			fprintf(fd,"wrapline	%i\n",(int)lineWrap);
 			fprintf(fd,"highlightcurrentline	%i\n",(int)highLight);
+			fprintf(fd,"useundeline	%i\n",(int)useUnderline);
 			fprintf(fd,"insenssearch	%i\n",(int)insensitiveSearch);
 			fprintf(fd,"wrapsearch	%i\n",(int)wrapSearch);
 			fprintf(fd,"showlivesearch	%i\n",(int)showLiveSearch);
@@ -442,8 +443,12 @@ void setPrefs(GtkWidget* widget,gpointer data)
 {
 	if(strcmp(gtk_widget_get_name(widget),"wrap")==0)
 		tmpLineWrap=gtk_toggle_button_get_active((GtkToggleButton*)data);
+
 	if(strcmp(gtk_widget_get_name(widget),"high")==0)
 		tmpHighLight=gtk_toggle_button_get_active((GtkToggleButton*)data);
+
+	if(strcmp(gtk_widget_get_name(widget),"underline")==0)
+		tmpUseUnderline=gtk_toggle_button_get_active((GtkToggleButton*)data);
 
 	if(strcmp(gtk_widget_get_name(widget),"livesearch")==0)
 		tmpShowLiveSearch=gtk_toggle_button_get_active((GtkToggleButton*)data);
@@ -458,6 +463,7 @@ void setPrefs(GtkWidget* widget,gpointer data)
 		{
 			lineWrap=tmpLineWrap;
 			highLight=tmpHighLight;
+			useUnderline=tmpUseUnderline;
 			showLiveSearch=tmpShowLiveSearch;
 			showHideWidget(liveSearchWidget,showLiveSearch);
 

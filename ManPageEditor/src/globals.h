@@ -117,11 +117,13 @@ extern int				tabWidth;
 extern char*			fontAndSize;
 extern char*			terminalCommand;
 extern bool				showLiveSearch;
+extern bool				useUnderline;
 extern GtkWidget*		fontBox;
 extern bool				tmpLineWrap;
 extern bool				tmpHighLight;
 extern int				tmpTabWidth;
 extern bool				tmpShowLiveSearch;
+extern bool				tmpUseUnderline;
 
 extern int				windowWidth;
 extern int				windowHeight;
