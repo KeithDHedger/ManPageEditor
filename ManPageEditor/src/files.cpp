@@ -28,6 +28,38 @@ bool		isSubsection=false;
 int			tagboldnum=0;
 int			tagitalicnum=0;
 
+void tagLookUp(GtkTextTag *tag,gpointer data)
+{
+	int		style=-1;
+	int		underline=-1;
+
+	if(useUnderline==true)
+		{
+			g_object_get((gpointer)tag,"style",&style,NULL);
+			if(style==PANGO_STYLE_ITALIC)
+				{
+					g_object_set((gpointer)tag,"style",PANGO_STYLE_NORMAL,NULL);
+					g_object_set((gpointer)tag,"underline",PANGO_UNDERLINE_SINGLE,NULL);
+				}
+		}
+	else
+		{
+			g_object_get((gpointer)tag,"underline",&underline,NULL);
+			if(underline==PANGO_UNDERLINE_SINGLE)
+				{
+					g_object_set((gpointer)tag,"underline",PANGO_UNDERLINE_NONE,NULL);
+					g_object_set((gpointer)tag,"style",PANGO_STYLE_ITALIC,NULL);
+				}
+		}
+}
+
+void setUnderlining(pageStruct* page)
+{
+	GtkTextTagTable*   tagtable=gtk_text_buffer_get_tag_table((GtkTextBuffer*)page->buffer);
+
+	gtk_text_tag_table_foreach(tagtable,tagLookUp,page->fileName);
+}
+
 void makeDirty(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page=(pageStruct*)data;
@@ -36,6 +68,25 @@ void makeDirty(GtkWidget* widget,gpointer data)
 	if(page!=NULL)
 		gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
 	setSensitive();
+}
+
+void resetAllItalicTags(void)
+{
+	long		thispage;
+	pageStruct*	page;
+	int			numtabs=gtk_notebook_get_n_pages(notebook);
+
+	for(int loop=0;loop<numtabs;loop++)
+		{
+			page=getPageStructPtr(loop);
+			if(page!=NULL)
+				{
+					setUnderlining(page);
+					dirty=true;
+					gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),true);
+					setSensitive();
+				}
+		}
 }
 
 GtkWidget* makeNewTab(char* name,char* tooltip,pageStruct* page)
@@ -652,6 +703,7 @@ void openConvertedFile(char* filepath)
 	gtk_source_buffer_set_highlight_matching_brackets(page->buffer,false);
 	gtk_source_buffer_begin_not_undoable_action(page->buffer);
 		loadBuffer(page);
+		setUnderlining(page);
 	gtk_source_buffer_end_not_undoable_action(page->buffer);
 
 	g_free(filename);

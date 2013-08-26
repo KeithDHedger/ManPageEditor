@@ -23,5 +23,6 @@ void makeDirty(GtkWidget* widget,gpointer data);
 void deleteSection(GtkWidget* widget,gpointer data);
 void renameSection(GtkWidget* widget,gpointer data);
 void importManpage(GtkWidget* widget,gpointer data);
+void resetAllItalicTags(void);
 
 #endif

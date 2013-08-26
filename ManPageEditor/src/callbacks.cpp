@@ -483,6 +483,7 @@ void setPrefs(GtkWidget* widget,gpointer data)
 			gtk_widget_destroy(prefswin);
 			resetAllFilePrefs();
 			writeConfig();
+			resetAllItalicTags();
 		}
 }
 
