@@ -189,7 +189,7 @@ void dropText(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelecti
 	gtk_drag_finish (context,true,true,time);
 }
 
-bool getSaveFile(void)
+bool getSaveFile(bool isExport)
 {
 	GtkWidget*	dialog;
 	bool		retval=false;
@@ -197,11 +197,17 @@ bool getSaveFile(void)
 	dialog=gtk_file_chooser_dialog_new("Save File",(GtkWindow*)window, GTK_FILE_CHOOSER_ACTION_SAVE,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_SAVE,GTK_RESPONSE_ACCEPT,NULL);
 
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER (dialog),TRUE);
-	if(saveFileName!=NULL)
+	if((isExport==false) && (saveFileName!=NULL))
 		{
 			if(saveFilePath!=NULL)
 				gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),g_path_get_dirname(saveFilePath));
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),saveFileName);
+		}
+	else if((isExport==true) && (exportPath!=NULL))
+		{
+			if(exportPath!=NULL)
+				gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),g_path_get_dirname(exportPath));
+			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),"Untitled.1");
 		}
  	else
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),"Untitled");
@@ -216,30 +222,6 @@ bool getSaveFile(void)
 	gtk_widget_destroy(dialog);
 	refreshMainWindow();
 	return(retval);
-}
-
-char* escapeString(char* ptr)
-{
-	GString*	str=g_string_new(ptr);
-	GString*	deststr=g_string_new(NULL);
-	g_free(ptr);
-
-	for(unsigned int j=0;j<str->len;j++)
-		{
-			switch(str->str[j])
-				{
-					case '-':
-						g_string_append(deststr,"\\-");
-						break;
-//					case '<':
-//						g_string_append(deststr,"\-");
-//						break;
-					default:
-						g_string_append_c(deststr,str->str[j]);
-				}
-		}
-	g_string_free(str,true);
-	return(g_string_free(deststr,false));
 }
 
 char* doReplaceTags(char* str)
@@ -313,7 +295,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 
 	if(exportPath==NULL || data!=NULL)
 		{
-			if(getSaveFile()==false)
+			if(getSaveFile(true)==false)
 				return;
 			exportPath=strdup(saveFilePath);
 		}
@@ -411,7 +393,7 @@ void saveManpage(GtkWidget* widget,gpointer data)
 
 	if(manFilePath==NULL)
 		{
-			if(getSaveFile()==false)
+			if(getSaveFile(false)==false)
 				return;
 			if(g_str_has_suffix(saveFilePath,".mpz"))
 				manFilePath=strdup(saveFilePath);
@@ -1017,17 +999,6 @@ char*	getLineFromString(char* bigStr)
 	return(retval);
 }
 
-char	tabs[64]={0,};
-int		currenttabs=0;
-
-void makeTabs(int numtabs)
-{
-	for(int j=0;j<numtabs;j++)
-		tabs[j]='\t';
-	tabs[numtabs]=0;
-	currenttabs=numtabs;
-}
-
 char* cleanText(char* text)
 {
 	char*			data=text;
@@ -1128,7 +1099,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 					replaceAllSlice(&manAuthor,(char*)"\"",(char*)"");
 					manCategory=strdup(manCategoryBuffer);
 					replaceAllSlice(&manCategory,(char*)"\"",(char*)"");
-					pageOpen=true;
 				}
 
 			while(true)
