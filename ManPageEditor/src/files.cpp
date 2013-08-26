@@ -72,7 +72,6 @@ void makeDirty(GtkWidget* widget,gpointer data)
 
 void resetAllItalicTags(void)
 {
-	long		thispage;
 	pageStruct*	page;
 	int			numtabs=gtk_notebook_get_n_pages(notebook);
 
@@ -106,7 +105,6 @@ GtkWidget* makeNewTab(char* name,char* tooltip,pageStruct* page)
 
 void setFilePrefs(GtkSourceView* sourceview)
 {
-
 	PangoFontDescription*	font_desc;
 
 	gtk_source_view_set_auto_indent(sourceview,true);
