@@ -2,6 +2,9 @@
 Added 'Use Underline' to prefs to show italic as underlined ( most terminals do this ).
 Redone document icon.
 Redone application icon.
+Fixed problems with filenames when importing manpage.
+Added extra size icons for mimetypes.
+
 
 0.0.8
 Added import manpage.
