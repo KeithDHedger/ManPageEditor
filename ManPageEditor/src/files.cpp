@@ -405,7 +405,9 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	pageStruct*	page;
 	FILE*		fd=NULL;
 	char*		manifest;
-
+	char*		lowername;
+	char*		dirname;
+	char*		recenturi;
 
 	if(manFilePath==NULL)
 		{
@@ -448,6 +450,18 @@ void saveManpage(GtkWidget* widget,gpointer data)
 	asprintf(&manifest,"tar -cC %s -f %s .",manFilename,manFilePath);
 	system(manifest);
 	g_free(manifest);
+
+	if(exportPath!=NULL)
+		g_free(exportPath);
+
+	dirname=g_path_get_dirname(manFilePath);
+	lowername=g_ascii_strdown(manName,-1);
+	asprintf(&exportPath,"%s/%s.%s",dirname,lowername,manSection);
+	g_free(dirname);
+	g_free(lowername);
+	recenturi=g_filename_to_uri(manFilePath,NULL,NULL);
+	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
+
 	dirty=false;
 	setSensitive();
 }
@@ -1067,6 +1081,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 	FILE*		fp;
 	char		buffer[256]={0,};
 	char*		commandBuffer=(char*)malloc(2048);
+	char*		recenturi;
 
 	closePage(NULL,NULL);
 	manFilename=tempnam(NULL,"ManEd");
@@ -1081,7 +1096,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				pclose(fp);
-			sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g'|sed 's/\\x1b\\[24m/\\x1b\\[0m/g'|sed 's/\\x1b\\[22m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
+			sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g;s/\\x1b\\[22m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				pclose(fp);
@@ -1147,6 +1162,11 @@ void importManpage(GtkWidget* widget,gpointer data)
 
 					ptr=end;
 				}
+
+			recenturi=g_filename_to_uri(filename,NULL,NULL);
+			gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
+			g_free(recenturi);
+			g_free(filename);
 			pageOpen=true;
 			dirty=true;
 			setSensitive();
