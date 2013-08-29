@@ -11,8 +11,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <gtksourceview/gtksourcebuffer.h>
-#include <gtksourceview/gtksourcelanguage.h>
-#include <gtksourceview/gtksourcelanguagemanager.h>
 
 #ifdef _ASPELL_
 #include <aspell.h>

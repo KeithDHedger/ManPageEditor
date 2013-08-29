@@ -1044,15 +1044,12 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char*		ptr;
 	GtkTextIter	iter;
 	char*		props;
-	char		manNameBuffer[64];
-	char		manSectionBuffer[64];
-	char		manVersionBuffer[64];
-	char		manAuthorBuffer[64];
-	char		manCategoryBuffer[64];
 	FILE*		fp;
 	char		buffer[256]={0,};
 	char*		commandBuffer=(char*)malloc(2048);
 	char*		recenturi;
+	int			numprops;
+	char**		propargs;
 
 	closePage(NULL,NULL);
 	manFilename=tempnam(NULL,"ManEd");
@@ -1085,20 +1082,47 @@ void importManpage(GtkWidget* widget,gpointer data)
 			ptr=contents;
 
 			props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
+
 			if(props!=NULL)
 				{
-					sscanf(props,"%s %s %s %s %s",manNameBuffer,manSectionBuffer,manVersionBuffer,manAuthorBuffer,manCategoryBuffer);
-					
-					manName=strdup(manNameBuffer);
-					replaceAllSlice(&manName,(char*)"\"",(char*)"");
-					manSection=strdup(manSectionBuffer);
-					replaceAllSlice(&manSection,(char*)"\"",(char*)"");
-					manVersion=strdup(manVersionBuffer);
-					replaceAllSlice(&manVersion,(char*)"\"",(char*)"");
-					manAuthor=strdup(manAuthorBuffer);
-					replaceAllSlice(&manAuthor,(char*)"\"",(char*)"");
-					manCategory=strdup(manCategoryBuffer);
-					replaceAllSlice(&manCategory,(char*)"\"",(char*)"");
+					if(manName!=NULL)
+						{
+							g_free(manName);
+							manName=NULL;
+						}
+					if(manSection!=NULL)
+						{
+							g_free(manSection);
+							manSection=NULL;
+						}
+					if(manVersion!=NULL)
+						{
+							g_free(manVersion);
+							manVersion=NULL;
+						}
+					if(manAuthor!=NULL)
+						{
+							g_free(manAuthor);
+							manAuthor=NULL;
+						}
+					if(manCategory!=NULL)
+						{
+							g_free(manCategory);
+							manCategory=NULL;
+						}
+
+					g_shell_parse_argv(props,&numprops,&propargs,NULL);
+					if(numprops>0)
+						manName=strdup(propargs[0]);
+					if(numprops>1)
+						manSection=strdup(propargs[1]);
+					if(numprops>2)
+						manVersion=strdup(propargs[2]);
+					if(numprops>3)
+						manAuthor=strdup(propargs[3]);
+					if(numprops>4)
+						manCategory=strdup(propargs[4]);
+					g_strfreev(propargs);
 				}
 
 			while(true)

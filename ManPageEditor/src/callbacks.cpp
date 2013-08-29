@@ -409,7 +409,10 @@ void doShutdown(GtkWidget* widget,gpointer data)
 
 	if(dirty==true)
 		{
-			result=show_question(g_path_get_basename(manFilePath));
+			if(manFilePath!=NULL)
+				result=show_question(g_path_get_basename(manFilePath));
+			else
+				result=show_question("manpage");
 			switch(result)
 				{
 					case GTK_RESPONSE_YES:
@@ -626,8 +629,9 @@ void redoProps(GtkWidget* widget,gpointer data)
 		nameBox=gtk_entry_new();
 		label=gtk_label_new("Name\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),nameBox,true,true,0);	
-		gtk_entry_set_text((GtkEntry*)nameBox,manName);
+		gtk_box_pack_start(GTK_BOX(hbox),nameBox,true,true,0);
+		if(manName!=NULL)
+			gtk_entry_set_text((GtkEntry*)nameBox,manName);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 	hbox=gtk_hbox_new(false,0);
@@ -635,7 +639,8 @@ void redoProps(GtkWidget* widget,gpointer data)
 		label=gtk_label_new("Section\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);		
-		gtk_entry_set_text((GtkEntry*)sectionBox,manSection);
+		if(manSection!=NULL)
+			gtk_entry_set_text((GtkEntry*)sectionBox,manSection);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 	hbox=gtk_hbox_new(false,0);
@@ -643,7 +648,8 @@ void redoProps(GtkWidget* widget,gpointer data)
 		label=gtk_label_new("Version\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);		
-		gtk_entry_set_text((GtkEntry*)versionBox,manVersion);
+		if(manVersion!=NULL)
+			gtk_entry_set_text((GtkEntry*)versionBox,manVersion);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 	hbox=gtk_hbox_new(false,0);
@@ -651,7 +657,8 @@ void redoProps(GtkWidget* widget,gpointer data)
 		label=gtk_label_new("Author\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);		
-		gtk_entry_set_text((GtkEntry*)authorBox,manAuthor);
+		if(manAuthor!=NULL)
+			gtk_entry_set_text((GtkEntry*)authorBox,manAuthor);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 	hbox=gtk_hbox_new(false,0);
@@ -659,7 +666,8 @@ void redoProps(GtkWidget* widget,gpointer data)
 		label=gtk_label_new("Category\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);		
-		gtk_entry_set_text((GtkEntry*)categoryBox,manCategory);
+		if(manCategory!=NULL)
+			gtk_entry_set_text((GtkEntry*)categoryBox,manCategory);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 
