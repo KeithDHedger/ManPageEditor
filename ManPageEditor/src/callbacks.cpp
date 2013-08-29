@@ -412,7 +412,7 @@ void doShutdown(GtkWidget* widget,gpointer data)
 			if(manFilePath!=NULL)
 				result=show_question(g_path_get_basename(manFilePath));
 			else
-				result=show_question("manpage");
+				result=show_question((char*)"manpage");
 			switch(result)
 				{
 					case GTK_RESPONSE_YES:
