@@ -111,6 +111,7 @@ extern int				currentPage;
 extern GtkWidget*		prefswin;
 extern GtkWidget*		terminalBox;
 
+extern bool				gzipPages;
 extern bool				lineWrap;
 extern bool				highLight;
 extern int				tabWidth;
@@ -119,6 +120,7 @@ extern char*			terminalCommand;
 extern bool				showLiveSearch;
 extern bool				useUnderline;
 extern GtkWidget*		fontBox;
+extern bool				tmpGzipPages;
 extern bool				tmpLineWrap;
 extern bool				tmpHighLight;
 extern int				tmpTabWidth;

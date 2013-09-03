@@ -292,6 +292,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 	FILE*		fd=NULL;
 	char*		xmldata=NULL;
 	GString*	str=g_string_new(NULL);
+	char*		zipcommand=NULL;
 
 	if(exportPath==NULL || data!=NULL)
 		{
@@ -361,6 +362,12 @@ void exportFile(GtkWidget* widget,gpointer data)
 						}
 				}
 			fclose(fd);
+			if(gzipPages==true)
+				{
+					asprintf(&zipcommand,"gzip --force %s",exportPath);
+					system(zipcommand);
+					g_free(zipcommand);
+				}
 		}
 }
 
@@ -807,17 +814,24 @@ void openManpage(GtkWidget* widget,gpointer data)
 	if(manFilename!=NULL)
 		closeAllTabs(NULL,NULL);
 
-	dialog=gtk_file_chooser_dialog_new("Open File",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
-
-	gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filter);
-	gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filterall);
-	if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
+	if((long)data==1)
 		{
-			filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			doOpenManpage(filename);
-			g_free(filename);
+			doOpenManpage((char*)DATADIR"/examples/template-1.mpz");
 		}
-	gtk_widget_destroy (dialog);
+	else
+		{
+			dialog=gtk_file_chooser_dialog_new("Open File",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
+
+			gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filter);
+			gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filterall);
+			if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
+				{
+					filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+					doOpenManpage(filename);
+					g_free(filename);
+				}
+			gtk_widget_destroy (dialog);
+		}
 	dirty=false;
 	setSensitive();
 

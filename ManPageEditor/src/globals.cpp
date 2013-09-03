@@ -68,6 +68,7 @@ GtkWidget*		prefswin;
 GtkWidget*		fontBox;
 GtkWidget*		terminalBox;
 
+bool			gzipPages;
 bool			lineWrap;
 bool			highLight;
 int				tabWidth;
@@ -75,6 +76,7 @@ char*			fontAndSize;
 char*			terminalCommand;
 bool			showLiveSearch;
 bool			useUnderline;
+bool			tmpGzipPages;
 bool			tmpLineWrap;
 bool			tmpHighLight;
 int				tmpTabWidth;

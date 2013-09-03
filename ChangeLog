@@ -1,3 +1,7 @@
+0.0.10
+Added 'New From Template' to 'File' menu, at some later stage I may add multiple templates to this.
+Added 'GZip Man Pages' to prefs to gzip exported manpages as some linux distros require ( Arch ).
+
 0.0.9
 Added 'Use Underline' to prefs to show italic as underlined ( most terminals do this ).
 Redone document icon.

@@ -394,6 +394,7 @@ void writeConfig(void)
 			fprintf(fd,"insenssearch	%i\n",(int)insensitiveSearch);
 			fprintf(fd,"wrapsearch	%i\n",(int)wrapSearch);
 			fprintf(fd,"showlivesearch	%i\n",(int)showLiveSearch);
+			fprintf(fd,"gzip	%i\n",(int)gzipPages);
 			fprintf(fd,"tabwidth	%i\n",tabWidth);
 			fprintf(fd,"font	%s\n",fontAndSize);
 			fprintf(fd,"terminalcommand	%s\n",terminalCommand);
@@ -444,6 +445,9 @@ void doShutdown(GtkWidget* widget,gpointer data)
 
 void setPrefs(GtkWidget* widget,gpointer data)
 {
+	if(strcmp(gtk_widget_get_name(widget),"gzip")==0)
+		tmpGzipPages=gtk_toggle_button_get_active((GtkToggleButton*)data);
+
 	if(strcmp(gtk_widget_get_name(widget),"wrap")==0)
 		tmpLineWrap=gtk_toggle_button_get_active((GtkToggleButton*)data);
 
@@ -464,6 +468,7 @@ void setPrefs(GtkWidget* widget,gpointer data)
 
 	if(strcmp(gtk_widget_get_name(widget),"apply")==0)
 		{
+			gzipPages=tmpGzipPages;
 			lineWrap=tmpLineWrap;
 			highLight=tmpHighLight;
 			useUnderline=tmpUseUnderline;

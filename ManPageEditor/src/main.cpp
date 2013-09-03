@@ -39,6 +39,9 @@ void readConfig(void)
 					if(strcasecmp(name,"wrapline")==0)
 							lineWrap=(bool)atoi(strarg);
 
+					if(strcasecmp(name,"gzip")==0)
+							gzipPages=(bool)atoi(strarg);
+
 					if(strcasecmp(name,"highlightcurrentline")==0)
 							highLight=(bool)atoi(strarg);
 
@@ -111,6 +114,7 @@ void init(void)
 	insensitiveSearch=true;
 	replaceAll=false;
 	showLiveSearch=true;
+	gzipPages=false;
 
 	asprintf(&filename,"%s/.ManPageEditor",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
@@ -118,6 +122,7 @@ void init(void)
 
 	readConfig();
 
+	tmpGzipPages=gzipPages;
 	tmpHighLight=highLight;
 	tmpLineWrap=lineWrap;
 	tmpTabWidth=tabWidth;

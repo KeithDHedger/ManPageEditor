@@ -50,6 +50,13 @@ void doPrefs(void)
 	gtk_box_pack_start(GTK_BOX(vbox),item,true,true,0);
 	g_signal_connect(G_OBJECT(item),"toggled",G_CALLBACK(setPrefs),(void*)item);
 
+//gzip manpages
+	item=gtk_check_button_new_with_label("GZip Man Pages");
+	gtk_widget_set_name(item,"gzip");
+	gtk_toggle_button_set_active((GtkToggleButton*)item,gzipPages);
+	gtk_box_pack_start(GTK_BOX(vbox),item,true,true,0);
+	g_signal_connect(G_OBJECT(item),"toggled",G_CALLBACK(setPrefs),(void*)item);
+
 
 //show live search in toolbar
 	item=gtk_check_button_new_with_label("Show 'Live Search' in toolbar");
@@ -224,6 +231,13 @@ void buildMainGui(void)
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+
+//newtemplate
+	menuitem=gtk_image_menu_item_new_with_label("New From Template");
+	image=gtk_image_new_from_stock(GTK_STOCK_NEW,GTK_ICON_SIZE_MENU);
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem),"activate",G_CALLBACK(openManpage),(void*)1);
 
 //new editor
 	menuitem=gtk_image_menu_item_new_with_label("New Editor");
