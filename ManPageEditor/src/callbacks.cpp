@@ -700,10 +700,16 @@ void previewPage(GtkWidget* widget,gpointer data)
 
 	exportPath=(char*)"/tmp/previewpage";
 	exportFile(NULL,NULL);
-	sprintf((char*)&command,"%s man /tmp/previewpage",terminalCommand);
+	if(gzipPages==true)
+		sprintf((char*)&command,"%s man /tmp/previewpage.gz",terminalCommand);
+	else
+		sprintf((char*)&command,"%s man /tmp/previewpage",terminalCommand);
 	system(command);
 	exportPath=holdpath;
-	unlink("/tmp/previewpage");
+	if(gzipPages==true)
+		unlink("/tmp/previewpage.gz");
+	else
+		unlink("/tmp/previewpage");
 }
 
 void reorderDirty(GtkNotebook *notebook,GtkWidget *child,guint page_num,gpointer user_data)
