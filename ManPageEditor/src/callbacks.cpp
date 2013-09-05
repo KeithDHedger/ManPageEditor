@@ -609,7 +609,6 @@ void doFormat(GtkWidget* widget,gpointer data)
 					else
 						tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL);
 
-					//tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL);
 					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
 					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
 				break;
