@@ -1079,7 +1079,6 @@ int showFunctionEntry(void)
 char* getManpageName(void)
 {
 	GtkWidget*	dialog;
-	int			result;
 	char*		manpage=NULL;
 	GtkWidget*	entrybox;
 	GtkWidget*	content_area;
@@ -1095,7 +1094,7 @@ char* getManpageName(void)
 	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
 	gtk_widget_show_all(content_area);
 
-	result=gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_dialog_run(GTK_DIALOG(dialog));
 	manpage=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
 	gtk_widget_destroy(dialog);
 	return(manpage);
