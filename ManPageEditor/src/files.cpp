@@ -1046,36 +1046,6 @@ char* cleanText(char* text)
 	return(g_string_free(deststr,false));
 }
 
-/*
-int showFunctionEntry(void)
-{
-	GtkWidget*	dialog;
-	gint		result;
-	GtkWidget*	content_area;
-	GtkWidget*	entrybox;
-
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Enter Function Name");
-
-	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
-	gtk_window_set_title(GTK_WINDOW(dialog),"Find Function");
-
-	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
-	entrybox=gtk_entry_new();
-	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
-	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
-	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
-	gtk_widget_show_all(content_area);
-	result=gtk_dialog_run(GTK_DIALOG(dialog));
-	if(functionSearchText!=NULL)
-		g_free(functionSearchText);
-	functionSearchText=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
-	gtk_widget_destroy(dialog);
-
-	return(result);
-}
-
-
-*/
 char* getManpageName(void)
 {
 	GtkWidget*	dialog;
@@ -1153,19 +1123,22 @@ void importManpage(GtkWidget* widget,gpointer data)
 			}
 		else
 			{
+				g_free(commandBuffer);
+				gtk_widget_destroy (dialog);
 				return;
 			}
 		}
 
 	if(g_str_has_suffix(filename,".gz"))
-		sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' > %s/x",filename,manFilename);
+		sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
 	else
-		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' > %s/x",filename,manFilename);
+		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
 
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
 		pclose(fp);
-	sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g;s/\\x1b\\[22m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
+	sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4|sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g;s/\\x1b\\[22m/\\x1b\\[0m/g;s/@@CC@@/©/g' > %s/xx",manFilename,manFilename);
+
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
 		pclose(fp);
@@ -1244,6 +1217,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 			importSection(strdup(ptr));
 			replaceAllSlice(&sect,ptr,(char*)"");
 			replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
+			replaceAllSlice(&sect,(char*)"\\(co",(char*)"");
 			sect=cleanText(sect);
 
 			gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
@@ -1263,7 +1237,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 	g_free(recenturi);
 	g_free(filename);
 	pageOpen=true;
-	dirty=true;
+	dirty=false;
 	setSensitive();
 	refreshMainWindow();
 
