@@ -1130,7 +1130,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 			manname=getManpageName();
 			if(manname==NULL)
 				return;
-			sprintf(commandBuffer,"man -w %s",manname);
+			sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				{
@@ -1139,7 +1139,10 @@ void importManpage(GtkWidget* widget,gpointer data)
 				}
 			else
 				return;
-		filename=strndup((char*)&buffer[0],strlen((char*)&buffer[0])-1);
+			if(strlen(buffer)==0)
+				return;
+
+			filename=strndup((char*)&buffer[0],strlen((char*)&buffer[0])-1);
 		}
 	else
 		{

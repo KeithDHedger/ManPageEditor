@@ -1,7 +1,10 @@
+0.0.11
+Added 'Import System Manpage' to file menu.
+
 0.0.10
 Added 'New From Template' to 'File' menu, at some later stage I may add multiple templates to this.
 Added 'GZip Man Pages' to prefs to gzip exported manpages as some linux distros prefer ( Arch for instance ).
-Bug fix for showing as underline ( minor but annoying ).
+Bug fix for showing italic as underline ( minor but annoying ).
 
 0.0.9
 Added 'Use Underline' to prefs to show italic as underlined ( most terminals do this ).
