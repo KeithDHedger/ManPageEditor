@@ -522,7 +522,7 @@ void beginPrint(GtkPrintOperation *operation,GtkPrintContext *context,gpointer u
 	GtkSourcePrintCompositor*	compositor;
 	gint						n_pages;
 
-    compositor=GTK_SOURCE_PRINT_COMPOSITOR (user_data);
+    compositor=GTK_SOURCE_PRINT_COMPOSITOR(user_data);
 
     while(!gtk_source_print_compositor_paginate(compositor,context));
 
@@ -530,14 +530,46 @@ void beginPrint(GtkPrintOperation *operation,GtkPrintContext *context,gpointer u
     gtk_print_operation_set_n_pages(operation,n_pages);
 }
 
+GtkSourceBuffer*	printBuffer;
+GtkSourceView*		printView;
+
+void doCombineBuffers(void)
+{
+	pageStruct*	page;
+	GtkTextIter	iter;
+	GtkTextIter	fromstart;
+	GtkTextIter	fromend;
+	GtkClipboard*	clipboard=gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+
+	printBuffer=gtk_source_buffer_new(NULL);
+	printView=(GtkSourceView*)gtk_source_view_new_with_buffer(printBuffer);
+
+	gtk_text_buffer_get_start_iter((GtkTextBuffer*)printBuffer,&iter);
+
+	for(int j=0;j<gtk_notebook_get_n_pages(notebook);j++)
+		{
+			page=getPageStructPtr(j);
+			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&fromstart);
+			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&fromend);
+			//gtk_text_buffer_insert((GtkTextBuffer*)printBuffer,&iter,gtk_text_buffer_get_text((GtkTextBuffer *)page->buffer,&fromstart,&fromend,true),-1);
+			gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&fromstart,&fromend);
+			gtk_text_buffer_copy_clipboard((GtkTextBuffer *)page->buffer,clipboard);
+			gtk_text_buffer_paste_clipboard((GtkTextBuffer*)printBuffer,clipboard,&iter,true);
+			gtk_main_iteration_do(false);
+			gtk_text_buffer_get_end_iter((GtkTextBuffer*)printBuffer,&iter);
+		}
+}
+
 void printFile(GtkWidget* widget,gpointer data)
 {
+	doCombineBuffers();
 	pageStruct*					page=getPageStructPtr(-1);
-	GtkSourcePrintCompositor*	printview=gtk_source_print_compositor_new_from_view(page->view);
+//	GtkSourcePrintCompositor*	printview=gtk_source_print_compositor_new_from_view(page->view);
+	GtkSourcePrintCompositor*	printview=gtk_source_print_compositor_new_from_view(printView);
 	GtkPrintOperation*			print;
 	GtkPrintOperationResult		result;
 
-	print=gtk_print_operation_new ();
+	print=gtk_print_operation_new();
 	if (settings != NULL)
 		gtk_print_operation_set_print_settings(print,settings);
 	g_signal_connect(print,"begin-print",G_CALLBACK(beginPrint),(void*)printview);

@@ -303,10 +303,18 @@ void buildMainGui(void)
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 
-//printfile
+//printtab
+	image=gtk_image_new_from_stock(GTK_STOCK_PRINT,GTK_ICON_SIZE_MENU);
+	menuprint=gtk_image_menu_item_new_with_label("Print Section");
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuprint,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuprint);
+	gtk_signal_connect(GTK_OBJECT(menuprint),"activate",G_CALLBACK(printFile),NULL);
+
+/*
 	menuprint=gtk_image_menu_item_new_from_stock(GTK_STOCK_PRINT,NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuprint);
 	gtk_signal_connect(GTK_OBJECT(menuprint),"activate",G_CALLBACK(printFile),NULL);
+*/
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
