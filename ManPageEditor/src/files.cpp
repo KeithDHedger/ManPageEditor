@@ -1132,6 +1132,193 @@ void importManpage(GtkWidget* widget,gpointer data)
 	if(g_str_has_suffix(filename,".gz"))
 		sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
 	else
+//		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' > %s/x",filename,manFilename);
+		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
+
+	fp=popen(commandBuffer,"r");
+	if(fp!=NULL)
+		pclose(fp);
+//sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g;s/\\x1b\\[22m/\\x1b\\[0m/g;s/@@CC@@/©/g' > %s/xx",manFilename,manFilename);
+//sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g;s/\\x1b\\[22m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
+sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
+	fp=popen(commandBuffer,"r");
+	if(fp!=NULL)
+		pclose(fp);
+
+	sprintf(commandBuffer,"cat %s/x|grep \"\\.TH\"",manFilename);
+	fp=popen(commandBuffer,"r");
+	if(fp!=NULL)
+		{
+			fgets((char*)&buffer[0],256,fp);
+			pclose(fp);
+		}
+
+	sprintf(commandBuffer,"%s/xx",manFilename);
+	g_file_get_contents(commandBuffer,&contents,NULL,NULL);
+/*
+//s/\\.SH/\\.SH @SECTION@/g;
+//s/\\.SS/\\.SS @section@/g;
+*/
+	replaceAllSlice(&contents,(char*)"@@CC@@",(char*)"©");
+	replaceAllSlice(&contents,(char*)"\x1b\[22m",(char*)"\x1b\[0m");
+//	replaceAllSlice(&contents,(char*)".SS",(char*)".SS @section@");
+
+	ptr=contents;
+
+	props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
+
+	if(props!=NULL)
+		{
+			if(manName!=NULL)
+				{
+					g_free(manName);
+					manName=NULL;
+				}
+			if(manSection!=NULL)
+				{
+					g_free(manSection);
+					manSection=NULL;
+				}
+			if(manVersion!=NULL)
+				{
+					g_free(manVersion);
+					manVersion=NULL;
+				}
+			if(manAuthor!=NULL)
+				{
+					g_free(manAuthor);
+					manAuthor=NULL;
+				}
+			if(manCategory!=NULL)
+				{
+					g_free(manCategory);
+					manCategory=NULL;
+				}
+
+			g_shell_parse_argv(props,&numprops,&propargs,NULL);
+			if(numprops>0)
+				manName=strdup(propargs[0]);
+			if(numprops>1)
+				manSection=strdup(propargs[1]);
+			if(numprops>2)
+				manVersion=strdup(propargs[2]);
+			if(numprops>3)
+				manAuthor=strdup(propargs[3]);
+			if(numprops>4)
+				manCategory=strdup(propargs[4]);
+			g_strfreev(propargs);
+		}
+
+	while(true)
+		{
+			start=strcasestr(ptr,"@SECTION@");
+			if(start==NULL)
+				break;
+			end=strcasestr((char*)&start[9],"@SECTION@");
+
+			if(end==NULL)
+				sect=strdup(start);
+			else
+				{
+					len=(long)end-(long)start;
+					sect=strndup(start,len);
+				}
+			ptr=sliceCaseInclude(sect,(char*)"@SECTION@",(char*)"\n",true,true);
+			importSection(strdup(ptr));
+			replaceAllSlice(&sect,ptr,(char*)"");
+			replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
+			replaceAllSlice(&sect,(char*)"\\(co",(char*)"");
+			sect=cleanText(sect);
+
+			gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
+				gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
+				gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
+				replaceTags();
+			gtk_source_buffer_end_not_undoable_action(importPage->buffer);
+
+			if(end==NULL)
+				break;
+
+			ptr=end;
+		}
+
+	recenturi=g_filename_to_uri(filename,NULL,NULL);
+	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
+	g_free(recenturi);
+	g_free(filename);
+	pageOpen=true;
+	dirty=false;
+	setSensitive();
+	refreshMainWindow();
+
+	g_free(commandBuffer);
+	if(dialog!=NULL)
+		gtk_widget_destroy (dialog);
+}
+
+#if 0
+void importManpage(GtkWidget* widget,gpointer data)
+{
+	GtkWidget*	dialog=NULL;
+	char*		filename=NULL;
+	char*		contents;
+	char*		start=NULL;
+	char*		end=NULL;
+	long		len;
+	char*		sect=NULL;
+	char*		ptr;
+	GtkTextIter	iter;
+	char*		props;
+	FILE*		fp;
+	char		buffer[2048]={0,};
+	char*		commandBuffer=(char*)malloc(2048);
+	char*		recenturi;
+	int			numprops;
+	char**		propargs;
+	char*		manname=NULL;
+
+	closePage(NULL,NULL);
+	manFilename=tempnam(NULL,"ManEd");
+	g_mkdir_with_parents(manFilename,493);
+
+	if((long)data==1)
+		{
+			manname=getManpageName();
+			if(manname==NULL)
+				return;
+			sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
+			fp=popen(commandBuffer,"r");
+			if(fp!=NULL)
+				{
+					fgets((char*)&buffer[0],2048,fp);
+					pclose(fp);
+				}
+			else
+				return;
+			if(strlen(buffer)==0)
+				return;
+
+			filename=strndup((char*)&buffer[0],strlen((char*)&buffer[0])-1);
+		}
+	else
+		{
+			dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
+
+		if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
+			{
+				filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+			}
+		else
+			{
+				g_free(commandBuffer);
+				gtk_widget_destroy (dialog);
+				return;
+			}
+		}
+
+	if(g_str_has_suffix(filename,".gz"))
+		sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
+	else
 		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
 
 	fp=popen(commandBuffer,"r");
@@ -1246,4 +1433,4 @@ void importManpage(GtkWidget* widget,gpointer data)
 		gtk_widget_destroy (dialog);
 }
 
-
+#endif
