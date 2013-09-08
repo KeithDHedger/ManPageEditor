@@ -1132,15 +1132,15 @@ void importManpage(GtkWidget* widget,gpointer data)
 	if(g_str_has_suffix(filename,".gz"))
 		sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
 	else
-//		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' > %s/x",filename,manFilename);
-		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
+		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g' > %s/x",filename,manFilename);
+//		sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g;s/\\\\(co/@@CC@@/g' > %s/x",filename,manFilename);
 
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
 		pclose(fp);
 //sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g;s/\\x1b\\[22m/\\x1b\\[0m/g;s/@@CC@@/©/g' > %s/xx",manFilename,manFilename);
 //sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g;s/\\x1b\\[22m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
-sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4|sed 's/\\x1b\\[4m\\x1b\\[22m/\\x1b\\[22m\\x1b\\[4m/g;s/\\x1b\\[24m/\\x1b\\[0m/g' > %s/xx",manFilename,manFilename);
+sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justification --no-hyphenation %s/x|head -n -4 > %s/xx",manFilename,manFilename);
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
 		pclose(fp);
@@ -1155,13 +1155,15 @@ sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justific
 
 	sprintf(commandBuffer,"%s/xx",manFilename);
 	g_file_get_contents(commandBuffer,&contents,NULL,NULL);
-/*
-//s/\\.SH/\\.SH @SECTION@/g;
-//s/\\.SS/\\.SS @section@/g;
-*/
-	replaceAllSlice(&contents,(char*)"@@CC@@",(char*)"©");
+
+	//replaceAllSlice(&contents,(char*)"©",(char*)"(CC)");
 	replaceAllSlice(&contents,(char*)"\x1b\[22m",(char*)"\x1b\[0m");
-//	replaceAllSlice(&contents,(char*)".SS",(char*)".SS @section@");
+	replaceAllSlice(&contents,(char*)"\x1b\[24m",(char*)"\x1b\[0m");
+	replaceAllSlice(&contents,(char*)"\x1b\[4m\x1b\[22m",(char*)"\x1b\[22m\x1b\[4m");
+
+	replaceAllSlice(&contents,(char*)"\xa9",(char*)"@@CC@@");
+	replaceAllSlice(&contents,(char*)"@@CC@@",(char*)"©");
+
 
 	ptr=contents;
 
@@ -1227,7 +1229,7 @@ sprintf(commandBuffer,"MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man --no-justific
 			importSection(strdup(ptr));
 			replaceAllSlice(&sect,ptr,(char*)"");
 			replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
-			replaceAllSlice(&sect,(char*)"\\(co",(char*)"");
+			//replaceAllSlice(&sect,(char*)"\\(co",(char*)"");
 			sect=cleanText(sect);
 
 			gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
