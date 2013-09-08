@@ -143,9 +143,6 @@ void init(void)
 
 int main(int argc,char **argv)
 {
-//printf("\e[1mNAME\e[0m thats all folks\n");
-//return(0);
-
 	gtk_init(&argc,&argv);
 
 	init();

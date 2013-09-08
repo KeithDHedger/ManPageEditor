@@ -141,13 +141,3 @@ pageStruct* getPageStructPtr(int pagenum)
 		return((pageStruct*)g_object_get_data((GObject*)pageBox,"pagedata"));
 }
 
-
-
-
-
-
-
-
-
-
-

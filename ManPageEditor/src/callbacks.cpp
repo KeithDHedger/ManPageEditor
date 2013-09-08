@@ -698,7 +698,6 @@ void redoProps(GtkWidget* widget,gpointer data)
 
 void previewPage(GtkWidget* widget,gpointer data)
 {
-
 	char	command[1024];
 	char*	holdpath=exportPath;
 
@@ -721,10 +720,4 @@ void reorderDirty(GtkNotebook *notebook,GtkWidget *child,guint page_num,gpointer
 	pageStruct* page=getPageStructPtr(page_num);
 	makeDirty(NULL,(void*)page);
 }
-
-
-
-
-
-
 

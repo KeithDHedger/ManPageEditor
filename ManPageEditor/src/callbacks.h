@@ -13,7 +13,7 @@
 
 #ifndef _CALLBACKS_
 #define _CALLBACKS_
-//extern int					boldnum=0;
+
 void doOpenFile(GtkWidget* widget,gpointer data);
 void closeTab(GtkWidget* widget,gpointer data);
 void setSensitive(void);
