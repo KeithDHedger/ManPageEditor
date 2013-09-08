@@ -1046,12 +1046,16 @@ char* cleanText(char* text)
 	return(g_string_free(deststr,false));
 }
 
+int	selectedSection=1;
+
 char* getManpageName(void)
 {
 	GtkWidget*	dialog;
 	char*		manpage=NULL;
 	GtkWidget*	entrybox;
 	GtkWidget*	content_area;
+	GtkWidget*	drop;
+	const char*	buffer[]={"","1 Executable programs or shell commands","2 System calls (functions provided by the kernel)","3 Library calls (functions within program libraries)","4 Special files (usually found in /dev)","5 File formats and conventions eg /etc/passwd","6 Games","7 Miscellaneous, e.g. man(7), groff(7)","8 System administration commands (usually only for root)","9 Kernel routines [Non standard]"};
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Manpage Name");
 
@@ -1062,10 +1066,17 @@ char* getManpageName(void)
 	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
 	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
 	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
+	drop=gtk_combo_box_text_new();
+	for(int j=1;j<10;j++)
+		gtk_combo_box_text_append_text((GtkComboBoxText*)drop,buffer[j]);
+
+	gtk_combo_box_set_active((GtkComboBox*)drop,0);
+	gtk_container_add(GTK_CONTAINER(content_area),drop);
 	gtk_widget_show_all(content_area);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	manpage=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
+	selectedSection=gtk_combo_box_get_active((GtkComboBox*)drop);
 	gtk_widget_destroy(dialog);
 	return(manpage);
 }
@@ -1089,6 +1100,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 	int			numprops;
 	char**		propargs;
 	char*		manname=NULL;
+	char*		strok=NULL;
+	GString*	str=g_string_new(NULL);
 
 	closePage(NULL,NULL);
 	manFilename=tempnam(NULL,"ManEd");
@@ -1099,7 +1112,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 			manname=getManpageName();
 			if(manname==NULL)
 				return;
-			sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
+			sprintf(commandBuffer,"man -w -s %i %s 2>/dev/null",selectedSection+1,manname);
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				{
@@ -1150,7 +1163,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 
 	props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
 
-	GString* str=g_string_new(NULL);
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
 		{
@@ -1160,13 +1172,17 @@ void importManpage(GtkWidget* widget,gpointer data)
 		}
 
 	contents=g_string_free(str,false);
+	if(g_utf8_validate(contents,-1,NULL)==false)
+		strok=g_locale_to_utf8(contents,-1,NULL,NULL,NULL);
+	else
+		strok=strdup(contents);
+
+	g_free(contents);
+	contents=strok;
 //clean bold/italic tags
 	replaceAllSlice(&contents,(char*)"\x1b\[22m",(char*)"\x1b\[0m");
 	replaceAllSlice(&contents,(char*)"\x1b\[24m",(char*)"\x1b\[0m");
 	replaceAllSlice(&contents,(char*)"\x1b\[4m\x1b\[22m",(char*)"\x1b\[22m\x1b\[4m");
-//correct (c) bug
-	replaceAllSlice(&contents,(char*)"\xa9",(char*)"@@CC@@");
-	replaceAllSlice(&contents,(char*)"@@CC@@",(char*)"©");
 
 	ptr=contents;
 
@@ -1248,13 +1264,11 @@ void importManpage(GtkWidget* widget,gpointer data)
 	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	g_free(recenturi);
 	g_free(filename);
+	g_free(contents);
 	pageOpen=true;
 	dirty=false;
 	setSensitive();
 	refreshMainWindow();
-
-//	sprintf(commandBuffer,"%s/x",manFilename);
-//	unlink(commandBuffer);
 
 	g_free(commandBuffer);
 	if(dialog!=NULL)

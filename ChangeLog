@@ -3,6 +3,9 @@ Added 'Import System Manpage' to file menu.
 Added Hack to importing manpage to strip rubbish from end of last section :(
 Fixed copyright symbol bug - may only work for unicode.
 Got rid of a load of sed's for importing manpage.
+Added man section drop down to importing system manpage.
+Removed copyright bug fix.
+Aded some support for non-english man pages ( the LANG env should be set ie LANG=pl_PL manpageeditor ).
 
 0.0.10
 Added 'New From Template' to 'File' menu, at some later stage I may add multiple templates to this.
