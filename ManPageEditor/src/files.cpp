@@ -27,6 +27,7 @@ pageStruct* importPage=NULL;
 bool		isSubsection=false;
 int			tagboldnum=0;
 int			tagitalicnum=0;
+int			selectedSection=1;
 
 void tagLookUp(GtkTextTag *tag,gpointer data)
 {
@@ -1045,8 +1046,6 @@ char* cleanText(char* text)
 	g_string_free(srcstr,true);
 	return(g_string_free(deststr,false));
 }
-
-int	selectedSection=1;
 
 char* getManpageName(void)
 {
