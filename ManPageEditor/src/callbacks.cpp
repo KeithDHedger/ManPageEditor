@@ -554,7 +554,9 @@ void doCombineBuffers(void)
 			//gtk_text_buffer_insert((GtkTextBuffer*)printBuffer,&iter,gtk_text_buffer_get_text((GtkTextBuffer *)page->buffer,&fromstart,&fromend,true),-1);
 			gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&fromstart,&fromend);
 			gtk_text_buffer_copy_clipboard((GtkTextBuffer *)page->buffer,clipboard);
-			gtk_text_buffer_paste_clipboard((GtkTextBuffer*)printBuffer,clipboard,&iter,true);
+			//gtk_text_buffer_paste_clipboard((GtkTextBuffer*)printBuffer,clipboard,&iter,true);
+			gtk_text_buffer_paste_clipboard((GtkTextBuffer*)printBuffer,gtk_clipboard_get(GDK_SELECTION_CLIPBOARD),&iter,true);
+
 			gtk_main_iteration_do(false);
 			gtk_text_buffer_get_end_iter((GtkTextBuffer*)printBuffer,&iter);
 		}
@@ -562,18 +564,25 @@ void doCombineBuffers(void)
 
 void printFile(GtkWidget* widget,gpointer data)
 {
-	doCombineBuffers();
-	pageStruct*					page=getPageStructPtr(-1);
-//	GtkSourcePrintCompositor*	printview=gtk_source_print_compositor_new_from_view(page->view);
-	GtkSourcePrintCompositor*	printview=gtk_source_print_compositor_new_from_view(printView);
+//	doCombineBuffers();
+	pageStruct*					page;
+	//=getPageStructPtr(-1);
+	GtkSourcePrintCompositor*	printview;
+	//=gtk_source_print_compositor_new_from_view(page->view);
+//	GtkSourcePrintCompositor*	printview=gtk_source_print_compositor_new_from_view(printView);
 	GtkPrintOperation*			print;
 	GtkPrintOperationResult		result;
 
 	print=gtk_print_operation_new();
 	if (settings != NULL)
 		gtk_print_operation_set_print_settings(print,settings);
+	for(int j=0;j<gtk_notebook_get_n_pages(notebook);j++)
+	{
+	page=getPageStructPtr(j);
+	printview=gtk_source_print_compositor_new_from_view(page->view);
 	g_signal_connect(print,"begin-print",G_CALLBACK(beginPrint),(void*)printview);
 	g_signal_connect(print,"draw-page",G_CALLBACK (drawPage),(void*)printview);
+	}
 	result=gtk_print_operation_run(print,GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,GTK_WINDOW(window),NULL);
 	if (result==GTK_PRINT_OPERATION_RESULT_APPLY)
 		{
