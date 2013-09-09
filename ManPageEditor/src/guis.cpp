@@ -303,12 +303,26 @@ void buildMainGui(void)
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 
-//printtab
+//printsection
+//	image=gtk_image_new_from_stock(GTK_STOCK_PRINT,GTK_ICON_SIZE_MENU);
+//	menuprint=gtk_image_menu_item_new_with_label("Print Section");
+//	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuprint,image);
+//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuprint);
+//	gtk_signal_connect(GTK_OBJECT(menuprint),"activate",G_CALLBACK(printSection),NULL);
+
+//printmanpage
 	image=gtk_image_new_from_stock(GTK_STOCK_PRINT,GTK_ICON_SIZE_MENU);
-	menuprint=gtk_image_menu_item_new_with_label("Print Section");
+	menuprint=gtk_image_menu_item_new_with_label("Print Manpage to LP");
 	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuprint,image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuprint);
-	gtk_signal_connect(GTK_OBJECT(menuprint),"activate",G_CALLBACK(printFile),NULL);
+	gtk_signal_connect(GTK_OBJECT(menuprint),"activate",G_CALLBACK(printFile),(void*)1);
+
+//print manpage to pdf
+	image=gtk_image_new_from_stock(GTK_STOCK_PRINT,GTK_ICON_SIZE_MENU);
+	menuprint=gtk_image_menu_item_new_with_label("Print Manpage To PDF");
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuprint,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuprint);
+	gtk_signal_connect(GTK_OBJECT(menuprint),"activate",G_CALLBACK(printFile),(void*)2);
 
 /*
 	menuprint=gtk_image_menu_item_new_from_stock(GTK_STOCK_PRINT,NULL);

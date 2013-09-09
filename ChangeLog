@@ -1,3 +1,6 @@
+0.0.12
+Now prints whole manpage to pdf or lp.
+
 0.0.11
 Added 'Import System Manpage' to file menu.
 Added Hack to importing manpage to strip rubbish from end of last section :(

@@ -24,6 +24,7 @@ void undo(GtkWidget* widget,gpointer data);
 void redo(GtkWidget* widget,gpointer data);
 
 void openHelp(GtkWidget* widget,gpointer data);
+void printSection(GtkWidget* widget,gpointer data);
 void printFile(GtkWidget* widget,gpointer data);
 void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data);
 void tabPopUp(GtkWidget *my_widget, GdkEventButton *event,gpointer user_data);
