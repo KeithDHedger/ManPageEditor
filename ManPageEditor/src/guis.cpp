@@ -522,7 +522,7 @@ void buildWordCheck(int documentCheck)
 	GtkWidget*	vbox;
 	GtkWidget*	button;
 	GtkWidget*	hbox;
-	GtkWidget*	label;
+//	GtkWidget*	label;
 	GtkWidget*	image;
 	char*		labeltext[512];
 	int			docflag=documentCheck;
@@ -533,10 +533,16 @@ void buildWordCheck(int documentCheck)
 
 	hbox=gtk_hbox_new(true,8);
 
+	//sprintf((char*)&labeltext,"Change <i><b>%s</b></i> to: ",badWord);
+	//label=gtk_label_new((char*)&labeltext);
+	//gtk_label_set_use_markup((GtkLabel*)label,true);
+
 	sprintf((char*)&labeltext,"Change <i><b>%s</b></i> to: ",badWord);
-	label=gtk_label_new((char*)&labeltext);
-	gtk_label_set_use_markup((GtkLabel*)label,true);
-	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	badWordLabel=gtk_label_new((char*)&labeltext);
+	gtk_label_set_use_markup((GtkLabel*)badWordLabel,true);
+	gtk_box_pack_start(GTK_BOX(hbox),badWordLabel,true,true,0);
+
+//	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 
 	wordListDropbox=gtk_combo_box_text_new();
 	gtk_box_pack_start(GTK_BOX(hbox),wordListDropbox,true,true,0);

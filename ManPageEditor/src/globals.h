@@ -157,6 +157,8 @@ extern char*			goodWord;
 #ifdef _ASPELL_
 extern AspellConfig*	aspellConfig;
 extern AspellSpeller*	spellChecker;
+extern int				numWords;
+extern GtkWidget*		badWordLabel;
 #endif
 
 pageStruct* getPageStructPtr(int pagenum);

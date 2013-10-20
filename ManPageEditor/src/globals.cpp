@@ -107,13 +107,16 @@ GtkWidget*		replaceBox;
 char*			thePage=NULL;
 
 //spellcheck
-GtkWidget*		spellCheckWord;
+GtkWidget*		spellCheckWord=NULL;
 GtkWidget*		wordListDropbox;
 char*			badWord=NULL;
 char*			goodWord=NULL;
+
 #ifdef _ASPELL_
 AspellConfig*	aspellConfig;
 AspellSpeller*	spellChecker=0;
+int				numWords=0;
+GtkWidget*		badWordLabel=NULL;
 #endif
 
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter)
