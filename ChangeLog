@@ -1,3 +1,9 @@
+0.0.13
+Removed annoying flashing caused by building/destroying spell check dialog.
+Fixed 'Spell Check Document' in tab popup.
+Fixed spelling in template file.
+Code clean.
+
 0.0.12
 Now prints whole manpage to pdf or lp.
 
