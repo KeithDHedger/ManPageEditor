@@ -157,5 +157,7 @@ int main(int argc,char **argv)
 	setSensitive();
 	refreshMainWindow();
 
+	gtk_window_set_default_icon_name(PACKAGE);
+	gtk_window_set_icon_name((GtkWindow*)window,PACKAGE);
 	gtk_main();
 }

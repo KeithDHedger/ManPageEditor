@@ -736,6 +736,15 @@ void doOpenManpage(char* file)
 	char*		recenturi;
 	char*		dirname;
 	char*		lowername;
+	GtkWidget*	dialog;
+
+	if(!g_file_test(file,G_FILE_TEST_EXISTS))
+		{
+			dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"File '%s' doesn't exist :(",file);
+			gtk_dialog_run(GTK_DIALOG(dialog));
+			gtk_widget_destroy(dialog);
+			return;
+		}
 
 	if(manFilename!=NULL)
 		{
@@ -1054,7 +1063,7 @@ char* getManpageName(void)
 	GtkWidget*	entrybox;
 	GtkWidget*	content_area;
 	GtkWidget*	drop;
-	const char*	buffer[]={"","1 Executable programs or shell commands","2 System calls (functions provided by the kernel)","3 Library calls (functions within program libraries)","4 Special files (usually found in /dev)","5 File formats and conventions eg /etc/passwd","6 Games","7 Miscellaneous, e.g. man(7), groff(7)","8 System administration commands (usually only for root)","9 Kernel routines [Non standard]"};
+	const char*	buffer[]={"","Auto","1 Executable programs or shell commands","2 System calls (functions provided by the kernel)","3 Library calls (functions within program libraries)","4 Special files (usually found in /dev)","5 File formats and conventions eg /etc/passwd","6 Games","7 Miscellaneous, e.g. man(7), groff(7)","8 System administration commands (usually only for root)","9 Kernel routines [Non standard]"};
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Manpage Name");
 
@@ -1111,7 +1120,10 @@ void importManpage(GtkWidget* widget,gpointer data)
 			manname=getManpageName();
 			if(manname==NULL)
 				return;
-			sprintf(commandBuffer,"man -w -s %i %s 2>/dev/null",selectedSection+1,manname);
+			if(selectedSection==0)
+				sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
+			else
+				sprintf(commandBuffer,"man -w -s %i %s 2>/dev/null",selectedSection,manname);
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				{

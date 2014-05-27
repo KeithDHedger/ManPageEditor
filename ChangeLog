@@ -1,3 +1,9 @@
+0.0.14
+Added 'Auto' to drop down list when importing system manpage.
+Fixed segfault when error opening file
+Redone .desktop file.
+Set window icon properly.
+
 0.0.13
 Removed annoying flashing caused by building/destroying spell check dialog.
 Fixed 'Spell Check Document' in tab popup.
