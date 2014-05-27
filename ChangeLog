@@ -1,4 +1,5 @@
 0.0.14
+Fixed selecting wrong section when importing system manpage.
 Added 'Auto' to drop down list when importing system manpage.
 Fixed segfault when error opening file
 Redone .desktop file.
