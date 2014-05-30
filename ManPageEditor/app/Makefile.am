@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 include ../flagsandlibs
 include ../sources
 
@@ -25,7 +27,7 @@ examplefiles_DATA = ../resources/examples/*
 docfilesdir = $(pkgdatadir)/docs
 docfiles_DATA = ../resources/docs/*
 
-install-data-hook:
+install-exec-hook:
 	cp ../resources/pixmaps/ManPageEditor.png $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps
 	gtk-update-icon-cache --ignore-theme-index --force /usr/share/icons/hicolor
 
