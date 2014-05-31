@@ -1156,15 +1156,16 @@ void importManpage(GtkWidget* widget,gpointer data)
 	if(g_str_has_suffix(filename,".gz"))
 		{
 			sprintf(buffer,"gunzip --stdout %s|cat|sed -n /^.TH/p",filename);
-			sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+			sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
 		}
 	else
 		{
 			sprintf(buffer,"cat %s|sed -n /^.TH/p",filename);
-			sprintf(commandBuffer,"cat %s |sed 's/\\.SH/\\.SH @SECTION@/g;s/\\.SS/\\.SS @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+			sprintf(commandBuffer,"echo \".TH\"|cat - %s |sed 's/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g;s/\\.P[Pp]/\\.PP/g;s/\\.O[Pp]/\\.I/g;s/\\.N[Mm]/\\.B/g;s/\\.D[Dd]/\\.DD/g;s/Fl \\\\/-/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
 		}
 
 //get properties
+	buffer[0]=0;
 	fp=popen(buffer,"r");
 	if(fp!=NULL)
 		{
@@ -1172,7 +1173,10 @@ void importManpage(GtkWidget* widget,gpointer data)
 			pclose(fp);
 		}
 
-	props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
+	if(strlen(buffer)==0)
+		props=strdup("DIRNAME \"1\" \"April 2014\" \"GNU coreutils 8.22\" \"User Commands\"");
+	else
+		props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
 
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
@@ -1244,6 +1248,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 			start=strcasestr(ptr,"@SECTION@");
 			if(start==NULL)
 				break;
+
 			end=strcasestr((char*)&start[9],"@SECTION@");
 
 			if(end==NULL)
