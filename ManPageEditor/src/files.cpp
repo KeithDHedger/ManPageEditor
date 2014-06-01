@@ -1161,9 +1161,10 @@ void importManpage(GtkWidget* widget,gpointer data)
 	else
 		{
 			sprintf(buffer,"cat %s|sed -n /^.TH/p",filename);
-			sprintf(commandBuffer,"echo \".TH\"|cat - %s |sed 's/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g;s/\\.P[Pp]/\\.PP/g;s/\\.O[Pp]/\\.I/g;s/\\.N[Mm]/\\.B/g;s/\\.D[Dd]/\\.DD/g;s/Fl \\\\/-/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
-		}
-
+//			sprintf(commandBuffer,"echo \".TH\"|cat - %s |sed 's/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g;s/\\.P[Pp]/\\.PP/g;s/\\.O[Pp]/\\.I/g;s/\\.N[Mm]/\\.B/g;s/\\.D[Dd]/\\.DD/g;s/Fl \\\\/-/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+			sprintf(commandBuffer,"echo \".TH\"|cat - %s |sed -r 's/^.At v(.)/Version \\1 AT\\&T UNIX/g;s/ Ns Ar /\\n\.I\\n/g;s/[\\.]C[Mm]/\\.B/g;s/^\\.N[Dd]/--/g;s/\\.X[Rr] (.*) ([0-9])/\\1\\(\\2\\)/;s/\\.Ed/\\.RE/g;s/^\\.Bd .*/\\.RS/g;s/.It Ev (.*)/\\.IP \"\\1\"/g;s/ Cm / /g;s/^.Oo /.B\\n\[/g;s/Oc/\]/g;s/Fl /-/g;s/^\\.I[Tt] (.*)/.B\\n\\.IP \"\\1\"/g;s/^(\\...[ ]*)/\\U\\1/g;s/\\.N[Mm]/\\.B/g;s/\\.O[Pp] Ar (.*)/\\\\fI\\[\\1\\]\\\\fR/g;s/\\.I[Tt]/\\.RS/g;s/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+	 	}
+fprintf(stderr,"%s\n",commandBuffer);
 //get properties
 	buffer[0]=0;
 	fp=popen(buffer,"r");
