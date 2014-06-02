@@ -1073,6 +1073,8 @@ char* getManpageName(void)
 	GtkWidget*	entrybox;
 	GtkWidget*	content_area;
 	GtkWidget*	drop;
+	int			retcode;
+
 	const char*	buffer[]={"","Auto","1 Executable programs or shell commands","2 System calls (functions provided by the kernel)","3 Library calls (functions within program libraries)","4 Special files (usually found in /dev)","5 File formats and conventions eg /etc/passwd","6 Games","7 Miscellaneous, e.g. man(7), groff(7)","8 System administration commands (usually only for root)","9 Kernel routines [Non standard]"};
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Manpage Name");
@@ -1092,9 +1094,12 @@ char* getManpageName(void)
 	gtk_container_add(GTK_CONTAINER(content_area),drop);
 	gtk_widget_show_all(content_area);
 
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	manpage=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
-	selectedSection=gtk_combo_box_get_active((GtkComboBox*)drop);
+	retcode=gtk_dialog_run(GTK_DIALOG(dialog));
+	if(retcode==GTK_RESPONSE_YES)
+		{
+			manpage=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
+			selectedSection=gtk_combo_box_get_active((GtkComboBox*)drop);
+		}
 	gtk_widget_destroy(dialog);
 	return(manpage);
 }
