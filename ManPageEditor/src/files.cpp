@@ -737,6 +737,7 @@ void doOpenManpage(char* file)
 	char*		dirname;
 	char*		lowername;
 	GtkWidget*	dialog;
+	int			status;
 
 	if(!g_file_test(file,G_FILE_TEST_EXISTS))
 		{
@@ -755,9 +756,18 @@ void doOpenManpage(char* file)
 
 	manFilename=tempnam(NULL,"ManEd");
 	g_mkdir_with_parents(manFilename,493);
-	asprintf(&command,"tar -xC %s -f %s",manFilename,file);
-	system(command);
-	g_free(command);
+	asprintf(&command,"tar -xC %s -f %s 2>/dev/null",manFilename,file);
+	status=system(command);
+	status=WEXITSTATUS(status);
+	if(status!=0)
+		{
+			g_free(command);
+			dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"File '%s' isn't a ManPage Editor archive\nTry using 'Import' instead",file);
+			gtk_dialog_run(GTK_DIALOG(dialog));
+			gtk_widget_destroy(dialog);
+			return;
+		}
+
 	asprintf(&command,"%s/manifest",manFilename);
 	fp=fopen(command, "r");
 	while(fgets(buffer,4096,fp))
@@ -1103,7 +1113,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char*		props;
 	FILE*		fp;
 	char		buffer[2048]={0,};
-	char*		commandBuffer=(char*)malloc(2048);
+	char		commandBuffer[2048]={0,};
 	char		nameBuffer[2048]={0,};
 	char*		recenturi;
 	int			numprops;
@@ -1148,7 +1158,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 			}
 		else
 			{
-				g_free(commandBuffer);
 				gtk_widget_destroy (dialog);
 				return;
 			}
@@ -1163,8 +1172,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 		{
 			sprintf(nameBuffer,"cat %s|sed -n /^.TH/p",filename);
 			sprintf(commandBuffer,"cat %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
-
-
 	 	}
 
 	fp=popen(commandBuffer,"r");
@@ -1208,7 +1215,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 								tsec=sliceBetween((char*)&buffer[0],(char*)".Dt ",(char*)"\n");
 						}
 					pclose(fp);
-
 				}
 
 			if(name==NULL)
@@ -1333,7 +1339,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 	setSensitive();
 	refreshMainWindow();
 
-	g_free(commandBuffer);
 	if(dialog!=NULL)
 		gtk_widget_destroy (dialog);
 }

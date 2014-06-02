@@ -1,3 +1,7 @@
+0.0.15
+Better support for importing BSD/generated manpages ( like tar,sftp etc ).
+Fixed segfault when trying to open non editor archive ( .mpz ) file.
+
 0.0.14
 Fixed selecting wrong section when importing system manpage.
 Added 'Auto' to drop down list when importing system manpage.
