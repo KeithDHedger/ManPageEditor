@@ -1155,8 +1155,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 
 	if(g_str_has_suffix(filename,".gz"))
 		{
-			sprintf(buffer,"gunzip --stdout %s|cat|sed -n /^.TH/p",filename);
-			sprintf(commandBuffer,"gunzip --stdout %s|cat|sed 's/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+			sprintf(buffer,"gunzip --stdout %s|sed -n /^.TH/p",filename);
+			sprintf(commandBuffer,"gunzip --stdout %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
 		}
 	else
 		{
@@ -1165,13 +1165,13 @@ void importManpage(GtkWidget* widget,gpointer data)
 //			sprintf(commandBuffer,"echo \".TH\"|cat - %s |sed -r 's/ A[Rr] (.*)/ \\\\fI\\1\\\\fR/g;s/^.At v(.)/Version \\1 AT\\&T UNIX/g;s/ Ns Ar /\\n\.I\\n/g;s/[\\.]C[Mm]/\\.B/g;s/^\\.N[Dd]/--/g;s/\\.X[Rr] (.*) ([0-9])/\\1\\(\\2\\)/;s/\\.Ed/\\.RE/g;s/^\\.Bd .*/\\.RS/g;s/.It Ev (.*)/\\.IP \"\\1\"/g;s/ Cm / /g;s/^.Oo /.B\\n\[/g;s/Oc/\]/g;s/Fl /-/g;s/^\\.I[Tt] (.*)/.B\\n\\.IP \"\\1\"/g;s/^(\\...[ ]*)/\\U\\1/g;s/\\.N[Mm]/\\.B/g;s/\\.O[Pp] Ar (.*)/\\\\fI\\[\\1\\]\\\\fR/g;s/\\.I[Tt]/\\.RS/g;s/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
 
 
-			sprintf(commandBuffer,"echo \".TH\"|cat - %s |MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+			sprintf(commandBuffer,"cat %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
 
 
 	 	}
 fprintf(stderr,"%s\n",commandBuffer);
 //get properties
-	buffer[0]=0;
+//	buffer[0]=0;
 	fp=popen(buffer,"r");
 	if(fp!=NULL)
 		{
@@ -1179,6 +1179,7 @@ fprintf(stderr,"%s\n",commandBuffer);
 			pclose(fp);
 		}
 
+fprintf(stderr,"%s\n",buffer);
 	if(strlen(buffer)==0)
 		props=strdup("DIRNAME \"1\" \"April 2014\" \"GNU coreutils 8.22\" \"User Commands\"");
 	else
@@ -1269,6 +1270,7 @@ fprintf(stderr,"%s\n",commandBuffer);
 			replaceAllSlice(&sect,ptr,(char*)"");
 			replaceAllSlice(&sect,(char*)"\\-",(char*)"-");
 			sect=cleanText(sect);
+			replaceAllSlice(&sect,(char*)"\x7f",(char*)"");
 
 			gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
 				gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
