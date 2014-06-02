@@ -1104,6 +1104,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 	FILE*		fp;
 	char		buffer[2048]={0,};
 	char*		commandBuffer=(char*)malloc(2048);
+	char		nameBuffer[2048]={0,};
 	char*		recenturi;
 	int			numprops;
 	char**		propargs;
@@ -1155,35 +1156,16 @@ void importManpage(GtkWidget* widget,gpointer data)
 
 	if(g_str_has_suffix(filename,".gz"))
 		{
-			sprintf(buffer,"gunzip --stdout %s|sed -n /^.TH/p",filename);
+			sprintf(nameBuffer,"gunzip --stdout %s|sed -n /^.TH/p",filename);
 			sprintf(commandBuffer,"gunzip --stdout %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
 		}
 	else
 		{
-			sprintf(buffer,"cat %s|sed -n /^.TH/p",filename);
-//			sprintf(commandBuffer,"echo \".TH\"|cat - %s |sed 's/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g;s/\\.P[Pp]/\\.PP/g;s/\\.O[Pp]/\\.I/g;s/\\.N[Mm]/\\.B/g;s/\\.D[Dd]/\\.DD/g;s/Fl \\\\/-/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
-//			sprintf(commandBuffer,"echo \".TH\"|cat - %s |sed -r 's/ A[Rr] (.*)/ \\\\fI\\1\\\\fR/g;s/^.At v(.)/Version \\1 AT\\&T UNIX/g;s/ Ns Ar /\\n\.I\\n/g;s/[\\.]C[Mm]/\\.B/g;s/^\\.N[Dd]/--/g;s/\\.X[Rr] (.*) ([0-9])/\\1\\(\\2\\)/;s/\\.Ed/\\.RE/g;s/^\\.Bd .*/\\.RS/g;s/.It Ev (.*)/\\.IP \"\\1\"/g;s/ Cm / /g;s/^.Oo /.B\\n\[/g;s/Oc/\]/g;s/Fl /-/g;s/^\\.I[Tt] (.*)/.B\\n\\.IP \"\\1\"/g;s/^(\\...[ ]*)/\\U\\1/g;s/\\.N[Mm]/\\.B/g;s/\\.O[Pp] Ar (.*)/\\\\fI\\[\\1\\]\\\\fR/g;s/\\.I[Tt]/\\.RS/g;s/\\.S[Hh]/\\.SH @SECTION@/g;s/\\.S[Ss]/\\.SS @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
-
-
+			sprintf(nameBuffer,"cat %s|sed -n /^.TH/p",filename);
 			sprintf(commandBuffer,"cat %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
 
 
 	 	}
-fprintf(stderr,"%s\n",commandBuffer);
-//get properties
-//	buffer[0]=0;
-	fp=popen(buffer,"r");
-	if(fp!=NULL)
-		{
-			fgets((char*)&buffer[0],2048,fp);
-			pclose(fp);
-		}
-
-fprintf(stderr,"%s\n",buffer);
-	if(strlen(buffer)==0)
-		props=strdup("DIRNAME \"1\" \"April 2014\" \"GNU coreutils 8.22\" \"User Commands\"");
-	else
-		props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
 
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
@@ -1192,6 +1174,62 @@ fprintf(stderr,"%s\n",buffer);
 				g_string_append(str,buffer);
 			pclose(fp);
 		}
+
+//get properties
+	buffer[0]=0;
+	fp=popen(nameBuffer,"r");
+	if(fp!=NULL)
+		{
+			fgets((char*)&buffer[0],2048,fp);
+			pclose(fp);
+		}
+
+	if(strlen(buffer)==0)
+		{
+			char *name=NULL,*date=NULL,*tsec=NULL;
+			char	sec;
+
+			if(g_str_has_suffix(filename,".gz"))
+				sprintf(nameBuffer,"gunzip --stdout %s",filename);
+			else
+				sprintf(nameBuffer,"cat %s",filename);
+
+			buffer[0]=0;
+			fp=popen(nameBuffer,"r");
+			if(fp!=NULL)
+				{
+					while(fgets(buffer,2048,fp))
+						{
+							if(name==NULL)
+								name=sliceBetween((char*)&buffer[0],(char*)".Dt ",(char*)" ");
+							if(date==NULL)
+								date=sliceBetween((char*)&buffer[0],(char*)".Dd ",(char*)"\n");
+							if(tsec==NULL)
+								tsec=sliceBetween((char*)&buffer[0],(char*)".Dt ",(char*)"\n");
+						}
+					pclose(fp);
+
+				}
+
+			if(name==NULL)
+				name=strdup("");
+			if(date==NULL)
+				date=strdup("");
+			if(tsec==NULL)
+				{
+					tsec=strdup("");
+					sec=' ';
+				}
+			else
+				sec=tsec[strlen(tsec)-1];
+
+			asprintf(&props,"\"%s\" \"%c\" \"%s\" \"\" \"\"",name,sec,date);
+			free(name);
+			free(date);
+			free(tsec);
+		}
+	else
+		props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
 
 	contents=g_string_free(str,false);
 	if(g_utf8_validate(contents,-1,NULL)==false)
@@ -1289,6 +1327,7 @@ fprintf(stderr,"%s\n",buffer);
 	g_free(recenturi);
 	g_free(filename);
 	g_free(contents);
+	free(props);
 	pageOpen=true;
 	dirty=false;
 	setSensitive();
