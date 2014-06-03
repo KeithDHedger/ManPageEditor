@@ -559,9 +559,11 @@ void printFile(GtkWidget* widget,gpointer data)
 {
 	char*	holdpath;
 	char*	command;
+	bool	holdgzipages=gzipPages;
+
 
 	holdpath=exportPath;
-
+	gzipPages=false;
 
 	if((long)data==1)
 		{
@@ -585,6 +587,7 @@ void printFile(GtkWidget* widget,gpointer data)
 
 	unlink("/tmp/printexportfile");
 	exportPath=holdpath;
+	gzipPages=holdgzipages;
 }
 
 void newEditor(GtkWidget* widget,gpointer data)
