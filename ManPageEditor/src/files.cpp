@@ -63,11 +63,7 @@ void setUnderlining(pageStruct* page)
 
 void makeDirty(GtkWidget* widget,gpointer data)
 {
-	pageStruct*	page=(pageStruct*)data;
-
 	dirty=true;
-//	if(page!=NULL)
-//		gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),true);
 	setSensitive();
 }
 
@@ -829,25 +825,6 @@ void openManpage(GtkWidget* widget,gpointer data)
 	gtk_file_filter_set_name(filter,"Manpage Editor Docs \"*.mpz\"");
 	gtk_file_filter_set_name(filterall,"All Files");
 
-//		fprintf(stderr,"ZZZZZZZZZZZZZZZZZZZZZn");
-//if(checkForDirty()==true)
-//	{
-//	fprintf(stderr,"ITS DIRTYn");
-//	}
-//
-//	if(dirty==true)
-//		{
-//		fprintf(stderr,"XXXXXXXXXXn");
-//		saveManpage(NULL,NULL);
-//}
-//	if((gtk_text_buffer_get_modified((GtkTextBuffer*)page->buffer)==true) && (donesave==false))
-//		{
-//		saveManpage(NULL,NULL);
-//		donesave==true;
-//		printf("needs savingn");
-//		}
-
-
 	if((long)data==1)
 		{
 			closePage(NULL,NULL);
@@ -1143,21 +1120,17 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char*		strok=NULL;
 	GString*	str=g_string_new(NULL);
 
-	manFilename=tempnam(NULL,"ManEd");
-	g_mkdir_with_parents(manFilename,493);
-
 	if((long)data==1)
 		{
 			manname=getManpageName();
 			if(manname==NULL)
 				return;
 
-			closePage(NULL,NULL);
-
 			if(selectedSection==0)
 				sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
 			else
 				sprintf(commandBuffer,"man -w -s %i %s 2>/dev/null",selectedSection,manname);
+
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
 				{
@@ -1177,7 +1150,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 
 		if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 			{
-				closePage(NULL,NULL);
 				filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 			}
 		else
@@ -1186,6 +1158,10 @@ void importManpage(GtkWidget* widget,gpointer data)
 				return;
 			}
 		}
+
+	closePage(NULL,NULL);
+	manFilename=tempnam(NULL,"ManEd");
+	g_mkdir_with_parents(manFilename,493);
 
 	if(g_str_has_suffix(filename,".gz"))
 		{
@@ -1275,7 +1251,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 	replaceAllSlice(&contents,(char*)"\x1b\[4m\x1b\[22m",(char*)"\x1b\[22m\x1b\[4m");
 
 	ptr=contents;
-
 	if(props!=NULL)
 		{
 			if(manName!=NULL)
@@ -1347,6 +1322,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 			gtk_source_buffer_end_not_undoable_action(importPage->buffer);
 
 			gtk_text_buffer_set_modified((GtkTextBuffer*)importPage->buffer,false);
+
+			asprintf(&importPage->filePath,"%s/%s",manFilename,importPage->fileName);
 
 			if(end==NULL)
 				break;

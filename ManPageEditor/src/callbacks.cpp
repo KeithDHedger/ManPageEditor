@@ -94,7 +94,6 @@ void closeTab(GtkWidget* widget,gpointer data)
 {
 	long		thispage;
 	pageStruct*	page;
-	bool		donesave=false;
 
 	if(data==NULL)
 		thispage=0;
