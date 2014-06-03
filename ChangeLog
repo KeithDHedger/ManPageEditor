@@ -1,3 +1,6 @@
+0.0.16
+Fixed minor export to pdf bug.
+
 0.0.15
 Set window title to file path of current file.
 Fixed numerous bugs when opening/saving/closing system manpages.
