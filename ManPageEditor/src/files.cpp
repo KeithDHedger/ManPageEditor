@@ -811,6 +811,7 @@ void doOpenManpage(char* file)
 	recenturi=g_filename_to_uri(manFilePath,NULL,NULL);
 	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	pageOpen=true;
+	gtk_window_set_title((GtkWindow*)window,file);
 }
 
 void openManpage(GtkWidget* widget,gpointer data)
@@ -847,7 +848,6 @@ void openManpage(GtkWidget* widget,gpointer data)
 		}
 	dirty=false;
 	setSensitive();
-
 	refreshMainWindow();	
 }
 
@@ -1334,6 +1334,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 	recenturi=g_filename_to_uri(filename,NULL,NULL);
 	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	g_free(recenturi);
+	gtk_window_set_title((GtkWindow*)window,filename);
 	g_free(filename);
 	g_free(contents);
 	free(props);
