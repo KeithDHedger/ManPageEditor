@@ -1,5 +1,5 @@
 0.0.15
-St window title to file path of current manpage.
+Set window title to file path of current file.
 Fixed numerous bugs when opening/saving/closing system manpages.
 No longer clears current manpage if new open/import etc cancelled.
 Better support for importing BSD/generated manpages ( like tar,sftp etc ).
