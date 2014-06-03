@@ -67,7 +67,7 @@ void makeDirty(GtkWidget* widget,gpointer data)
 
 	dirty=true;
 //	if(page!=NULL)
-//		gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
+//		gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),true);
 	setSensitive();
 }
 
@@ -747,7 +747,6 @@ void doOpenManpage(char* file)
 			gtk_widget_destroy(dialog);
 			return;
 		}
-
 	if(manFilename!=NULL)
 		{
 			sprintf((char*)&buffer[0],"rm -r \"%s\"",manFilename);
@@ -829,20 +828,28 @@ void openManpage(GtkWidget* widget,gpointer data)
 	gtk_file_filter_set_name(filter,"Manpage Editor Docs \"*.mpz\"");
 	gtk_file_filter_set_name(filterall,"All Files");
 
-		fprintf(stderr,"ZZZZZZZZZZZZZZZZZZZZZ\n");
-if(checkForDirty()==true)
-	{
-	fprintf(stderr,"ITS DIRTY\n");
-	}
+//		fprintf(stderr,"ZZZZZZZZZZZZZZZZZZZZZn");
+//if(checkForDirty()==true)
+//	{
+//	fprintf(stderr,"ITS DIRTYn");
+//	}
+//
+//	if(dirty==true)
+//		{
+//		fprintf(stderr,"XXXXXXXXXXn");
+//		saveManpage(NULL,NULL);
+//}
+//	if((gtk_text_buffer_get_modified((GtkTextBuffer*)page->buffer)==true) && (donesave==false))
+//		{
+//		saveManpage(NULL,NULL);
+//		donesave==true;
+//		printf("needs savingn");
+//		}
 
-	if(dirty==true)
-		{
-		fprintf(stderr,"XXXXXXXXXX\n");
-		saveManpage(NULL,NULL);
-}
+
 	if((long)data==1)
 		{
-			closeAllTabs(NULL,NULL);
+			closePage(NULL,NULL);
 			doOpenManpage((char*)DATADIR"/examples/template-1.mpz");
 		}
 	else
@@ -854,7 +861,7 @@ if(checkForDirty()==true)
 			if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 				{
 					filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-					closeAllTabs(NULL,NULL);
+					closePage(NULL,NULL);
 					doOpenManpage(filename);
 					g_free(filename);
 				}
@@ -1337,6 +1344,8 @@ void importManpage(GtkWidget* widget,gpointer data)
 				gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
 				replaceTags();
 			gtk_source_buffer_end_not_undoable_action(importPage->buffer);
+
+			gtk_text_buffer_set_modified((GtkTextBuffer*)importPage->buffer,false);
 
 			if(end==NULL)
 				break;

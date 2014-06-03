@@ -94,6 +94,7 @@ void closeTab(GtkWidget* widget,gpointer data)
 {
 	long		thispage;
 	pageStruct*	page;
+	bool		donesave=false;
 
 	if(data==NULL)
 		thispage=0;
@@ -128,16 +129,16 @@ void closePage(GtkWidget* widget,gpointer data)
 	int		retval;
 	char*	command;
 
-	if(dirty==true)
+	if(checkForDirty()==true)
 		{
 			retval=yesNo((char*)"Do you want to save?",manName);
 			if(retval==GTK_RESPONSE_YES)
 				saveManpage(NULL,NULL);
 		}
 
+	closeAllTabs(NULL,NULL);
 	if(manFilename!=NULL)
 		{
-			closeAllTabs(NULL,NULL);
 			asprintf(&command,"rm -r \"%s\"",manFilename);
 			system(command);
 			g_free(command);
