@@ -460,6 +460,7 @@ void saveAs(GtkWidget* widget,gpointer data)
 {
 	if(manFilePath!=NULL)
 		{
+			printf("%s\n",manFilePath);
 			g_free(manFilePath);
 			manFilePath=NULL;
 		}
