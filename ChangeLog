@@ -1,4 +1,5 @@
 0.0.15
+Fixed numerous bugs when opening/saving/closing system manpages.
 No longer clears current manpage if new open/import etc cancelled.
 Better support for importing BSD/generated manpages ( like tar,sftp etc ).
 Fixed segfault when trying to open non editor archive ( .mpz ) file.
