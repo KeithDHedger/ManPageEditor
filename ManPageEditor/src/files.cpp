@@ -66,8 +66,8 @@ void makeDirty(GtkWidget* widget,gpointer data)
 	pageStruct*	page=(pageStruct*)data;
 
 	dirty=true;
-	if(page!=NULL)
-		gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
+//	if(page!=NULL)
+//		gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),false);
 	setSensitive();
 }
 
@@ -480,6 +480,7 @@ pageStruct* makeNewPage(void)
 
 	page->buffer=gtk_source_buffer_new(NULL);
 	page->view=(GtkSourceView*)gtk_source_view_new_with_buffer(page->buffer);
+	gtk_text_buffer_set_modified ((GtkTextBuffer*)page->buffer,false);
 
 	g_signal_connect(G_OBJECT(page->view),"populate-popup",G_CALLBACK(populatePopupMenu),NULL);
 	page->view2=(GtkSourceView*)gtk_source_view_new_with_buffer(page->buffer);
@@ -828,14 +829,20 @@ void openManpage(GtkWidget* widget,gpointer data)
 	gtk_file_filter_set_name(filter,"Manpage Editor Docs \"*.mpz\"");
 	gtk_file_filter_set_name(filterall,"All Files");
 
+		fprintf(stderr,"ZZZZZZZZZZZZZZZZZZZZZ\n");
+if(checkForDirty()==true)
+	{
+	fprintf(stderr,"ITS DIRTY\n");
+	}
+
 	if(dirty==true)
+		{
+		fprintf(stderr,"XXXXXXXXXX\n");
 		saveManpage(NULL,NULL);
-
-	if(manFilename!=NULL)
-		closeAllTabs(NULL,NULL);
-
+}
 	if((long)data==1)
 		{
+			closeAllTabs(NULL,NULL);
 			doOpenManpage((char*)DATADIR"/examples/template-1.mpz");
 		}
 	else
@@ -847,6 +854,7 @@ void openManpage(GtkWidget* widget,gpointer data)
 			if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 				{
 					filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+					closeAllTabs(NULL,NULL);
 					doOpenManpage(filename);
 					g_free(filename);
 				}
@@ -1127,7 +1135,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char*		strok=NULL;
 	GString*	str=g_string_new(NULL);
 
-	closePage(NULL,NULL);
 	manFilename=tempnam(NULL,"ManEd");
 	g_mkdir_with_parents(manFilename,493);
 
@@ -1136,6 +1143,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 			manname=getManpageName();
 			if(manname==NULL)
 				return;
+
+			closePage(NULL,NULL);
+
 			if(selectedSection==0)
 				sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
 			else
@@ -1159,6 +1169,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 
 		if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 			{
+				closePage(NULL,NULL);
 				filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 			}
 		else

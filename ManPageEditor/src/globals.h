@@ -163,6 +163,7 @@ extern GtkWidget*		badWordLabel;
 
 pageStruct* getPageStructPtr(int pagenum);
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter);
+bool checkForDirty(void);
 
 #endif
 

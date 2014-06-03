@@ -144,3 +144,24 @@ pageStruct* getPageStructPtr(int pagenum)
 		return((pageStruct*)g_object_get_data((GObject*)pageBox,"pagedata"));
 }
 
+bool checkForDirty(void)
+{
+	int			numtabs=gtk_notebook_get_n_pages(notebook);
+	pageStruct*	page;
+printf("QQQQQQQQQQ\n");
+	for(int loop=0;loop<numtabs;loop++)
+		{
+			page=getPageStructPtr(loop);
+			printf("AAAAAAAAAAA%i\n",loop);
+			if(gtk_text_buffer_get_modified((GtkTextBuffer*)page->buffer)==TRUE)
+				return(true);
+		}
+	return(false);
+}
+
+
+
+
+
+
+
