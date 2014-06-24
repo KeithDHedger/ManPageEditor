@@ -6,17 +6,9 @@
  *
 */
 
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <string.h>
-#include <sys/stat.h>
 #include <glib.h>
-
-#include <gtksourceview/gtksourceview.h>
-#include <gtksourceview/gtksourcebuffer.h>
 #include <gtksourceview/gtksourceiter.h>
 
-#include "globals.h"
 #include "callbacks.h"
 #include "script.h"
 

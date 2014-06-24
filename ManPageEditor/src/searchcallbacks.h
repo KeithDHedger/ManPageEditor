@@ -6,8 +6,6 @@
  *
 */
 
-#include <gtk/gtk.h>
-
 #include "globals.h"
 #include "files.h"
 

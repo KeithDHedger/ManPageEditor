@@ -6,7 +6,6 @@
 *     spellcheck.h
 * 
 ******************************************************/
-#include <gtk/gtk.h>
 
 #ifndef _SPELLCHECK_
 #define _SPELLCHECK_

@@ -4,17 +4,6 @@
  *
 */
 
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <string.h>
-#include <sys/stat.h>
-
-#include <gtksourceview/gtksourceview.h>
-#include <gtksourceview/gtksourcebuffer.h>
-
-#include "config.h"
-#include "globals.h"
-#include "files.h"
 #include "callbacks.h"
 #include "searchcallbacks.h"
 #include "spellcheck.h"

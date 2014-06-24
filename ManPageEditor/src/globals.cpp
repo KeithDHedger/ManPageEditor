@@ -6,17 +6,6 @@
  *
 */
 
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <gtksourceview/gtksourcebuffer.h>
-
-#ifdef _ASPELL_
-#include <aspell.h>
-#endif
-
-#include "globals.h"
 #include "searchcallbacks.h"
 #include "callbacks.h"
 #include "script.h"

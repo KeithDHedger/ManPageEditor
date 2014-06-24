@@ -6,15 +6,9 @@
  *
 */
 
-#include <gtk/gtk.h>
 #include <gtksourceview/gtksourceiter.h>
 
-#include "config.h"
-
 #include "globals.h"
-#include "files.h"
-#include "guis.h"
-#include "script.h"
 
 void doFindReplace(GtkDialog *dialog,gint response_id,gpointer user_data)
 {

@@ -6,12 +6,9 @@
  *
 */
 
-#include <gtk/gtk.h>
 #include <gtksourceview/gtksourceiter.h>
 #include <gtksourceview/gtksourceprintcompositor.h>
 
-#include "globals.h"
-#include "files.h"
 #include "guis.h"
 #include "searchcallbacks.h"
 #include "spellcheck.h"
