@@ -1,4 +1,12 @@
 .svn
 makepkg
+Makefile
+ManPageEditor/app/Makefile
+ManPageEditor/src/.deps/
+ManPageEditor/src/.dirstamp
+config.h
+config.log
+config.status
+stamp-h1
 
 
