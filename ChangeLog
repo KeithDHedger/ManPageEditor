@@ -1,3 +1,10 @@
+0.0.17
+Clight correction to .desktop file.
+Fixed missing directory bug, thanks to Kay Parker for that.
+Redone soucode licence preamble.
+Removed forced CFLAGS and CXXFLAGS.
+Added to Github: https://github.com/KeithDHedger/ManPageEditor
+
 0.0.16
 Fixed minor export to pdf bug.
 

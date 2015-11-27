@@ -1,21 +1,30 @@
-/******************************************************
-*
-*     ©keithhedger Tue 16 Jul 20:46:19 BST 2013
-*     kdhedger68713@gmail.com
-*
-*     spellcheck.cpp
-*
-*
-*	  Parts of this code from aspell-0.60.6.1 example
-*	  example-c.c
-*
-*     Copyright (C) 2000-2001 by Kevin Atkinson under the GNU LGPL
-*	  license version 2.0 or 2.1.  You should have received a copy of the
-*	  LGPL license along with this library if you did not you can find it
-*	  at http://www.gnu.org/. 
-*
-*
-******************************************************/
+/*
+ *
+ * ©K. D. Hedger. Fri 27 Nov 11:46:13 GMT 2015 kdhedger68713@gmail.com
+
+ * This file (spellcheck.cpp) is part of ManPageEditor.
+
+ *	  Parts of this code from aspell-0.60.6.1 example
+ *	  example-c.c
+ *
+ *     Copyright (C) 2000-2001 by Kevin Atkinson under the GNU LGPL
+ *	  license version 2.0 or 2.1.  You should have received a copy of the
+ *	  LGPL license along with this library if you did not you can find it
+ *	  at http://www.gnu.org/. 
+
+ * ManPageEditor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+
+ * ManPageEditor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ManPageEditor.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "globals.h"
 #include "guis.h"

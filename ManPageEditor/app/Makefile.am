@@ -5,9 +5,6 @@ include ../sources
 
 manpageeditor_SOURCES = $(COMMONSRC)
 
-manpageeditor_CFLAGS = -O3 -export-dynamic
-manpageeditor_CXXFLAGS = -O3 -export-dynamic
-
 appfilesdir = ${datarootdir}/applications
 appfiles_DATA = ../resources/applications/*
 

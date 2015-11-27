@@ -104,19 +104,13 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(pixfilesdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../src/manpageeditor-callbacks.$(OBJEXT) \
-	../src/manpageeditor-files.$(OBJEXT) \
-	../src/manpageeditor-globals.$(OBJEXT) \
-	../src/manpageeditor-guis.$(OBJEXT) \
-	../src/manpageeditor-main.$(OBJEXT) \
-	../src/manpageeditor-script.$(OBJEXT) \
-	../src/manpageeditor-searchcallbacks.$(OBJEXT) \
-	../src/manpageeditor-spellcheck.$(OBJEXT)
+am__objects_1 = ../src/callbacks.$(OBJEXT) ../src/files.$(OBJEXT) \
+	../src/globals.$(OBJEXT) ../src/guis.$(OBJEXT) \
+	../src/main.$(OBJEXT) ../src/script.$(OBJEXT) \
+	../src/searchcallbacks.$(OBJEXT) ../src/spellcheck.$(OBJEXT)
 am_manpageeditor_OBJECTS = $(am__objects_1)
 manpageeditor_OBJECTS = $(am_manpageeditor_OBJECTS)
 manpageeditor_LDADD = $(LDADD)
-manpageeditor_LINK = $(CXXLD) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -133,10 +127,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 AM_V_CXX = $(am__v_CXX_@AM_V@)
@@ -324,8 +314,6 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 
 COMMONSRC = ../src/callbacks.cpp ../src/files.cpp ../src/globals.cpp ../src/guis.cpp ../src/main.cpp ../src/script.cpp ../src/searchcallbacks.cpp ../src/spellcheck.cpp
 manpageeditor_SOURCES = $(COMMONSRC)
-manpageeditor_CFLAGS = -O3 -export-dynamic
-manpageeditor_CXXFLAGS = -O3 -export-dynamic
 appfilesdir = ${datarootdir}/applications
 appfiles_DATA = ../resources/applications/*
 pixfilesdir = ${datarootdir}/pixmaps
@@ -419,26 +407,26 @@ clean-binPROGRAMS:
 ../src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ../src/$(DEPDIR)
 	@: > ../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-callbacks.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/callbacks.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-files.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/files.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-globals.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/globals.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-guis.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/guis.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-main.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/main.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-script.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/script.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-searchcallbacks.$(OBJEXT):  \
-	../src/$(am__dirstamp) ../src/$(DEPDIR)/$(am__dirstamp)
-../src/manpageeditor-spellcheck.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/searchcallbacks.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
+../src/spellcheck.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
 manpageeditor$(EXEEXT): $(manpageeditor_OBJECTS) $(manpageeditor_DEPENDENCIES) $(EXTRA_manpageeditor_DEPENDENCIES) 
 	@rm -f manpageeditor$(EXEEXT)
-	$(AM_V_CXXLD)$(manpageeditor_LINK) $(manpageeditor_OBJECTS) $(manpageeditor_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(manpageeditor_OBJECTS) $(manpageeditor_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -447,14 +435,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-callbacks.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-files.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-globals.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-guis.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-script.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-searchcallbacks.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/manpageeditor-spellcheck.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/callbacks.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/files.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/globals.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/guis.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/script.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/searchcallbacks.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/spellcheck.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -471,118 +459,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-../src/manpageeditor-callbacks.o: ../src/callbacks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-callbacks.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-callbacks.Tpo -c -o ../src/manpageeditor-callbacks.o `test -f '../src/callbacks.cpp' || echo '$(srcdir)/'`../src/callbacks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-callbacks.Tpo ../src/$(DEPDIR)/manpageeditor-callbacks.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/callbacks.cpp' object='../src/manpageeditor-callbacks.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-callbacks.o `test -f '../src/callbacks.cpp' || echo '$(srcdir)/'`../src/callbacks.cpp
-
-../src/manpageeditor-callbacks.obj: ../src/callbacks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-callbacks.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-callbacks.Tpo -c -o ../src/manpageeditor-callbacks.obj `if test -f '../src/callbacks.cpp'; then $(CYGPATH_W) '../src/callbacks.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/callbacks.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-callbacks.Tpo ../src/$(DEPDIR)/manpageeditor-callbacks.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/callbacks.cpp' object='../src/manpageeditor-callbacks.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-callbacks.obj `if test -f '../src/callbacks.cpp'; then $(CYGPATH_W) '../src/callbacks.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/callbacks.cpp'; fi`
-
-../src/manpageeditor-files.o: ../src/files.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-files.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-files.Tpo -c -o ../src/manpageeditor-files.o `test -f '../src/files.cpp' || echo '$(srcdir)/'`../src/files.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-files.Tpo ../src/$(DEPDIR)/manpageeditor-files.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/files.cpp' object='../src/manpageeditor-files.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-files.o `test -f '../src/files.cpp' || echo '$(srcdir)/'`../src/files.cpp
-
-../src/manpageeditor-files.obj: ../src/files.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-files.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-files.Tpo -c -o ../src/manpageeditor-files.obj `if test -f '../src/files.cpp'; then $(CYGPATH_W) '../src/files.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/files.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-files.Tpo ../src/$(DEPDIR)/manpageeditor-files.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/files.cpp' object='../src/manpageeditor-files.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-files.obj `if test -f '../src/files.cpp'; then $(CYGPATH_W) '../src/files.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/files.cpp'; fi`
-
-../src/manpageeditor-globals.o: ../src/globals.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-globals.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-globals.Tpo -c -o ../src/manpageeditor-globals.o `test -f '../src/globals.cpp' || echo '$(srcdir)/'`../src/globals.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-globals.Tpo ../src/$(DEPDIR)/manpageeditor-globals.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/globals.cpp' object='../src/manpageeditor-globals.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-globals.o `test -f '../src/globals.cpp' || echo '$(srcdir)/'`../src/globals.cpp
-
-../src/manpageeditor-globals.obj: ../src/globals.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-globals.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-globals.Tpo -c -o ../src/manpageeditor-globals.obj `if test -f '../src/globals.cpp'; then $(CYGPATH_W) '../src/globals.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/globals.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-globals.Tpo ../src/$(DEPDIR)/manpageeditor-globals.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/globals.cpp' object='../src/manpageeditor-globals.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-globals.obj `if test -f '../src/globals.cpp'; then $(CYGPATH_W) '../src/globals.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/globals.cpp'; fi`
-
-../src/manpageeditor-guis.o: ../src/guis.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-guis.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-guis.Tpo -c -o ../src/manpageeditor-guis.o `test -f '../src/guis.cpp' || echo '$(srcdir)/'`../src/guis.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-guis.Tpo ../src/$(DEPDIR)/manpageeditor-guis.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/guis.cpp' object='../src/manpageeditor-guis.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-guis.o `test -f '../src/guis.cpp' || echo '$(srcdir)/'`../src/guis.cpp
-
-../src/manpageeditor-guis.obj: ../src/guis.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-guis.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-guis.Tpo -c -o ../src/manpageeditor-guis.obj `if test -f '../src/guis.cpp'; then $(CYGPATH_W) '../src/guis.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/guis.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-guis.Tpo ../src/$(DEPDIR)/manpageeditor-guis.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/guis.cpp' object='../src/manpageeditor-guis.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-guis.obj `if test -f '../src/guis.cpp'; then $(CYGPATH_W) '../src/guis.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/guis.cpp'; fi`
-
-../src/manpageeditor-main.o: ../src/main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-main.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-main.Tpo -c -o ../src/manpageeditor-main.o `test -f '../src/main.cpp' || echo '$(srcdir)/'`../src/main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-main.Tpo ../src/$(DEPDIR)/manpageeditor-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/main.cpp' object='../src/manpageeditor-main.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-main.o `test -f '../src/main.cpp' || echo '$(srcdir)/'`../src/main.cpp
-
-../src/manpageeditor-main.obj: ../src/main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-main.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-main.Tpo -c -o ../src/manpageeditor-main.obj `if test -f '../src/main.cpp'; then $(CYGPATH_W) '../src/main.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/main.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-main.Tpo ../src/$(DEPDIR)/manpageeditor-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/main.cpp' object='../src/manpageeditor-main.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-main.obj `if test -f '../src/main.cpp'; then $(CYGPATH_W) '../src/main.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/main.cpp'; fi`
-
-../src/manpageeditor-script.o: ../src/script.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-script.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-script.Tpo -c -o ../src/manpageeditor-script.o `test -f '../src/script.cpp' || echo '$(srcdir)/'`../src/script.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-script.Tpo ../src/$(DEPDIR)/manpageeditor-script.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/script.cpp' object='../src/manpageeditor-script.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-script.o `test -f '../src/script.cpp' || echo '$(srcdir)/'`../src/script.cpp
-
-../src/manpageeditor-script.obj: ../src/script.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-script.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-script.Tpo -c -o ../src/manpageeditor-script.obj `if test -f '../src/script.cpp'; then $(CYGPATH_W) '../src/script.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/script.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-script.Tpo ../src/$(DEPDIR)/manpageeditor-script.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/script.cpp' object='../src/manpageeditor-script.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-script.obj `if test -f '../src/script.cpp'; then $(CYGPATH_W) '../src/script.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/script.cpp'; fi`
-
-../src/manpageeditor-searchcallbacks.o: ../src/searchcallbacks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-searchcallbacks.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-searchcallbacks.Tpo -c -o ../src/manpageeditor-searchcallbacks.o `test -f '../src/searchcallbacks.cpp' || echo '$(srcdir)/'`../src/searchcallbacks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-searchcallbacks.Tpo ../src/$(DEPDIR)/manpageeditor-searchcallbacks.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/searchcallbacks.cpp' object='../src/manpageeditor-searchcallbacks.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-searchcallbacks.o `test -f '../src/searchcallbacks.cpp' || echo '$(srcdir)/'`../src/searchcallbacks.cpp
-
-../src/manpageeditor-searchcallbacks.obj: ../src/searchcallbacks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-searchcallbacks.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-searchcallbacks.Tpo -c -o ../src/manpageeditor-searchcallbacks.obj `if test -f '../src/searchcallbacks.cpp'; then $(CYGPATH_W) '../src/searchcallbacks.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/searchcallbacks.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-searchcallbacks.Tpo ../src/$(DEPDIR)/manpageeditor-searchcallbacks.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/searchcallbacks.cpp' object='../src/manpageeditor-searchcallbacks.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-searchcallbacks.obj `if test -f '../src/searchcallbacks.cpp'; then $(CYGPATH_W) '../src/searchcallbacks.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/searchcallbacks.cpp'; fi`
-
-../src/manpageeditor-spellcheck.o: ../src/spellcheck.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-spellcheck.o -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-spellcheck.Tpo -c -o ../src/manpageeditor-spellcheck.o `test -f '../src/spellcheck.cpp' || echo '$(srcdir)/'`../src/spellcheck.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-spellcheck.Tpo ../src/$(DEPDIR)/manpageeditor-spellcheck.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/spellcheck.cpp' object='../src/manpageeditor-spellcheck.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-spellcheck.o `test -f '../src/spellcheck.cpp' || echo '$(srcdir)/'`../src/spellcheck.cpp
-
-../src/manpageeditor-spellcheck.obj: ../src/spellcheck.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -MT ../src/manpageeditor-spellcheck.obj -MD -MP -MF ../src/$(DEPDIR)/manpageeditor-spellcheck.Tpo -c -o ../src/manpageeditor-spellcheck.obj `if test -f '../src/spellcheck.cpp'; then $(CYGPATH_W) '../src/spellcheck.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/spellcheck.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/manpageeditor-spellcheck.Tpo ../src/$(DEPDIR)/manpageeditor-spellcheck.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/spellcheck.cpp' object='../src/manpageeditor-spellcheck.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(manpageeditor_CXXFLAGS) $(CXXFLAGS) -c -o ../src/manpageeditor-spellcheck.obj `if test -f '../src/spellcheck.cpp'; then $(CYGPATH_W) '../src/spellcheck.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/spellcheck.cpp'; fi`
 install-man1: $(man1_MANS)
 	@$(NORMAL_INSTALL)
 	@list1='$(man1_MANS)'; \
