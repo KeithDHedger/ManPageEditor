@@ -507,13 +507,13 @@ void setPrefs(GtkWidget* widget,gpointer data)
 void doAbout(GtkWidget* widget,gpointer data)
 {
 	const char*	authors[]={"K.D.Hedger <"MYEMAIL">\n",MYWEBSITE,"\nMore by the same author\n","Xfce-Theme-Manager\nhttp://xfce-look.org/content/show.php?content=149647\n","Xfce4-Composite-Editor\nhttp://gtk-apps.org/content/show.php/Xfce4-Composite-Editor?content=149523\n","KKEdit\nhttp://gtk-apps.org/content/show.php?content=158161\n","GtkSu\nhttp://gtk-apps.org/content/show.php?content=158974",NULL};
-	const char	copyright[] ="Copyright \xc2\xa9 2013 K.D.Hedger";
-	const char*	aboutboxstring="ManPageEditor - Editor for linux manpages";
+	const char	copyright[] ="Copyright \xc2\xa9 2013-2015 K.D.Hedger\n" MYEMAIL;
+	const char*	aboutboxstring="ManPage Editor - Editor for linux manpages";
 	char*		licence;
 
 	g_file_get_contents(DATADIR"/docs/gpl-3.0.txt",&licence,NULL,NULL);
 
-	gtk_show_about_dialog(NULL,"authors",authors,"comments",aboutboxstring,"copyright",copyright,"version",VERSION,"website",MYWEBSITE,"program-name","ManPageEditor","logo-icon-name","ManPageEditor","license",licence,NULL);
+	gtk_show_about_dialog(NULL,"authors",authors,"comments",aboutboxstring,"copyright",copyright,"version",VERSION,"website",MYWEBSITE,"program-name","ManPage Editor","website-label","Manpage Editor Page","logo-icon-name","ManPageEditor","license",licence,NULL);
 
 	g_free(licence);
 }
