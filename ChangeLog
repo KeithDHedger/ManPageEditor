@@ -1,9 +1,15 @@
+0.0.18
+Added 'GROFF_SGR=1' to man formating command for older systems.
+Added check for 'groff' package in configure.
+Added '--enable-nroff' option for configure, for older man versions.
+Fixed older versions of man using overstrke instead of bold, preventing import of man pages.
+
 0.0.17
 Corrected abot box info.
 Updated websit and email links.
 Slight correction to .desktop file.
 Fixed missing directory bug, thanks to Kay Parker for that.
-Redone soucode licence preamble.
+Redone source code licence preamble.
 Removed forced CFLAGS and CXXFLAGS.
 Added to Github: https://github.com/KeithDHedger/ManPageEditor
 

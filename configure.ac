@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([ManPageEditor],[0.0.17],[PROJ],[ManPageEditor])
+AC_INIT([ManPageEditor],[0.0.18],[PROJ],[ManPageEditor])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -32,6 +32,20 @@ if test "$enable_aspell" = "yes"; then
 	ASPELL_LIBS=-laspell
 	AC_SUBST(ASPELL_LIBS)
 	AC_DEFINE([_ASPELL_], [], [Include spellchecker])
+fi
+
+AC_CHECK_PROG(GROFF, groff ,true,false)
+if test $GROFF = false; then
+	AC_MSG_ERROR([No groff program found!])
+fi
+
+AC_MSG_CHECKING(whether to format using man or nroff)
+AC_ARG_ENABLE(nroff,AS_HELP_STRING([--disable-nroff],[Format using nroff instead of man]),
+    [enable_nroff=$enableval],
+    [enable_nroff="no"])
+AC_MSG_RESULT($enable_nroff)
+if test "$enable_nroff" = "yes"; then
+	AC_DEFINE([_USENROFF_], [], [Use nroff])
 fi
 
 AC_OUTPUT(Makefile ManPageEditor/app/Makefile)

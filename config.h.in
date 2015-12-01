@@ -29,3 +29,6 @@
 
 /* Include spellchecker */
 #undef _ASPELL_
+
+/* Use nroff */
+#undef _USENROFF_

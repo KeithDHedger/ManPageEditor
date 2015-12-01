@@ -1170,12 +1170,20 @@ void importManpage(GtkWidget* widget,gpointer data)
 	if(g_str_has_suffix(filename,".gz"))
 		{
 			sprintf(nameBuffer,"gunzip --stdout %s|sed -n /^.TH/p",filename);
-			sprintf(commandBuffer,"gunzip --stdout %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+#ifndef _USENROFF_
+			sprintf(commandBuffer,"gunzip --stdout %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|GROFF_SGR=1 MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+#else
+			sprintf(commandBuffer,"gunzip --stdout %s|sed '1i\\.ll 100'|sed 's/^\\.S[Hh] \\(.*\\)$/@SECTION@ \\1\\n/g'|sed 's/^@SECTION@ \"\\(.*\\)\"/@SECTION@ \\1/g'|sed 's/^.IR \\(.*\\)/\\\\fI\\1\\\\fR/g;s/^.B \\(.*\\)/\\\\fB\\1\\\\fR/g;s/\\.PP/\\n/g;s/\\.IP/  \\n/g'|nroff|head -n -4",filename);
+#endif
 		}
 	else
 		{
 			sprintf(nameBuffer,"cat %s|sed -n /^.TH/p",filename);
-			sprintf(commandBuffer,"cat %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+#ifndef _USENROFF_
+			sprintf(commandBuffer,"cat %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|GROFF_SGR=1 MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+#else
+			sprintf(commandBuffer,"cat %s|sed '1i\\.ll 100'|sed 's/^\\.S[Hh] \\(.*\\)$/@SECTION@ \\1\\n/g'|sed 's/^@SECTION@ \"\\(.*\\)\"/@SECTION@ \\1/g'|sed 's/^.IR \\(.*\\)/\\\\fI\\1\\\\fR/g;s/^.B \\(.*\\)/\\\\fB\\1\\\\fR/g;s/\\.PP/\\n/g;s/\\.IP/  \\n/g'|nroff|head -n -4",filename);
+#endif
 	 	}
 
 	fp=popen(commandBuffer,"r");
