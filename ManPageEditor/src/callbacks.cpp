@@ -150,7 +150,7 @@ void closePage(GtkWidget* widget,gpointer data)
 			asprintf(&command,"rm -r \"%s\"",manFilename);
 			system(command);
 			g_free(command);
-			g_free(manFilename);
+			manFilename=NULL;
 		}
 
 	if(manName!=NULL)
@@ -440,7 +440,7 @@ void doShutdown(GtkWidget* widget,gpointer data)
 			asprintf(&command,"rm -r \"%s\"",manFilename);
 			system(command);
 			g_free(command);
-			g_free(manFilename);
+			manFilename=NULL;
 		}
 
 #ifdef _ASPELL_
@@ -744,21 +744,36 @@ void redoProps(GtkWidget* widget,gpointer data)
 
 void previewPage(GtkWidget* widget,gpointer data)
 {
-	char	command[1024];
+	char	*command;
 	char*	holdpath=exportPath;
+	char	tplate[]="/tmp/mpprevXXXXXX";
+	int		gotopen=-1;
 
-	exportPath=(char*)"/tmp/previewpage";
-	exportFile(NULL,NULL);
-	if(gzipPages==true)
-		sprintf((char*)&command,"%s man /tmp/previewpage.gz",terminalCommand);
-	else
-		sprintf((char*)&command,"%s man /tmp/previewpage",terminalCommand);
-	system(command);
-	exportPath=holdpath;
-	if(gzipPages==true)
-		unlink("/tmp/previewpage.gz");
-	else
-		unlink("/tmp/previewpage");
+	gotopen=mkstemp(tplate);
+	if(gotopen!=-1)
+		{
+			previewFile=fdopen(gotopen,"w");
+			if(previewFile!=NULL)
+				{
+					exportPath=tplate;
+					exportFile(NULL,NULL);
+					if(gzipPages==true)
+						asprintf(&command,"%s man %s.gz",terminalCommand,tplate);
+					else
+						asprintf(&command,"%s man %s",terminalCommand,tplate);
+
+					system(command);
+					exportPath=holdpath;
+				}
+			previewFile=NULL;
+			free(command);
+			if(gzipPages==true)
+				asprintf(&command,"%s.gz",tplate);
+			else
+				asprintf(&command,"%s",tplate);
+			unlink(command);
+			free(command);
+		}
 }
 
 void reorderDirty(GtkNotebook *notebook,GtkWidget *child,guint page_num,gpointer user_data)

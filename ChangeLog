@@ -1,3 +1,10 @@
+0.0.19
+Fixed temporary preview file not being removed on closing the preview window.
+Fixed double free segfault when opening .mpz files after using template file.
+Now uses 'safe' temporary folders.
+Now uses 'safe' temporary filename for preview, no longer clashes with other open instances.
+Updated autogen.sh file to remove autom4te.cache folder and aclocal.m4 before rebuliding.
+
 0.0.18
 Added 'GROFF_SGR=1' to man formating command for older systems.
 Added check for 'groff' package in configure.

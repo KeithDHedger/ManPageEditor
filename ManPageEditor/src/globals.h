@@ -82,6 +82,7 @@ struct pageStruct
 
 //manpage stuff
 extern char*			manFilename;
+//extern char			manFilename;
 extern char*			manName;
 extern char*			manSection;
 extern char*			manVersion;
@@ -91,6 +92,7 @@ extern char*			manFilePath;
 extern bool				pageOpen;
 extern bool				dirty;
 extern char*			exportPath;
+extern FILE				*previewFile;
 
 extern GtkWidget*		nameBox;
 extern GtkWidget*		sectionBox;

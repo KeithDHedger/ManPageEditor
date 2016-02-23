@@ -24,6 +24,8 @@
 
 //manpage
 char*			manFilename=NULL;
+//char			manFilename[]="/tmp/ManEditXXXXXX";
+
 char*			manName=NULL;
 char*			manSection=NULL;
 char*			manVersion=NULL;
@@ -33,6 +35,7 @@ char*			manFilePath=NULL;
 bool			pageOpen=false;
 bool			dirty=false;
 char*			exportPath=NULL;
+FILE			*previewFile=NULL;
 
 GtkWidget*		nameBox;
 GtkWidget*		sectionBox;

@@ -302,7 +302,10 @@ void exportFile(GtkWidget* widget,gpointer data)
 			exportPath=strdup(saveFilePath);
 		}
 
-	fd=fopen(exportPath,"w");
+	if(previewFile!=NULL)
+		fd=previewFile;
+	else
+		fd=fopen(exportPath,"w");
 	if (fd!=NULL)
 		{
 			fprintf(fd,".TH \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"\n",manName,manSection,manVersion,manAuthor,manCategory);
@@ -510,6 +513,7 @@ pageStruct* makeNewPage(void)
 
 	return(page);
 }
+char	tFileName[]="/tmp/ManEditXXXXXX";
 
 void newManpage(GtkWidget* widget,gpointer data)
 {
@@ -570,7 +574,8 @@ void newManpage(GtkWidget* widget,gpointer data)
 
 	if(result==GTK_RESPONSE_YES)
 		{
-			manFilename=tempnam(NULL,"ManEd");
+			sprintf(tFileName,"%s","/tmp/ManEditXXXXXX");
+			manFilename=mkdtemp(tFileName);
 			manName=strdup(gtk_entry_get_text((GtkEntry*)nameBox));
 			manSection=strdup(gtk_entry_get_text((GtkEntry*)sectionBox));
 			manVersion=strdup(gtk_entry_get_text((GtkEntry*)versionBox));
@@ -752,10 +757,11 @@ void doOpenManpage(char* file)
 		{
 			sprintf((char*)&buffer[0],"rm -r \"%s\"",manFilename);
 			system((char*)&buffer[0]);
-			g_free(manFilename);
+			manFilename=NULL;
 		}
 
-	manFilename=tempnam(NULL,"ManEd");
+	sprintf(tFileName,"%s","/tmp/ManEditXXXXXX");
+	manFilename=mkdtemp(tFileName);
 	g_mkdir_with_parents(manFilename,493);
 	asprintf(&command,"tar -xC %s -f %s 2>/dev/null",manFilename,file);
 	status=system(command);
@@ -1164,7 +1170,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 		}
 
 	closePage(NULL,NULL);
-	manFilename=tempnam(NULL,"ManEd");
+
+	sprintf(tFileName,"%s","/tmp/ManEditXXXXXX");
+	manFilename=mkdtemp(tFileName);
 	g_mkdir_with_parents(manFilename,493);
 
 	if(g_str_has_suffix(filename,".gz"))
