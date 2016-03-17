@@ -50,6 +50,7 @@ void doCancelCheck(GtkWidget* widget,gpointer data)
 
 void checkTheWord(char* word,int checkDoc)
 {
+#if 1
 	int							correct;
 	AspellWordList*				suggestions;
 	AspellStringEnumeration*	elements;
@@ -89,6 +90,7 @@ void checkTheWord(char* word,int checkDoc)
 			gtk_widget_show_all(spellCheckWord);
 			gtk_dialog_run((GtkDialog *)spellCheckWord);
 		}
+#endif
 }
 
 void checkWord(GtkWidget* widget,gpointer data)

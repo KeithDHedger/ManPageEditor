@@ -24,8 +24,6 @@
 
 //manpage
 char*			manFilename=NULL;
-//char			manFilename[]="/tmp/ManEditXXXXXX";
-
 char*			manName=NULL;
 char*			manSection=NULL;
 char*			manVersion=NULL;
@@ -162,7 +160,25 @@ bool checkForDirty(void)
 	return(false);
 }
 
+GtkWidget* creatNewBox(int orient,bool homog,int spacing)
+{
+	GtkWidget	*retwidg=NULL;
 
+#ifdef _USEGTK3_
+	if(orient==NEWVBOX)
+		retwidg=gtk_box_new(GTK_ORIENTATION_VERTICAL,spacing);
+	else
+		retwidg=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,spacing);
+	gtk_box_set_homogeneous((GtkBox*)retwidg,homog);
+#else
+	if(orient==NEWVBOX)
+		retwidg=gtk_vbox_new(homog,spacing);
+	else
+		retwidg=gtk_hbox_new(homog,spacing);
+#endif
+
+	return(retwidg);
+}
 
 
 

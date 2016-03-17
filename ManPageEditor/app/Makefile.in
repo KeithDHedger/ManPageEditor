@@ -308,6 +308,10 @@ AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = -I$(top_srcdir) \
 			$(GTK_CFLAGS) \
 			$(GTKSRC_CFLAGS) \
+			-DGTK_DISABLE_SINGLE_INCLUDES \
+			-DGDK_DISABLE_DEPRECATED \
+			-DGTK_DISABLE_DEPRECATED \
+			-DGSEAL_ENABLE \
 			-DPREFIX=\""${prefix}\"" \
 			-DDATADIR=\""${pkgdatadir}"\" \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \

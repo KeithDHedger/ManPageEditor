@@ -19,7 +19,8 @@
  */
 
 #include <glib.h>
-#include <gtksourceview/gtksourceiter.h>
+//#include <gtksourceview/gtksourceiter.h>
+#include <gtksourceview/gtksourceview.h>
 
 #include "callbacks.h"
 #include "script.h"
@@ -91,13 +92,20 @@ void resetAllItalicTags(void)
 
 GtkWidget* makeNewTab(char* name,char* tooltip,pageStruct* page)
 {
-	GtkWidget*	evbox=gtk_event_box_new();
-	GtkWidget*	hbox=gtk_hbox_new(false,0);
+	GtkWidget	*evbox=gtk_event_box_new();
+	GtkWidget	*hbox=NULL;
+
+	hbox=creatNewBox(NEWHBOX,false,0);
+
 	GtkWidget*	label=gtk_label_new(name);
 
 	gtk_box_pack_start(GTK_BOX(hbox),label,false,false,0);
 	gtk_container_add(GTK_CONTAINER(evbox),hbox);
-	gtk_signal_connect(GTK_OBJECT(evbox),"button-press-event",G_CALLBACK(tabPopUp),(void*)page);
+#ifdef _USEGTK3_
+	g_signal_connect(G_OBJECT(evbox),"button-press-event",G_CALLBACK(tabPopUp),(void*)page);
+#else
+	g_signal_connect(G_OBJECT(evbox),"button-press-event",G_CALLBACK(tabPopUp),(void*)page);
+#endif
 	page->tabName=label;
 	gtk_widget_show_all(evbox);
 	
@@ -120,7 +128,11 @@ void setFilePrefs(GtkSourceView* sourceview)
 	gtk_source_view_set_tab_width(sourceview,tabWidth);
 
 	font_desc=pango_font_description_from_string(fontAndSize);
+#ifdef _USEGTK3_
+//	gtk_widget_override_font((GtkWidget*)sourceview,font_desc);
+#else
 	gtk_widget_modify_font((GtkWidget*)sourceview,font_desc);
+#endif
 	pango_font_description_free(font_desc);
 
 }
@@ -195,7 +207,11 @@ bool getSaveFile(bool isExport)
 	GtkWidget*	dialog;
 	bool		retval=false;
 
+#ifdef _USEGTK3_
+	dialog=gtk_file_chooser_dialog_new("Save File",(GtkWindow*)window, GTK_FILE_CHOOSER_ACTION_SAVE,"Cancel",GTK_RESPONSE_CANCEL,"Save",GTK_RESPONSE_ACCEPT,NULL);
+#else
 	dialog=gtk_file_chooser_dialog_new("Save File",(GtkWindow*)window, GTK_FILE_CHOOSER_ACTION_SAVE,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_SAVE,GTK_RESPONSE_ACCEPT,NULL);
+#endif
 
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER (dialog),TRUE);
 	if((isExport==false) && (saveFileName!=NULL))
@@ -476,7 +492,12 @@ pageStruct* makeNewPage(void)
 
 	page=(pageStruct*)malloc(sizeof(pageStruct));
 
+#ifdef _USEGTK3_
+	page->pane=gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+#else
 	page->pane=gtk_vpaned_new();
+#endif
+
 	page->pageWindow=(GtkScrolledWindow*)gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page->pageWindow),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
 	page->pageWindow2=(GtkScrolledWindow*)gtk_scrolled_window_new(NULL, NULL);
@@ -490,7 +511,6 @@ pageStruct* makeNewPage(void)
 	page->view2=(GtkSourceView*)gtk_source_view_new_with_buffer(page->buffer);
 
 	setFilePrefs(page->view);
-
 	gtk_paned_add1(GTK_PANED(page->pane),(GtkWidget*)page->pageWindow);
 	gtk_container_add (GTK_CONTAINER(page->pageWindow),(GtkWidget*)page->view);
 	g_signal_connect(G_OBJECT(page->view),"button-release-event",G_CALLBACK(whatPane),(void*)1);
@@ -528,40 +548,47 @@ void newManpage(GtkWidget* widget,gpointer data)
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Create New Manpage");
 
+#ifdef _USEGTK3_
+	gtk_dialog_add_buttons((GtkDialog*)dialog,"Cancel",GTK_RESPONSE_CANCEL,"OK",GTK_RESPONSE_YES,NULL);
+#else
 	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
+#endif
 	gtk_window_set_title(GTK_WINDOW(dialog),"Details");
 
 	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-	
-	hbox=gtk_hbox_new(false,0);
+
+		hbox=creatNewBox(NEWHBOX,false,0);
+
 		nameBox=gtk_entry_new();
 		label=gtk_label_new("Name\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),nameBox,true,true,0);		
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-	hbox=gtk_hbox_new(false,0);
+		hbox=creatNewBox(NEWHBOX,false,0);
+
 		sectionBox=gtk_entry_new();
 		label=gtk_label_new("Section\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);		
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-	hbox=gtk_hbox_new(false,0);
+		hbox=creatNewBox(NEWHBOX,false,0);
+
 		versionBox=gtk_entry_new();
 		label=gtk_label_new("Version\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);		
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-	hbox=gtk_hbox_new(false,0);
+		hbox=creatNewBox(NEWHBOX,false,0);
 		authorBox=gtk_entry_new();
 		label=gtk_label_new("Author\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
 		gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);		
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-	hbox=gtk_hbox_new(false,0);
+		hbox=creatNewBox(NEWHBOX,false,0);
 		categoryBox=gtk_entry_new();
 		label=gtk_label_new("Category\t");
 		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
@@ -599,7 +626,11 @@ char* getNewSectionName(char* name)
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Enter Section Name");
 
+#ifdef _USEGTK3_
+	gtk_dialog_add_buttons((GtkDialog*)dialog,"Cancel",GTK_RESPONSE_CANCEL,"OK",GTK_RESPONSE_YES,NULL);
+#else
 	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
+#endif
 	gtk_window_set_title(GTK_WINDOW(dialog),"Section");
 
 	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
@@ -646,7 +677,7 @@ void newSection(GtkWidget* widget,gpointer data)
 	if(retval!=NULL)
 		{
 			page=makeNewPage();
-			page->tabVbox=gtk_vbox_new(true,4);
+			page->tabVbox=creatNewBox(NEWVBOX,true,4);
 			str=g_string_new(retval);
 			if(isSubsection==false)
 				g_string_ascii_up(str);
@@ -663,7 +694,9 @@ void newSection(GtkWidget* widget,gpointer data)
 			gtk_text_buffer_place_cursor(GTK_TEXT_BUFFER(page->buffer),&iter);
 
 //connect to ntebook
-			gtk_container_add(GTK_CONTAINER(page->tabVbox),GTK_WIDGET(page->pane));
+			gtk_box_pack_start ((GtkBox*)page->tabVbox,(GtkWidget*)page->pane,true,true,0);
+//			gtk_container_add(GTK_CONTAINER(page->tabVbox),GTK_WIDGET(page->pane));
+
 			g_object_set_data(G_OBJECT(page->tabVbox),"pagedata",(gpointer)page);
 
 			gtk_notebook_append_page(notebook,page->tabVbox,label);
@@ -701,8 +734,8 @@ void openConvertedFile(char* filepath)
 		return;
 
 	page=makeNewPage();
-	page->tabVbox=gtk_vbox_new(true,4);
-
+	page->tabVbox=creatNewBox(NEWVBOX,true,4);
+	
 	page->filePath=strdup(filepath);
 	page->fileName=strdup(filename);
 	page->isSubsection=isSubsection;
@@ -843,7 +876,11 @@ void openManpage(GtkWidget* widget,gpointer data)
 		}
 	else
 		{
+#ifdef _USEGTK3_
+			dialog=gtk_file_chooser_dialog_new("Open File",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"Cancel",GTK_RESPONSE_CANCEL,"Open",GTK_RESPONSE_ACCEPT,NULL);
+#else
 			dialog=gtk_file_chooser_dialog_new("Open File",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
+#endif
 
 			gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filter);
 			gtk_file_chooser_add_filter((GtkFileChooser*)dialog,filterall);
@@ -864,6 +901,8 @@ void openManpage(GtkWidget* widget,gpointer data)
 void deleteSection(GtkWidget* widget,gpointer data)
 {
 	pageStruct*	page=getPageStructPtr(-1);
+	if(page==NULL)
+		return;
 
 	if(yesNo((char*)"Do you want to permanently delete",page->fileName)==GTK_RESPONSE_YES)
 		{
@@ -975,7 +1014,7 @@ void replaceTags(void)
 	int						numendtags=2;
 	int						nltag=numendtags-1;
 
-	GtkSourceSearchFlags	flags=GTK_SOURCE_SEARCH_TEXT_ONLY;
+	GtkTextSearchFlags	flags=GTK_TEXT_SEARCH_TEXT_ONLY;
 
 	flag=true;
 	for(int j=0;j<numstarttags;j++)
@@ -983,22 +1022,22 @@ void replaceTags(void)
 			while(flag==true)
 				{
 					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					if(gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
+					if(gtk_text_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
 						{
 							noendfound=true;
 							for(int k=0;k<numendtags;k++)
 								{
-									if(gtk_source_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
+									if(gtk_text_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
 										{
 											noendfound=false;
 											tag=getNamedTag(j);
 											gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&endtag,&starttag2);
 											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-											gtk_source_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
+											gtk_text_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL);
 											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
 											if(k!=nltag)
 												{
-													gtk_source_iter_forward_search(&starttag,endtexttags[k],flags,&starttag2,&endtag2,NULL);
+													gtk_text_iter_forward_search(&starttag,endtexttags[k],flags,&starttag2,&endtag2,NULL);
 													gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag2,&endtag2);
 												}
 											break;
@@ -1082,7 +1121,11 @@ char* getManpageName(void)
 
 	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Manpage Name");
 
+#ifdef _USEGTK3_
+	gtk_dialog_add_buttons((GtkDialog*)dialog,"Yes",GTK_RESPONSE_YES,"No",GTK_RESPONSE_CANCEL,NULL);
+#else
 	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_YES,GTK_RESPONSE_YES,GTK_STOCK_NO,GTK_RESPONSE_CANCEL,NULL);
+#endif
 	gtk_window_set_title(GTK_WINDOW(dialog),"Import System Manpage");
 	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
 	entrybox=gtk_entry_new();
@@ -1156,7 +1199,11 @@ void importManpage(GtkWidget* widget,gpointer data)
 		}
 	else
 		{
-			dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
+#ifdef _USEGTK3_
+			dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"Cancel",GTK_RESPONSE_CANCEL,"Open",GTK_RESPONSE_ACCEPT,NULL);
+#else
+			dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
+#endif
 
 		if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
 			{

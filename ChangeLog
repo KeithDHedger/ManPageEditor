@@ -1,3 +1,9 @@
+0.1.0
+Fixed bug when trying to delete non existent section.
+Fixed segfault on doing cut/copy when there is no selection.
+Removed split view option.
+Made gtk3 compatable via configure option.
+
 0.0.19
 Fixed temporary preview file not being removed on closing the preview window.
 Fixed double free segfault when opening .mpz files after using template file.

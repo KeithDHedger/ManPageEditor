@@ -27,6 +27,10 @@
 
 #include "config.h"
 
+#ifndef _USEGTK3_
+	#include <gtksourceview/gtksourceiter.h>
+#endif
+
 #ifdef _ASPELL_
 #include <aspell.h>
 #endif
@@ -55,6 +59,7 @@
 #define NORMALESC2 "\e[24m"
 #define NORMALESC3 "\e[22m"
 
+enum {NEWVBOX=0,NEWHBOX};
 enum {BOLD=0,ITALIC,NORMAL};
 
 struct pageStruct
@@ -82,7 +87,6 @@ struct pageStruct
 
 //manpage stuff
 extern char*			manFilename;
-//extern char			manFilename;
 extern char*			manName;
 extern char*			manSection;
 extern char*			manVersion;
@@ -179,6 +183,7 @@ extern GtkWidget*		badWordLabel;
 pageStruct* getPageStructPtr(int pagenum);
 void scrollToIterInPane(pageStruct* page,GtkTextIter* iter);
 bool checkForDirty(void);
+GtkWidget* creatNewBox(int orient,bool homog,int spacing);
 
 #endif
 
