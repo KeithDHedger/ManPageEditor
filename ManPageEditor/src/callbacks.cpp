@@ -18,10 +18,7 @@
  * along with ManPageEditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include <gtksourceview/gtksourceiter.h>
 #include <gtksourceview/gtksourceview.h>
-//#include <gtksourceview/gtksourceprintcompositor.h>
-//#include <gtksourceview/gtksourceview.h>
 
 #include "guis.h"
 #include "searchcallbacks.h"
@@ -138,7 +135,7 @@ void closeAllTabs(GtkWidget* widget,gpointer data)
 {
 	int	numtabs=gtk_notebook_get_n_pages(notebook);
 
-	for(int loop=0;loop<numtabs;loop++)
+	for(int loop=0; loop<numtabs; loop++)
 		closeTab(NULL,0);
 }
 
@@ -235,11 +232,11 @@ void redo(GtkWidget* widget,gpointer data)
 		return;
 
 	if(gtk_source_buffer_can_redo(page->buffer));
-		{
-			gtk_source_buffer_redo(page->buffer);
-			page->isFirst=true;
-			setSensitive();
-		}
+	{
+		gtk_source_buffer_redo(page->buffer);
+		page->isFirst=true;
+		setSensitive();
+	}
 }
 
 void openHelp(GtkWidget* widget,gpointer data)
@@ -311,7 +308,7 @@ bool tabPopUp(GtkWidget *widget, GdkEventButton *event,gpointer user_data)
 	GtkWidget*	image;
 
 	if(event->button==3 && event->type==GDK_BUTTON_PRESS)
-	    {
+		{
 			tabMenu=gtk_menu_new();
 			page=(pageStruct*)user_data;
 
@@ -419,14 +416,14 @@ void doShutdown(GtkWidget* widget,gpointer data)
 				result=show_question((char*)"manpage");
 			switch(result)
 				{
-					case GTK_RESPONSE_YES:
-						saveManpage(NULL,NULL);
-						break;
-					case GTK_RESPONSE_NO:
-						break;
-					default:
-						return;
-						break;
+				case GTK_RESPONSE_YES:
+					saveManpage(NULL,NULL);
+					break;
+				case GTK_RESPONSE_NO:
+					break;
+				default:
+					return;
+					break;
 				}
 		}
 	if(manFilename!=NULL)
@@ -500,7 +497,7 @@ void setPrefs(GtkWidget* widget,gpointer data)
 
 void doAbout(GtkWidget* widget,gpointer data)
 {
-	const char*	authors[]={"K.D.Hedger <"MYEMAIL">\n",MYWEBSITE,"\nMore by the same author\n","Xfce-Theme-Manager\nhttp://xfce-look.org/content/show.php?content=149647\n","Xfce4-Composite-Editor\nhttp://gtk-apps.org/content/show.php/Xfce4-Composite-Editor?content=149523\n","KKEdit\nhttp://gtk-apps.org/content/show.php?content=158161\n","GtkSu\nhttp://gtk-apps.org/content/show.php?content=158974",NULL};
+	const char*	authors[]= {"K.D.Hedger <"MYEMAIL">\n",MYWEBSITE,"\nMore by the same author\n","Xfce-Theme-Manager\nhttp://xfce-look.org/content/show.php?content=149647\n","Xfce4-Composite-Editor\nhttp://gtk-apps.org/content/show.php/Xfce4-Composite-Editor?content=149523\n","KKEdit\nhttp://gtk-apps.org/content/show.php?content=158161\n","GtkSu\nhttp://gtk-apps.org/content/show.php?content=158974",NULL};
 	const char	copyright[] ="Copyright \xc2\xa9 2013-2015 K.D.Hedger\n" MYEMAIL;
 	const char*	aboutboxstring="ManPage Editor - Editor for linux manpages";
 	char*		licence;
@@ -510,61 +507,6 @@ void doAbout(GtkWidget* widget,gpointer data)
 	gtk_show_about_dialog(NULL,"authors",authors,"comments",aboutboxstring,"copyright",copyright,"version",VERSION,"website",MYWEBSITE,"program-name","ManPage Editor","website-label","Manpage Editor Page","logo-icon-name","ManPageEditor","license",licence,NULL);
 
 	g_free(licence);
-}
-
-void drawPage(GtkPrintOperation *operation,GtkPrintContext *context,gint page_nr,gpointer user_data)
-{
-//TODO//
-#if 0
-	GtkSourcePrintCompositor *compositor;
-
-	compositor=GTK_SOURCE_PRINT_COMPOSITOR(user_data);
-	gtk_source_print_compositor_draw_page(compositor,context,page_nr);
-#endif
-}
-
-void beginPrint(GtkPrintOperation *operation,GtkPrintContext *context,gpointer user_data)
-{
-//TODO//
-#if 0
-	GtkSourcePrintCompositor*	compositor;
-	gint						n_pages;
-
-    compositor=GTK_SOURCE_PRINT_COMPOSITOR(user_data);
-
-    while(!gtk_source_print_compositor_paginate(compositor,context));
-    n_pages=gtk_source_print_compositor_get_n_pages(compositor);
-    gtk_print_operation_set_n_pages(operation,n_pages);
-#endif
-}
-
-void printSection(GtkWidget* widget,gpointer data)
-{
-//TODO//
-#if 0
-	pageStruct*					page=getPageStructPtr(-1);
-	GtkSourcePrintCompositor*	printview=gtk_source_print_compositor_new_from_view(page->view);
-
-	GtkPrintOperation*			print;
-	GtkPrintOperationResult		result;
-
-	print=gtk_print_operation_new();
-	if (settings != NULL)
-		gtk_print_operation_set_print_settings(print,settings);
-
-	g_signal_connect(print,"begin-print",G_CALLBACK(beginPrint),(void*)printview);
-	g_signal_connect(print,"draw-page",G_CALLBACK (drawPage),(void*)printview);
-
-	result=gtk_print_operation_run(print,GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,GTK_WINDOW(window),NULL);
-	if (result==GTK_PRINT_OPERATION_RESULT_APPLY)
-		{
-			if (settings != NULL)
-				g_object_unref(settings);
-			settings=(GtkPrintSettings*)g_object_ref((gpointer)gtk_print_operation_get_print_settings(print));
-		}
-	g_object_unref(print);
-	g_object_unref(printview);
-#endif
 }
 
 void printFile(GtkWidget* widget,gpointer data)
@@ -623,44 +565,44 @@ void doFormat(GtkWidget* widget,gpointer data)
 
 	switch((long)data)
 		{
-			case BOLD:
+		case BOLD:
+			boldnum++;
+			sprintf((char*)&tagname,"bold-%i",boldnum);
+			tag=gtk_text_tag_table_lookup(tagtable,tagname);
+			while(tag!=NULL)
+				{
 					boldnum++;
 					sprintf((char*)&tagname,"bold-%i",boldnum);
 					tag=gtk_text_tag_table_lookup(tagtable,tagname);
-					while(tag!=NULL)
-						{
-							boldnum++;
-							sprintf((char*)&tagname,"bold-%i",boldnum);
-							tag=gtk_text_tag_table_lookup(tagtable,tagname);
-						}
-					tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL);
-					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
-				break;
+				}
+			tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL);
+			gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+			gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
+			break;
 
-			case NORMAL:
-					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-					gtk_text_buffer_remove_all_tags((GtkTextBuffer*)page->buffer,&start,&end);
-				break;
+		case NORMAL:
+			gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+			gtk_text_buffer_remove_all_tags((GtkTextBuffer*)page->buffer,&start,&end);
+			break;
 
-			case ITALIC:
+		case ITALIC:
+			italicnum++;
+			sprintf((char*)&tagname,"italic-%i",italicnum);
+			tag=gtk_text_tag_table_lookup(tagtable,tagname);
+			while(tag!=NULL)
+				{
 					italicnum++;
-					sprintf((char*)&tagname,"italic-%i",italicnum);
+					sprintf((char*)&tagname,"bold-%i",italicnum);
 					tag=gtk_text_tag_table_lookup(tagtable,tagname);
-					while(tag!=NULL)
-						{
-							italicnum++;
-							sprintf((char*)&tagname,"bold-%i",italicnum);
-							tag=gtk_text_tag_table_lookup(tagtable,tagname);
-						}
-					if(useUnderline==true)
-						tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"underline",PANGO_UNDERLINE_SINGLE,NULL);
-					else
-						tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL);
+				}
+			if(useUnderline==true)
+				tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"underline",PANGO_UNDERLINE_SINGLE,NULL);
+			else
+				tag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL);
 
-					gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-					gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
-				break;
+			gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end);
+			gtk_text_buffer_apply_tag((GtkTextBuffer*)page->buffer,tag,&start,&end);
+			break;
 		}
 
 	dirty=true;
@@ -676,7 +618,7 @@ void redoProps(GtkWidget* widget,gpointer data)
 	GtkWidget*	label;
 	GtkWidget*	hbox;
 
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Set Properties");
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_QUESTION,GTK_BUTTONS_NONE,"Set Properties");
 
 #ifdef _USEGTK3_
 	gtk_dialog_add_buttons((GtkDialog*)dialog,"OK",GTK_RESPONSE_OK,"Cancel",GTK_RESPONSE_CANCEL,NULL);
@@ -700,38 +642,38 @@ void redoProps(GtkWidget* widget,gpointer data)
 	sectionBox=gtk_entry_new();
 	label=gtk_label_new("Section\t");
 	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-	gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);		
+	gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);
 	if(manSection!=NULL)
 		gtk_entry_set_text((GtkEntry*)sectionBox,manSection);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-		hbox=creatNewBox(NEWHBOX,false,0);
-		versionBox=gtk_entry_new();
-		label=gtk_label_new("Version\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);		
-		if(manVersion!=NULL)
-			gtk_entry_set_text((GtkEntry*)versionBox,manVersion);
+	hbox=creatNewBox(NEWHBOX,false,0);
+	versionBox=gtk_entry_new();
+	label=gtk_label_new("Version\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);
+	if(manVersion!=NULL)
+		gtk_entry_set_text((GtkEntry*)versionBox,manVersion);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-		hbox=creatNewBox(NEWHBOX,false,0);
+	hbox=creatNewBox(NEWHBOX,false,0);
 
-		authorBox=gtk_entry_new();
-		label=gtk_label_new("Author\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);		
-		if(manAuthor!=NULL)
-			gtk_entry_set_text((GtkEntry*)authorBox,manAuthor);
+	authorBox=gtk_entry_new();
+	label=gtk_label_new("Author\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);
+	if(manAuthor!=NULL)
+		gtk_entry_set_text((GtkEntry*)authorBox,manAuthor);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-		hbox=creatNewBox(NEWHBOX,false,0);
+	hbox=creatNewBox(NEWHBOX,false,0);
 
-		categoryBox=gtk_entry_new();
-		label=gtk_label_new("Category\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);		
-		if(manCategory!=NULL)
-			gtk_entry_set_text((GtkEntry*)categoryBox,manCategory);
+	categoryBox=gtk_entry_new();
+	label=gtk_label_new("Category\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);
+	if(manCategory!=NULL)
+		gtk_entry_set_text((GtkEntry*)categoryBox,manCategory);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 
@@ -790,4 +732,3 @@ void reorderDirty(GtkNotebook *notebook,GtkWidget *child,guint page_num,gpointer
 	pageStruct* page=getPageStructPtr(page_num);
 	makeDirty(NULL,(void*)page);
 }
-

@@ -19,7 +19,6 @@
  */
 
 #include <glib.h>
-//#include <gtksourceview/gtksourceiter.h>
 #include <gtksourceview/gtksourceview.h>
 
 #include "callbacks.h"
@@ -77,7 +76,7 @@ void resetAllItalicTags(void)
 	pageStruct*	page;
 	int			numtabs=gtk_notebook_get_n_pages(notebook);
 
-	for(int loop=0;loop<numtabs;loop++)
+	for(int loop=0; loop<numtabs; loop++)
 		{
 			page=getPageStructPtr(loop);
 			if(page!=NULL)
@@ -108,7 +107,7 @@ GtkWidget* makeNewTab(char* name,char* tooltip,pageStruct* page)
 #endif
 	page->tabName=label;
 	gtk_widget_show_all(evbox);
-	
+
 	return(evbox);
 }
 
@@ -129,10 +128,15 @@ void setFilePrefs(GtkSourceView* sourceview)
 
 	font_desc=pango_font_description_from_string(fontAndSize);
 #ifdef _USEGTK3_
-	if(strstr(fontAndSize,"mono")!=NULL)
-		gtk_text_view_set_monospace ((GtkTextView*)sourceview,true);
-	else
-		gtk_text_view_set_monospace ((GtkTextView*)sourceview,false);
+//	if(gtk_minor_version>=16)
+//		{		
+////    printf("%d.%d.%d\n", gtk_major_version, gtk_minor_version, gtk_micro_version);
+//
+//			if(strstr(fontAndSize,"mono")!=NULL)
+//				gtk_text_view_set_monospace ((GtkTextView*)sourceview,true);
+//			else
+//				gtk_text_view_set_monospace ((GtkTextView*)sourceview,false);
+//		}
 #else
 	gtk_widget_modify_font((GtkWidget*)sourceview,font_desc);
 #endif
@@ -144,7 +148,7 @@ void resetAllFilePrefs(void)
 {
 	pageStruct*	page;
 
-	for(int loop=0;loop<gtk_notebook_get_n_pages(notebook);loop++)
+	for(int loop=0; loop<gtk_notebook_get_n_pages(notebook); loop++)
 		{
 			page=getPageStructPtr(loop);
 			setFilePrefs(page->view);
@@ -177,7 +181,7 @@ void dropText(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelecti
 		{
 			dropTextFile=true;
 
-			for(int j=0;j<cnt;j++)
+			for(int j=0; j<cnt; j++)
 				{
 					str=g_string_new(NULL);
 					filename=g_filename_from_uri(array[j],NULL,NULL);
@@ -200,7 +204,7 @@ void dropText(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelecti
 			g_strfreev(array);
 		}
 	else
-			dropTextFile=false;
+		dropTextFile=false;
 
 	gtk_drag_finish (context,true,true,time);
 }
@@ -229,7 +233,7 @@ bool getSaveFile(bool isExport)
 				gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),g_path_get_dirname(exportPath));
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),"Untitled.1");
 		}
- 	else
+	else
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),"Untitled");
 
 	if(gtk_dialog_run(GTK_DIALOG(dialog))==GTK_RESPONSE_ACCEPT)
@@ -248,8 +252,8 @@ char* doReplaceTags(char* str)
 {
 	char*		newstr=strdup(str);
 	char*		tagstr=NULL;
-	const char*	tagfrom[]={"&gt;","&lt;","&apos;","&quot;"};
-	const char*	tagto[]={">","<","'","\""};
+	const char*	tagfrom[]= {"&gt;","&lt;","&apos;","&quot;"};
+	const char*	tagto[]= {">","<","'","\""};
 	bool		flag=true;
 
 
@@ -272,9 +276,9 @@ char* doReplaceTags(char* str)
 			else
 				replaceAllSlice(&newstr,tagstr,(char*)"\\fI");
 		}
-	
+
 	replaceAllSlice(&newstr,(char*)"</apply_tag>",(char*)"\\fR");
-	for(int j=0;j<4;j++)
+	for(int j=0; j<4; j++)
 		replaceAllSlice(&newstr,(char*)tagfrom[j],(char*)tagto[j]);
 
 	g_free(str);
@@ -332,7 +336,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 			ptr=text;
 			startChar[1]=0;
 
-			for(int loop=0;loop<numpages;loop++)
+			for(int loop=0; loop<numpages; loop++)
 				{
 					page=getPageStructPtr(loop);
 					gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
@@ -365,7 +369,7 @@ void exportFile(GtkWidget* widget,gpointer data)
 											fprintf(fd,"%s\n.br\n",linePtr);
 											g_free(linePtr);
 											linePtr=sliceInclude(ptr,(char*)&startChar[0],(char*)"\n",true,true);
-											holdPtr=deleteSlice(ptr,linePtr);	
+											holdPtr=deleteSlice(ptr,linePtr);
 											g_free(linePtr);
 											g_free(ptr);
 											ptr=holdPtr;
@@ -431,7 +435,7 @@ void saveManpage(GtkWidget* widget,gpointer data)
 				asprintf(&manFilePath,"%s.mpz",saveFilePath);
 		}
 
-	for(int loop=0;loop<numpages;loop++)
+	for(int loop=0; loop<numpages; loop++)
 		{
 			page=getPageStructPtr(loop);
 			page->itsMe=true;
@@ -447,7 +451,7 @@ void saveManpage(GtkWidget* widget,gpointer data)
 			fprintf(fd,"manversion %s\n",manVersion);
 			fprintf(fd,"manauthor %s\n",manAuthor);
 			fprintf(fd,"mancategory %s\n",manCategory);
-			for(int loop=0;loop<numpages;loop++)
+			for(int loop=0; loop<numpages; loop++)
 				{
 					page=getPageStructPtr(loop);
 					if(page->isSubsection==false)
@@ -549,7 +553,7 @@ void newManpage(GtkWidget* widget,gpointer data)
 	if(pageOpen==true)
 		closePage(NULL,NULL);
 
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Create New Manpage");
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_QUESTION,GTK_BUTTONS_NONE,"Create New Manpage");
 
 #ifdef _USEGTK3_
 	gtk_dialog_add_buttons((GtkDialog*)dialog,"Cancel",GTK_RESPONSE_CANCEL,"OK",GTK_RESPONSE_YES,NULL);
@@ -560,42 +564,42 @@ void newManpage(GtkWidget* widget,gpointer data)
 
 	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
-		hbox=creatNewBox(NEWHBOX,false,0);
+	hbox=creatNewBox(NEWHBOX,false,0);
 
-		nameBox=gtk_entry_new();
-		label=gtk_label_new("Name\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),nameBox,true,true,0);		
+	nameBox=gtk_entry_new();
+	label=gtk_label_new("Name\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),nameBox,true,true,0);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-		hbox=creatNewBox(NEWHBOX,false,0);
+	hbox=creatNewBox(NEWHBOX,false,0);
 
-		sectionBox=gtk_entry_new();
-		label=gtk_label_new("Section\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);		
+	sectionBox=gtk_entry_new();
+	label=gtk_label_new("Section\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),sectionBox,true,true,0);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-		hbox=creatNewBox(NEWHBOX,false,0);
+	hbox=creatNewBox(NEWHBOX,false,0);
 
-		versionBox=gtk_entry_new();
-		label=gtk_label_new("Version\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);		
+	versionBox=gtk_entry_new();
+	label=gtk_label_new("Version\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),versionBox,true,true,0);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-		hbox=creatNewBox(NEWHBOX,false,0);
-		authorBox=gtk_entry_new();
-		label=gtk_label_new("Author\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);		
+	hbox=creatNewBox(NEWHBOX,false,0);
+	authorBox=gtk_entry_new();
+	label=gtk_label_new("Author\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),authorBox,true,true,0);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
-		hbox=creatNewBox(NEWHBOX,false,0);
-		categoryBox=gtk_entry_new();
-		label=gtk_label_new("Category\t");
-		gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
-		gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);		
+	hbox=creatNewBox(NEWHBOX,false,0);
+	categoryBox=gtk_entry_new();
+	label=gtk_label_new("Category\t");
+	gtk_box_pack_start(GTK_BOX(hbox),label,true,true,0);
+	gtk_box_pack_start(GTK_BOX(hbox),categoryBox,true,true,0);
 	gtk_container_add(GTK_CONTAINER(content_area),hbox);
 
 
@@ -627,7 +631,7 @@ char* getNewSectionName(char* name)
 	char*		retval=NULL;
 	GtkWidget*	checkbox;
 
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Enter Section Name");
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_QUESTION,GTK_BUTTONS_NONE,"Enter Section Name");
 
 #ifdef _USEGTK3_
 	gtk_dialog_add_buttons((GtkDialog*)dialog,"Cancel",GTK_RESPONSE_CANCEL,"OK",GTK_RESPONSE_YES,NULL);
@@ -636,7 +640,7 @@ char* getNewSectionName(char* name)
 #endif
 	gtk_window_set_title(GTK_WINDOW(dialog),"Section");
 
-	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
+	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 	entrybox=gtk_entry_new();
 	if(name!=NULL)
 		gtk_entry_set_text((GtkEntry*)entrybox,name);
@@ -686,13 +690,13 @@ void newSection(GtkWidget* widget,gpointer data)
 				g_string_ascii_up(str);
 			else
 				g_string_ascii_down(str);
-	
+
 			page->fileName=g_string_free(str,false);
 			asprintf(&page->filePath,"%s/%s",manFilename,page->fileName);
 
 			label=makeNewTab(page->fileName,NULL,page);
 
-/* move cursor to the beginning */
+			/* move cursor to the beginning */
 			gtk_text_buffer_get_start_iter(GTK_TEXT_BUFFER(page->buffer),&iter);
 			gtk_text_buffer_place_cursor(GTK_TEXT_BUFFER(page->buffer),&iter);
 
@@ -738,7 +742,7 @@ void openConvertedFile(char* filepath)
 
 	page=makeNewPage();
 	page->tabVbox=creatNewBox(NEWVBOX,true,4);
-	
+
 	page->filePath=strdup(filepath);
 	page->fileName=strdup(filename);
 	page->isSubsection=isSubsection;
@@ -747,8 +751,8 @@ void openConvertedFile(char* filepath)
 	gtk_source_buffer_set_highlight_syntax(page->buffer,false);
 	gtk_source_buffer_set_highlight_matching_brackets(page->buffer,false);
 	gtk_source_buffer_begin_not_undoable_action(page->buffer);
-		loadBuffer(page);
-		setUnderlining(page);
+	loadBuffer(page);
+	setUnderlining(page);
 	gtk_source_buffer_end_not_undoable_action(page->buffer);
 
 	g_free(filename);
@@ -898,7 +902,7 @@ void openManpage(GtkWidget* widget,gpointer data)
 		}
 	dirty=false;
 	setSensitive();
-	refreshMainWindow();	
+	refreshMainWindow();
 }
 
 void deleteSection(GtkWidget* widget,gpointer data)
@@ -969,33 +973,33 @@ GtkTextTag*	getNamedTag(int tagType)
 
 	switch(tagType)
 		{
-			case BOLD:
-				tagboldnum++;
-				sprintf((char*)&tagname,"bold-%i",tagboldnum);
-				tag=gtk_text_tag_table_lookup(tagtable,tagname);
-				while(tag!=NULL)
-					{
-						tagboldnum++;
-						sprintf((char*)&tagname,"bold-%i",tagboldnum);
-						tag=gtk_text_tag_table_lookup(tagtable,tagname);
-					}
-				return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL));
-				break;
-			case ITALIC:
-					tagitalicnum++;
-					sprintf((char*)&tagname,"italic-%i",tagitalicnum);
+		case BOLD:
+			tagboldnum++;
+			sprintf((char*)&tagname,"bold-%i",tagboldnum);
+			tag=gtk_text_tag_table_lookup(tagtable,tagname);
+			while(tag!=NULL)
+				{
+					tagboldnum++;
+					sprintf((char*)&tagname,"bold-%i",tagboldnum);
 					tag=gtk_text_tag_table_lookup(tagtable,tagname);
-					while(tag!=NULL)
-						{
-							tagitalicnum++;
-							sprintf((char*)&tagname,"bold-%i",tagitalicnum);
-							tag=gtk_text_tag_table_lookup(tagtable,tagname);
-						}
-					if(useUnderline==true)
-						return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"underline",PANGO_UNDERLINE_SINGLE,NULL));
-					else
-						return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL));
-				break;
+				}
+			return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"weight",PANGO_WEIGHT_BOLD,NULL));
+			break;
+		case ITALIC:
+			tagitalicnum++;
+			sprintf((char*)&tagname,"italic-%i",tagitalicnum);
+			tag=gtk_text_tag_table_lookup(tagtable,tagname);
+			while(tag!=NULL)
+				{
+					tagitalicnum++;
+					sprintf((char*)&tagname,"bold-%i",tagitalicnum);
+					tag=gtk_text_tag_table_lookup(tagtable,tagname);
+				}
+			if(useUnderline==true)
+				return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"underline",PANGO_UNDERLINE_SINGLE,NULL));
+			else
+				return(gtk_text_buffer_create_tag((GtkTextBuffer*)importPage->buffer,tagname,"style",PANGO_STYLE_ITALIC,NULL));
+			break;
 		}
 	return(NULL);
 }
@@ -1009,8 +1013,8 @@ void replaceTags(void)
 	GtkTextIter				starttag2;
 	GtkTextTag*				tag=NULL;
 	bool					flag=true;
-	const char*				texttags[]={BOLDESC,ITALICESC};
-	const char*				endtexttags[]={NORMALESC,"\n"};
+	const char*				texttags[]= {BOLDESC,ITALICESC};
+	const char*				endtexttags[]= {NORMALESC,"\n"};
 	bool					noendfound=true;
 
 	int						numstarttags=2;
@@ -1020,7 +1024,7 @@ void replaceTags(void)
 	GtkTextSearchFlags	flags=GTK_TEXT_SEARCH_TEXT_ONLY;
 
 	flag=true;
-	for(int j=0;j<numstarttags;j++)
+	for(int j=0; j<numstarttags; j++)
 		{
 			while(flag==true)
 				{
@@ -1028,7 +1032,7 @@ void replaceTags(void)
 					if(gtk_text_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
 						{
 							noendfound=true;
-							for(int k=0;k<numendtags;k++)
+							for(int k=0; k<numendtags; k++)
 								{
 									if(gtk_text_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
 										{
@@ -1120,9 +1124,9 @@ char* getManpageName(void)
 	GtkWidget*	drop;
 	int			retcode;
 
-	const char*	buffer[]={"","Auto","1 Executable programs or shell commands","2 System calls (functions provided by the kernel)","3 Library calls (functions within program libraries)","4 Special files (usually found in /dev)","5 File formats and conventions eg /etc/passwd","6 Games","7 Miscellaneous, e.g. man(7), groff(7)","8 System administration commands (usually only for root)","9 Kernel routines [Non standard]"};
+	const char*	buffer[]= {"","Auto","1 Executable programs or shell commands","2 System calls (functions provided by the kernel)","3 Library calls (functions within program libraries)","4 Special files (usually found in /dev)","5 File formats and conventions eg /etc/passwd","6 Games","7 Miscellaneous, e.g. man(7), groff(7)","8 System administration commands (usually only for root)","9 Kernel routines [Non standard]"};
 
-	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Manpage Name");
+	dialog=gtk_message_dialog_new(GTK_WINDOW(window),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_QUESTION,GTK_BUTTONS_NONE,"Manpage Name");
 
 #ifdef _USEGTK3_
 	gtk_dialog_add_buttons((GtkDialog*)dialog,"Yes",GTK_RESPONSE_YES,"No",GTK_RESPONSE_CANCEL,NULL);
@@ -1130,13 +1134,13 @@ char* getManpageName(void)
 	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_YES,GTK_RESPONSE_YES,GTK_STOCK_NO,GTK_RESPONSE_CANCEL,NULL);
 #endif
 	gtk_window_set_title(GTK_WINDOW(dialog),"Import System Manpage");
-	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
+	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 	entrybox=gtk_entry_new();
 	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
 	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
 	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
 	drop=gtk_combo_box_text_new();
-	for(int j=1;j<10;j++)
+	for(int j=1; j<10; j++)
 		gtk_combo_box_text_append_text((GtkComboBoxText*)drop,buffer[j]);
 
 	gtk_combo_box_set_active((GtkComboBox*)drop,0);
@@ -1166,9 +1170,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 	GtkTextIter	iter;
 	char*		props;
 	FILE*		fp;
-	char		buffer[2048]={0,};
-	char		commandBuffer[2048]={0,};
-	char		nameBuffer[2048]={0,};
+	char		buffer[2048]= {0,};
+	char		commandBuffer[2048]= {0,};
+	char		nameBuffer[2048]= {0,};
 	char*		recenturi;
 	int			numprops;
 	char**		propargs;
@@ -1208,15 +1212,15 @@ void importManpage(GtkWidget* widget,gpointer data)
 			dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
 #endif
 
-		if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
-			{
-				filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-			}
-		else
-			{
-				gtk_widget_destroy (dialog);
-				return;
-			}
+			if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
+				{
+					filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+				}
+			else
+				{
+					gtk_widget_destroy (dialog);
+					return;
+				}
 		}
 
 	closePage(NULL,NULL);
@@ -1242,7 +1246,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 #else
 			sprintf(commandBuffer,"cat %s|sed '1i\\.ll 100'|sed 's/^\\.S[Hh] \\(.*\\)$/@SECTION@ \\1\\n/g'|sed 's/^@SECTION@ \"\\(.*\\)\"/@SECTION@ \\1/g'|sed 's/^.IR \\(.*\\)/\\\\fI\\1\\\\fR/g;s/^.B \\(.*\\)/\\\\fB\\1\\\\fR/g;s/\\.PP/\\n/g;s/\\.IP/  \\n/g'|nroff|head -n -4",filename);
 #endif
-	 	}
+		}
 
 	fp=popen(commandBuffer,"r");
 	if(fp!=NULL)
@@ -1386,9 +1390,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 			replaceAllSlice(&sect,(char*)"\x7f",(char*)"");
 
 			gtk_source_buffer_begin_not_undoable_action(importPage->buffer);
-				gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
-				gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
-				replaceTags();
+			gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&iter);
+			gtk_text_buffer_insert((GtkTextBuffer*)importPage->buffer,&iter,(char*)sect,-1);
+			replaceTags();
 			gtk_source_buffer_end_not_undoable_action(importPage->buffer);
 
 			gtk_text_buffer_set_modified((GtkTextBuffer*)importPage->buffer,false);

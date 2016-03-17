@@ -117,7 +117,7 @@ void doPrefs(void)
 #endif
 	gtk_box_pack_start(GTK_BOX(hbox),item,true,false,2);
 	gtk_widget_set_name(item,"apply");
-	g_signal_connect(G_OBJECT(item),"clicked",G_CALLBACK(setPrefs),(void*)item);	
+	g_signal_connect(G_OBJECT(item),"clicked",G_CALLBACK(setPrefs),(void*)item);
 
 #ifdef _USEGTK3_
 	item=gtk_button_new_with_label("Cancel");
@@ -232,7 +232,7 @@ void buildMainGui(void)
 	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
 	g_signal_connect(G_OBJECT(toolbutton),"clicked",G_CALLBACK(find),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Find/Replace");
-		
+
 //livesearch
 	liveSearchWidget=gtk_entry_new();
 	toolbutton=gtk_tool_item_new();

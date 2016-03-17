@@ -40,28 +40,28 @@ void readConfig(void)
 					sscanf(buffer,"%s %s",(char*)&name,(char*)&strarg);
 
 					if(strcasecmp(name,"wrapline")==0)
-							lineWrap=(bool)atoi(strarg);
+						lineWrap=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"gzip")==0)
-							gzipPages=(bool)atoi(strarg);
+						gzipPages=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"highlightcurrentline")==0)
-							highLight=(bool)atoi(strarg);
+						highLight=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"useundeline")==0)
-							useUnderline=(bool)atoi(strarg);
+						useUnderline=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"insenssearch")==0)
-							insensitiveSearch=(bool)atoi(strarg);
+						insensitiveSearch=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"wrapsearch")==0)
-							wrapSearch=(bool)atoi(strarg);
+						wrapSearch=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"showlivesearch")==0)
-							showLiveSearch=(bool)atoi(strarg);
+						showLiveSearch=(bool)atoi(strarg);
 
 					if(strcasecmp(name,"tabwidth")==0)
-							tabWidth=atoi(strarg);
+						tabWidth=atoi(strarg);
 
 					if(strcasecmp(name,"font")==0)
 						{

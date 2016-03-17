@@ -10,7 +10,7 @@
  *     Copyright (C) 2000-2001 by Kevin Atkinson under the GNU LGPL
  *	  license version 2.0 or 2.1.  You should have received a copy of the
  *	  LGPL license along with this library if you did not you can find it
- *	  at http://www.gnu.org/. 
+ *	  at http://www.gnu.org/.
 
  * ManPageEditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void checkTheWord(char* word,int checkDoc)
 				buildWordCheck(checkDoc);
 			else
 				{
-					for(int j=0;j<numWords;j++)
+					for(int j=0; j<numWords; j++)
 						gtk_combo_box_text_remove((GtkComboBoxText*)wordListDropbox,0);
 
 					sprintf((char*)&labeltext,"Change <i><b>%s</b></i> to: ",badWord);
@@ -195,13 +195,13 @@ void doSpellCheckDoc(GtkWidget* widget,gpointer data)
 		}
 
 	checker=to_aspell_document_checker(ret);
-	  /* First process the line */
+	/* First process the line */
 	aspell_document_checker_process(checker,line,-1);
 	diff=0;
-	  /* Now find the misspellings in the line */
+	/* Now find the misspellings in the line */
 	while(token=aspell_document_checker_next_misspelling(checker),token.len!=0)
 		{
-	    /* Pay particular attention to how token.offset and diff is used */
+			/* Pay particular attention to how token.offset and diff is used */
 			asprintf(&badword,"%.*s",token.len,(char*)&line[token.offset+diff]);
 			goodWord=NULL;
 			checkTheWord(badword,1);
@@ -215,12 +215,12 @@ void doSpellCheckDoc(GtkWidget* widget,gpointer data)
 			if(goodWord!=NULL)
 				{
 					goodwordlen=strlen(goodWord);
-	    /* Replace the misspelled word with the replacement */
+					/* Replace the misspelled word with the replacement */
 					diff+=goodwordlen-token.len;
 					memmove(word_begin+goodwordlen,word_begin+token.len,strlen(word_begin+token.len)+1);
 					memcpy(word_begin,goodWord,goodwordlen);
 				}
-			}
+		}
 
 	delete_aspell_document_checker(checker);
 

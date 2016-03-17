@@ -151,7 +151,7 @@ bool checkForDirty(void)
 	int			numtabs=gtk_notebook_get_n_pages(notebook);
 	pageStruct*	page;
 
-	for(int loop=0;loop<numtabs;loop++)
+	for(int loop=0; loop<numtabs; loop++)
 		{
 			page=getPageStructPtr(loop);
 			if(gtk_text_buffer_get_modified((GtkTextBuffer*)page->buffer)==true)
