@@ -67,11 +67,14 @@ void doPrefs(void)
 	gtk_box_pack_start(GTK_BOX(vbox),item,true,true,0);
 	g_signal_connect(G_OBJECT(item),"toggled",G_CALLBACK(setPrefs),(void*)item);
 
-//tabwidth  -- CLEAN
-//TODO//
-#if 0
+//tabwidth
+#if 1
+#ifdef _USEGTK3_
+	GtkAdjustment*	adj=gtk_adjustment_new(tmpTabWidth,1,64,1,1,0);
+#else
 	GtkObject*	adj=gtk_adjustment_new(tmpTabWidth,1,64,1,1,0);
-	hbox=gtk_hbox_new(true,0);
+#endif
+	hbox=creatNewBox(NEWHBOX,true,0);
 	item=gtk_spin_button_new((GtkAdjustment*)adj,1,0);
 	gtk_widget_set_name(item,"tabs");
 	gtk_box_pack_start(GTK_BOX(hbox),gtk_label_new("Tab width: "),true,true,0);
@@ -180,13 +183,13 @@ void buildMainGui(void)
 
 //toolbar
 //new
-	newButton=makeNewToolItem("gtk-new","New");
+	newButton=makeNewToolItem(GTK_STOCK_NEW,"New");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,newButton,-1);
 	g_signal_connect(G_OBJECT(newButton),"clicked",G_CALLBACK(newSection),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)newButton,"New File");
 
 //save
-	saveButton=makeNewToolItem("gtk-save","Save");
+	saveButton=makeNewToolItem(GTK_STOCK_SAVE,"Save");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,saveButton,-1);
 	g_signal_connect(G_OBJECT(saveButton),"clicked",G_CALLBACK(saveManpage),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)saveButton,"Save File");
@@ -195,17 +198,17 @@ void buildMainGui(void)
 
 //edit buttons
 //cut
-	toolbutton=makeNewToolItem("gtk-cut","Cut");
+	toolbutton=makeNewToolItem(GTK_STOCK_CUT,"Cut");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
 	g_signal_connect(G_OBJECT(toolbutton),"clicked",G_CALLBACK(cutToClip),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Cut");
 //copy
-	toolbutton=makeNewToolItem("gtk-copy","Copy");
+	toolbutton=makeNewToolItem(GTK_STOCK_COPY,"Copy");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
 	g_signal_connect(G_OBJECT(toolbutton),"clicked",G_CALLBACK(copyToClip),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Copy");
 //paste
-	toolbutton=makeNewToolItem("gtk-paste","Paste");
+	toolbutton=makeNewToolItem(GTK_STOCK_PASTE,"Paste");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
 	g_signal_connect(G_OBJECT(toolbutton),"clicked",G_CALLBACK(pasteFromClip),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Paste");
@@ -213,19 +216,19 @@ void buildMainGui(void)
 	gtk_toolbar_insert((GtkToolbar*)toolbar,gtk_separator_tool_item_new(),-1);
 
 //undo
-	undoButton=makeNewToolItem("gtk-undo","Undo");
+	undoButton=makeNewToolItem(GTK_STOCK_UNDO,"Undo");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,undoButton,-1);
 	g_signal_connect(G_OBJECT(undoButton),"clicked",G_CALLBACK(undo),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)undoButton,"Undo");
 //redo
-	redoButton=makeNewToolItem("gtk-redo","Redo");
+	redoButton=makeNewToolItem(GTK_STOCK_REDO,"Redo");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,redoButton,-1);
 	g_signal_connect(G_OBJECT(redoButton),"clicked",G_CALLBACK(redo),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)redoButton,"Redo");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,gtk_separator_tool_item_new(),-1);
 
 //find
-	toolbutton=makeNewToolItem("gtk-find","Find");
+	toolbutton=makeNewToolItem(GTK_STOCK_FIND,"Find");
 	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
 	g_signal_connect(G_OBJECT(toolbutton),"clicked",G_CALLBACK(find),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Find/Replace");

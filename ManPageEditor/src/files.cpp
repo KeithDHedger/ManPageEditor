@@ -129,7 +129,10 @@ void setFilePrefs(GtkSourceView* sourceview)
 
 	font_desc=pango_font_description_from_string(fontAndSize);
 #ifdef _USEGTK3_
-//	gtk_widget_override_font((GtkWidget*)sourceview,font_desc);
+	if(strstr(fontAndSize,"mono")!=NULL)
+		gtk_text_view_set_monospace ((GtkTextView*)sourceview,true);
+	else
+		gtk_text_view_set_monospace ((GtkTextView*)sourceview,false);
 #else
 	gtk_widget_modify_font((GtkWidget*)sourceview,font_desc);
 #endif

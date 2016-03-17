@@ -1,4 +1,6 @@
 0.1.0
+Because gtk3 stupidly doesn't let you set a font for a widget programatically, setting the font in the prefs only switches between monspace and normal fonts, use 'mon' in the text box to select monospace anything else uses the current css. THIS DOES NOT APPLY to gtk2 build.
+Added back stock item names stupidly removed from gtk3.
 Fixed bug when trying to delete non existent section.
 Fixed segfault on doing cut/copy when there is no selection.
 Removed split view option.

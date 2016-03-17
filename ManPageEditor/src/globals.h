@@ -28,7 +28,16 @@
 #include "config.h"
 
 #ifndef _USEGTK3_
-	#include <gtksourceview/gtksourceiter.h>
+#include <gtksourceview/gtksourceiter.h>
+#else
+#define GTK_STOCK_NEW "document-new"
+#define GTK_STOCK_SAVE "document-save"
+#define GTK_STOCK_CUT "edit-cut"
+#define GTK_STOCK_COPY "edit-copy"
+#define GTK_STOCK_PASTE "edit-paste"
+#define GTK_STOCK_UNDO "edit-undo"
+#define GTK_STOCK_REDO "edit-redo"
+#define GTK_STOCK_FIND "edit-find"
 #endif
 
 #ifdef _ASPELL_
