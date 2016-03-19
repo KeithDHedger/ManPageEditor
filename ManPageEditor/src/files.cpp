@@ -137,6 +137,8 @@ void setFilePrefs(GtkSourceView* sourceview)
 //			else
 //				gtk_text_view_set_monospace ((GtkTextView*)sourceview,false);
 //		}
+//	gtk_widget_modify_font((GtkWidget*)sourceview,font_desc);
+	gtk_widget_override_font ((GtkWidget*)sourceview,font_desc);
 #else
 	gtk_widget_modify_font((GtkWidget*)sourceview,font_desc);
 #endif

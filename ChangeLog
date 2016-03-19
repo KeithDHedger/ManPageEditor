@@ -1,4 +1,5 @@
 0.1.0
+Added back modify font in gtk3 version, but will be broken by gtk devs again!
 Had to add question icon to message dialogs, cos ubuntu is broken.
 Because gtk3 stupidly doesn't let you set a font for a widget programatically, setting the font in the prefs has no effect in gtk3 usse a css instead, I guess. THIS DOES NOT APPLY to gtk2 build.
 Added back stock item names stupidly removed from gtk3.
