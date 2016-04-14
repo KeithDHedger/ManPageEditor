@@ -1,11 +1,11 @@
 I write a number of my own programs, and have always had a bit of a problem writing the manpage, I have used the excellent 'ManEdit' but development on this has been stalled for a number of years.
 So I finally decided to write my own and this is the result.
 
-Debian install.
+Debian or Ubuntu install.
 sudo apt-get update
 sudo apt-get install build-essential 
 sudo apt-get install libglib2.0-dev libgtk2.0-dev
-sudo apt-get install libgtksourceview2.0-dev
+sudo apt-get install libgtksourceview2.0-dev libaspell-dev
 
 Fedora Install
 sudo yum update kernel*
