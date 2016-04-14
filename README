@@ -27,4 +27,4 @@ You can make this permenant by adding:
 export GROFF_SGR=1
 To your shell start up files, ~/.bashrc for instance.
 
-Please readd the BUGS-ETC file.
+Please read the BUGS-ETC file.
