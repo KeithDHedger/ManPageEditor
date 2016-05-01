@@ -24,10 +24,9 @@ examplefiles_DATA = ../resources/examples/*
 docfilesdir = $(pkgdatadir)/docs
 docfiles_DATA = ../resources/docs/*
 
-install-exec-hook:
+install-data-hook:
 	mkdir -vp $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps||true
 	cp ../resources/pixmaps/ManPageEditor.png $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps
-	gtk-update-icon-cache --ignore-theme-index --force /usr/share/icons/hicolor||true
 
 uninstall-hook:
 	rm $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps/ManPageEditor.png||true

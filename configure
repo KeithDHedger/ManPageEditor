@@ -4777,6 +4777,7 @@ $as_echo "#define _USENROFF_ /**/" >>confdefs.h
 
 fi
 
+
 ac_config_files="$ac_config_files Makefile ManPageEditor/app/Makefile"
 
 cat >confcache <<\_ACEOF
@@ -6238,4 +6239,18 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+echo
+echo "You may now run:"
+echo "make"
+echo "sudo make install"
+echo
+echo "If you are installing from source you also need to run:"
+echo "sudo make install-mimetypes"
+echo "To install the mimetypes, icons, etc"
+echo "When uninstalling from source use:"
+echo "sudo make uninstall-mimetypes"
+echo
+echo "Packagers should include commands from install-mimetypes/uninstall-mimetypes in their post install/uninstall"
+echo
 

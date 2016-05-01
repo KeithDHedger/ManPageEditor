@@ -61,5 +61,20 @@ if test "$enable_nroff" = "yes"; then
 	AC_DEFINE([_USENROFF_], [], [Use nroff])
 fi
 
+
 AC_OUTPUT(Makefile ManPageEditor/app/Makefile)
+
+echo
+echo "You may now run:"
+echo "make"
+echo "sudo make install"
+echo
+echo "If you are installing from source you also need to run:"
+echo "sudo make install-mimetypes"
+echo "To install the mimetypes, icons, etc"
+echo "When uninstalling from source use:"
+echo "sudo make uninstall-mimetypes"
+echo
+echo "Packagers should include commands from install-mimetypes/uninstall-mimetypes in their post install/uninstall"
+echo
 

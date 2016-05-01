@@ -1,3 +1,6 @@
+0.1.1
+Fixed makefiles when using DESTDIR= ...
+
 0.1.0
 Added back modify font in gtk3 version, but will be broken by gtk devs again!
 Had to add question icon to message dialogs, cos ubuntu is broken.
