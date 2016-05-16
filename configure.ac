@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([ManPageEditor],[0.1.0],[PROJ],[ManPageEditor])
+AC_INIT([ManPageEditor],[0.1.1],[PROJ],[ManPageEditor])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
