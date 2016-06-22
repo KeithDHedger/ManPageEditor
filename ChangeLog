@@ -1,3 +1,7 @@
+0.1.2
+Application icons now symlinked instead of installed.
+Tweaked .desktop files for compatability.
+
 0.1.1
 Fixed makefiles when using DESTDIR= ...
 
