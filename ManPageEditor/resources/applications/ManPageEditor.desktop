@@ -5,6 +5,6 @@ Comment=©K.D.Hedger 2013-2016, A simple Manpage editor
 Terminal=false
 Type=Application
 Categories=Development;GTK;
-MimeType=application/x-maneditdoc
+MimeType=application/x-maneditdoc;
 Exec=manpageeditor
 Icon=ManPageEditor
