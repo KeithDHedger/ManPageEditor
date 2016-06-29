@@ -106,8 +106,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = ../src/callbacks.$(OBJEXT) ../src/files.$(OBJEXT) \
 	../src/globals.$(OBJEXT) ../src/guis.$(OBJEXT) \
-	../src/main.$(OBJEXT) ../src/script.$(OBJEXT) \
-	../src/searchcallbacks.$(OBJEXT) ../src/spellcheck.$(OBJEXT)
+	../src/internet.$(OBJEXT) ../src/main.$(OBJEXT) \
+	../src/script.$(OBJEXT) ../src/searchcallbacks.$(OBJEXT) \
+	../src/spellcheck.$(OBJEXT)
 am_manpageeditor_OBJECTS = $(am__objects_1)
 manpageeditor_OBJECTS = $(am_manpageeditor_OBJECTS)
 manpageeditor_LDADD = $(LDADD)
@@ -317,7 +318,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 			-DLIBDIR=\""${libdir}/${PACKAGE}"\"
 
-COMMONSRC = ../src/callbacks.cpp ../src/files.cpp ../src/globals.cpp ../src/guis.cpp ../src/main.cpp ../src/script.cpp ../src/searchcallbacks.cpp ../src/spellcheck.cpp
+COMMONSRC = ../src/callbacks.cpp ../src/files.cpp ../src/globals.cpp ../src/guis.cpp ../src/internet.cpp ../src/main.cpp ../src/script.cpp ../src/searchcallbacks.cpp ../src/spellcheck.cpp
 manpageeditor_SOURCES = $(COMMONSRC)
 appfilesdir = ${datarootdir}/applications
 appfiles_DATA = ../resources/applications/*
@@ -420,6 +421,8 @@ clean-binPROGRAMS:
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/guis.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
+../src/internet.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/main.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/script.$(OBJEXT): ../src/$(am__dirstamp) \
@@ -444,6 +447,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/files.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/globals.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/guis.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/internet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/script.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/searchcallbacks.Po@am__quote@
@@ -835,7 +839,6 @@ uninstall-man: uninstall-man1
 
 
 install-data-hook:
-
 	mkdir -p $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps||true
 	ln -sf ${prefix}/share/pixmaps/ManPageEditor.png $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps/ManPageEditor.png
 

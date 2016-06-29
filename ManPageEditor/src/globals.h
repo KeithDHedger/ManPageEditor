@@ -26,6 +26,7 @@
 #include <gtksourceview/gtksourceview.h>
 
 #include "config.h"
+#include "internet.h"
 
 #ifndef _USEGTK3_
 #include <gtksourceview/gtksourceiter.h>
@@ -51,8 +52,8 @@
 #define FINDNEXT		200
 #define FINDPREV		300
 
-#define MYEMAIL "keithhedger@keithhedger.darktech.org"
-#define MYWEBSITE "http://khapplications.darktech.org/pages/manpageeditor/help.html"
+//##define MYEMAIL "keithhedger@keithhedger.darktech.org"
+//#define MYWEBSITE "http://khapplications.darktech.org/pages/manpageeditor/help.html"
 
 #define VALIDCHARS "[]a-zA-Z0-9:/@ ()_-,.*#;[\"]"
 #define VALIDFILENAMECHARS "[A-Za-z0-9_-./ ]"
