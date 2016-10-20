@@ -1,4 +1,5 @@
 0.1.2
+Added key shortcuts to formating menu items ( finally ).
 Added 'Documentation' sub catagory to desktop file.
 Application icons now symlinked instead of installed.
 Tweaked .desktop files for compatability.

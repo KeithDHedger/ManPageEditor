@@ -18,6 +18,8 @@
  * along with ManPageEditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <gdk/gdkkeysyms.h>
+
 #include "callbacks.h"
 #include "searchcallbacks.h"
 #include "spellcheck.h"
@@ -542,6 +544,7 @@ void buildMainGui(void)
 #else
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_BOLD,NULL);
 #endif
+	gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,GDK_KEY_B,(GdkModifierType)GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)BOLD);
 //italic
@@ -550,6 +553,7 @@ void buildMainGui(void)
 #else
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_ITALIC,NULL);
 #endif
+	gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,GDK_KEY_I,(GdkModifierType)GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)ITALIC);
 //normal
@@ -558,6 +562,7 @@ void buildMainGui(void)
 #else
 	menuitem=gtk_image_menu_item_new_from_stock(GTK_STOCK_CLEAR,NULL);
 #endif
+	gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,GDK_KEY_R,(GdkModifierType)GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doFormat),(void*)NORMAL);
 
