@@ -150,6 +150,43 @@ GtkToolItem* makeNewToolItem(const char* stock,const char* label)
 	return(button);
 }
 
+void recentFileMenu(GtkRecentChooser *chooser,gpointer *data)
+{
+	gchar	*uri=NULL;
+	char	*filename;
+
+	uri=gtk_recent_chooser_get_current_uri((GtkRecentChooser*)chooser);
+	if(uri!=NULL)
+		{
+			filename=g_filename_from_uri((const gchar*)uri,NULL,NULL);
+			closePage(NULL,NULL);
+			doOpenManpage(filename);
+			dirty=false;
+			setSensitive();
+			g_free(uri);
+			g_free(filename);
+		}
+}
+
+void setupRecent(GtkMenuItem *menu)
+{
+	GtkRecentFilter	*filter;
+	GtkWidget		*recent;
+
+	recent=gtk_recent_chooser_menu_new();
+	gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recent),false);
+	gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recent),GTK_RECENT_SORT_MRU);
+	gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(recent),10);
+
+	filter=gtk_recent_filter_new();
+	gtk_recent_filter_add_mime_type (filter,"application/x-maneditdoc");
+	//gtk_recent_filter_add_application(filter,"manpageeditor");
+	gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recent),filter);
+	g_signal_connect(recent,"item_activated",G_CALLBACK(recentFileMenu),NULL);
+
+	gtk_menu_item_set_submenu(menu,recent);
+}
+
 void buildMainGui(void)
 {
 	GtkWidget*					vbox;
@@ -278,6 +315,14 @@ void buildMainGui(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(openManpage),NULL);
 	gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,'O',GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
+
+	menuitem=gtk_separator_menu_item_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+
+//open recent menu
+	menuitem=gtk_menu_item_new_with_mnemonic("_Recent");
+	setupRecent((GtkMenuItem*)menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 
 	menuitem=gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
