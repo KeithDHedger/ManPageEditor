@@ -356,7 +356,7 @@ void buildMainGui(void)
 #ifdef _USEGTK3_
 	saveMenu=gtk_menu_item_new_with_mnemonic("_Save");
 #else
-	saveMenu=gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN,NULL);
+	saveMenu=gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE,NULL);
 #endif
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),saveMenu);
 	g_signal_connect(G_OBJECT(saveMenu),"activate",G_CALLBACK(saveManpage),NULL);
