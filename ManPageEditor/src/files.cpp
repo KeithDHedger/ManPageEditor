@@ -1182,16 +1182,16 @@ void importManpage(GtkWidget* widget,gpointer data)
 	char*		strok=NULL;
 	GString*	str=g_string_new(NULL);
 
-	if((long)data==1)
+	if((long)data>1)
 		{
-			manname=getManpageName();
+			manname=(char*)data;
 			if(manname==NULL)
 				return;
 
-			if(selectedSection==0)
+			if(widget==NULL)
 				sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
 			else
-				sprintf(commandBuffer,"man -w -s %i %s 2>/dev/null",selectedSection,manname);
+				sprintf(commandBuffer,"man -w -s %i %s 2>/dev/null",(long)widget,manname);
 
 			fp=popen(commandBuffer,"r");
 			if(fp!=NULL)
@@ -1205,23 +1205,51 @@ void importManpage(GtkWidget* widget,gpointer data)
 				return;
 
 			filename=strndup((char*)&buffer[0],strlen((char*)&buffer[0])-1);
+			
 		}
 	else
 		{
-#ifdef _USEGTK3_
-			dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"Cancel",GTK_RESPONSE_CANCEL,"Open",GTK_RESPONSE_ACCEPT,NULL);
-#else
-			dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
-#endif
-
-			if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
+			if((long)data==1)
 				{
-					filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+					manname=getManpageName();
+					if(manname==NULL)
+						return;
+
+					if(selectedSection==0)
+						sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
+					else
+						sprintf(commandBuffer,"man -w -s %i %s 2>/dev/null",selectedSection,manname);
+
+					fp=popen(commandBuffer,"r");
+					if(fp!=NULL)
+						{
+							fgets((char*)&buffer[0],2048,fp);
+							pclose(fp);
+						}
+					else
+						return;
+					if(strlen(buffer)==0)
+						return;
+
+					filename=strndup((char*)&buffer[0],strlen((char*)&buffer[0])-1);
 				}
 			else
 				{
-					gtk_widget_destroy (dialog);
-					return;
+#ifdef _USEGTK3_
+					dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"Cancel",GTK_RESPONSE_CANCEL,"Open",GTK_RESPONSE_ACCEPT,NULL);
+#else
+					dialog=gtk_file_chooser_dialog_new("Import Manpage",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,NULL);
+#endif
+
+					if (gtk_dialog_run(GTK_DIALOG (dialog))==GTK_RESPONSE_ACCEPT)
+						{
+							filename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+						}
+					else
+						{
+							gtk_widget_destroy (dialog);
+							return;
+						}
 				}
 		}
 

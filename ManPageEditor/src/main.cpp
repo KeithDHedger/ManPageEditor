@@ -18,6 +18,9 @@
  * along with ManPageEditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <unistd.h>
+#include <getopt.h>
+
 #include "callbacks.h"
 #include "guis.h"
 
@@ -144,8 +147,31 @@ void init(void)
 
 }
 
+struct option		long_options[] =
+{
+					{"import",1,0,'i'},
+					{"section",1,0,'s'},
+					{"version",0,0,'v'},
+					{"help",0,0,'?'},
+					{0,0,0,0}
+};
+
+void printHelp(void)
+{
+	printf( PACKAGE_STRING "\n" COPYRITE "\n" MYEMAIL "\n\n");
+	printf("-i, --import NAME: Import system manpage NAME\n");
+	printf("-s, --section SECTION: Specify section SECTION\n");
+	printf("-v, --version: Print version info and exit\n");
+	printf("-?, --help: Print quick help\n\n");
+}
+
 int main(int argc,char **argv)
 {
+	int		c=-1;
+	bool	flag=true;
+	long	section=0;
+	char	*manname=NULL;
+
 	gtk_init(&argc,&argv);
 
 	init();
@@ -153,8 +179,41 @@ int main(int argc,char **argv)
 	buildMainGui();
 	buildFindReplace();
 
-	if(argc>1)
-		doOpenManpage(argv[1]);
+	while (1)
+		{
+			int option_index=0;
+			c=getopt_long (argc,argv,"v?hi:s:",long_options,&option_index);
+			if (c==-1)
+				break;
+
+			switch (c)
+				{
+					case 'v':
+						printf( PACKAGE_STRING "\n" COPYRITE "\n" MYEMAIL "\n");
+						return(0);
+						break;
+					case 's':
+						section=atoi(optarg);
+						break;
+					case 'i':
+						manname=optarg;
+						break;
+					case '?':
+						printHelp();
+						return(0);
+						break;
+				}
+		}
+
+	if(manname==NULL)
+		{
+			if(argc>1)
+				doOpenManpage(argv[1]);
+		}
+	else
+		{
+			importManpage((GtkWidget*)section,(gpointer)manname);
+		}
 
 	dirty=false;
 	setSensitive();
