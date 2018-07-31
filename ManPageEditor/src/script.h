@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 27 Nov 11:45:42 GMT 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 27 Nov 11:45:42 GMT 2015 keithdhedger@gmail.com
 
  * This file (script.h) is part of ManPageEditor.
 

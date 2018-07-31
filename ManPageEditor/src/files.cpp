@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 27 Nov 11:42:58 GMT 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 27 Nov 11:42:58 GMT 2015 keithdhedger@gmail.com
 
  * This file (files.cpp) is part of ManPageEditor.
 
