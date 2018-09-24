@@ -25,8 +25,9 @@ docfilesdir = $(pkgdatadir)/docs
 docfiles_DATA = ../resources/docs/*
 
 install-data-hook:
-	mkdir -p $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps||true
+	mkdir -p $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps  $(DESTDIR)$(pkgdatadir)||true
 	ln -sf ${prefix}/share/pixmaps/ManPageEditor.png $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps/ManPageEditor.png
+	cp -r ../resources/documenticons $(DESTDIR)$(pkgdatadir)
 
 uninstall-hook:
 	rm $(DESTDIR)${prefix}/share/icons/hicolor/256x256/apps/ManPageEditor.png||true
