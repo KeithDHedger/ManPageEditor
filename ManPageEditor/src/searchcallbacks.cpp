@@ -218,6 +218,10 @@ void doSearchPrefs(GtkWidget* widget,gpointer data)
 void doLiveSearch(GtkWidget* widget,GdkEvent *event,gpointer data)
 {
 	pageStruct* 			page=getPageStructPtr(-1);
+
+	if(page==NULL)
+		return;
+
 #ifdef _USEGTK3_
 	GtkTextSearchFlags		flags=GTK_TEXT_SEARCH_TEXT_ONLY;
 #else
@@ -235,6 +239,8 @@ void doLiveSearch(GtkWidget* widget,GdkEvent *event,gpointer data)
 #endif
 
 	searchtext=g_strcompress(gtk_entry_get_text((GtkEntry*)widget));
+
+
 	if(modkey==0)
 		{
 			if(!gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&page->match_start,&page->match_end))

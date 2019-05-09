@@ -716,6 +716,7 @@ void newSection(GtkWidget* widget,gpointer data)
 			page->isSubsection=isSubsection;
 			if(data!=NULL)
 				importPage=page;
+			gtk_widget_set_sensitive(liveSearchWidget,true);
 		}
 }
 
@@ -822,7 +823,7 @@ void doOpenManpage(char* file)
 	while(fgets(buffer,4096,fp))
 		{
 			strarg[0]=0;
-			sscanf(buffer,"%s %"VALIDFILENAMECHARS"s",(char*)&name,(char*)&strarg);
+			sscanf(buffer,"%s %" VALIDFILENAMECHARS "s",(char*)&name,(char*)&strarg);
 			if(strcasecmp(name,"manname")==0)
 				manName=strdup((char*)&strarg);
 			if(strcasecmp(name,"mansection")==0)

@@ -103,6 +103,8 @@ void setSensitive(void)
 	gtk_widget_set_sensitive((GtkWidget*)exportAsMenu,pageOpen);
 	gtk_widget_set_sensitive((GtkWidget*)previewMenu,pageOpen);
 
+	gtk_widget_set_sensitive(liveSearchWidget,pageOpen);
+
 	refreshMainWindow();
 }
 

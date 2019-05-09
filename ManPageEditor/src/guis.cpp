@@ -279,6 +279,7 @@ void buildMainGui(void)
 	gtk_toolbar_insert((GtkToolbar*)toolbar,toolbutton,-1);
 	g_signal_connect_after(G_OBJECT(liveSearchWidget),"key-release-event",G_CALLBACK(doLiveSearch),NULL);
 	gtk_widget_set_tooltip_text((GtkWidget*)toolbutton,"Live Search");
+	gtk_widget_set_sensitive(liveSearchWidget,false);
 
 //menus
 //file menu
