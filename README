@@ -1,44 +1,47 @@
-I write a number of my own programs, and have always had a bit of a problem writing the manpage, I have used the excellent 'ManEdit' but development on this has been stalled for a number of years.
-So I finally decided to write my own and this is the result.
-
-Debian or Ubuntu install.
-sudo apt-get update
-sudo apt-get install build-essential 
-sudo apt-get install libglib2.0-dev libgtk2.0-dev
-sudo apt-get install libgtksourceview2.0-dev libaspell-dev
-
-******************
-
-Fedora Install
-sudo yum update kernel*
-sudo yum install gcc-c++ glib2-devel gtk2-devel gcc
-sudo yum install gtksourceview2-devel ctags webkitgtk-devel aspell-devel
-
-******************
-
-OpenSuse ( Leap 42.x ) gtk2.
-
-sudo zypper install make gcc gcc-c++
-sudo zypper install xorg-x11-devel ctags gtksourceview2-devel gtk2-devel vte2-devel
-
-Optional installs
-sudo zypper install aspell-devel aspell aspell-en
-
-******************
-
-To install:
-./configure --prefix=/usr --enable-aspell
-make
-sudo make install
-
-If you don't have aspell installed then don't enable it!
-
-If you have problems importing a manpage or a system manpage try:
-
-GROFF_SGR=1 manpageeditor
-
-You can make this permenant by adding:
-export GROFF_SGR=1
-To your shell start up files, ~/.bashrc for instance.
-
-Please read the BUGS-ETC file.
+**Man Page Editor.**<br><br>
+![Man Page Editor](screenshots/main.png?raw=true "Man Page Editor")<br><br>
+[Full details and screenshots:](http://khapplications.freeddns.org/pages/manpageeditor/help.html)<br>
+<br>
+Man Page Editor<br>
+<br>
+(c)K.D.Hedger 2013-2019<br>
+keithhdhedger@gmail.com<br>
+<br>
+I write a number of my own programs, and have always had a bit of a problem writing the manpage, I have used the excellent 'ManEdit' but development on this has been stalled for a number of years.<br>
+So I finally decided to write my own and this is the result.<br>
+<br>
+Debian or Ubuntu install.<br>
+sudo apt-get update<br>
+sudo apt-get install build-essential <br>
+sudo apt-get install libglib2.0-dev libgtk2.0-dev<br>
+sudo apt-get install libgtksourceview2.0-dev libaspell-dev<br>
+<br>
+Fedora Install<br>
+sudo yum update kernel*<br>
+sudo yum install gcc-c++ glib2-devel gtk2-devel gcc<br>
+sudo yum install gtksourceview2-devel ctags webkitgtk-devel aspell-devel<br>
+<br>
+OpenSuse ( Leap 42.x ) gtk2.<br>
+<br>
+sudo zypper install make gcc gcc-c++<br>
+sudo zypper install xorg-x11-devel ctags gtksourceview2-devel gtk2-devel vte2-devel<br>
+<br>
+Optional installs<br>
+sudo zypper install aspell-devel aspell aspell-en<br>
+<br>
+To install:<br>
+./configure --prefix=/usr --enable-aspell<br>
+make<br>
+sudo make install<br>
+<br>
+If you don't have aspell installed then don't enable it!<br>
+<br>
+If you have problems importing a manpage or a system manpage try:<br>
+<br>
+GROFF\_SGR=1 manpageeditor<br>
+<br>
+You can make this permenant by adding:<br>
+export GROFF\_SGR=1<br>
+To your shell start up files, ~/.bashrc for instance.<br>
+<br>
+Please read the BUGS-ETC file.<br>
