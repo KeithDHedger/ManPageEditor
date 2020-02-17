@@ -1019,25 +1019,26 @@ void replaceTags(void)
 	const char*				texttags[]= {BOLDESC,ITALICESC};
 	const char*				endtexttags[]= {NORMALESC,"\n"};
 	bool					noendfound=true;
-
+	bool					dumpret=false;
+	bool					gotstart=true;
 	int						numstarttags=2;
 	int						numendtags=2;
 	int						nltag=numendtags-1;
 
 	GtkTextSearchFlags	flags=GTK_TEXT_SEARCH_TEXT_ONLY;
-
 	flag=true;
 	for(int j=0; j<numstarttags; j++)
 		{
+		gotstart=true;
 			while(flag==true)
 				{
 					gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
-					if(gtk_text_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL))
+					if(gtk_text_iter_forward_search(&start,texttags[j],flags,&starttag,&endtag,NULL)==true)
 						{
 							noendfound=true;
 							for(int k=0; k<numendtags; k++)
 								{
-									if(gtk_text_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL))
+									if(gtk_text_iter_forward_search(&endtag,endtexttags[k],flags,&starttag2,&endtag2,NULL)==true)
 										{
 											noendfound=false;
 											tag=getNamedTag(j);
@@ -1052,14 +1053,26 @@ void replaceTags(void)
 												}
 											break;
 										}
+									else
+										gotstart=false;
 								}
 
 							if(noendfound==true)
 								{
-									gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&endtag2);
-									gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
-									gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
-									break;
+									if(gotstart==true)
+										{
+											gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&endtag2);
+											gtk_text_buffer_apply_tag((GtkTextBuffer*)importPage->buffer,tag,&starttag,&endtag2);
+											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
+											break;
+										}
+									else
+										{
+											gtk_text_buffer_get_start_iter((GtkTextBuffer*)importPage->buffer,&start);
+											gtk_text_buffer_get_end_iter((GtkTextBuffer*)importPage->buffer,&endtag2);
+											gtk_text_buffer_delete((GtkTextBuffer*)importPage->buffer,&starttag,&endtag);
+											break;
+										}
 								}
 						}
 					else
@@ -1292,7 +1305,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 	fp=popen(nameBuffer,"r");
 	if(fp!=NULL)
 		{
-			fgets((char*)&buffer[0],2048,fp);
+			fgets((char*)&buffer[0],65535,fp);
 			pclose(fp);
 		}
 
@@ -1305,7 +1318,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 				sprintf(nameBuffer,"gunzip --stdout %s",filename);
 			else
 				sprintf(nameBuffer,"cat %s",filename);
-
 			buffer[0]=0;
 			fp=popen(nameBuffer,"r");
 			if(fp!=NULL)
@@ -1340,7 +1352,10 @@ void importManpage(GtkWidget* widget,gpointer data)
 			free(tsec);
 		}
 	else
+	{
+	
 		props=sliceBetween((char*)&buffer[0],(char*)".TH ",(char*)"\n");
+}
 
 	contents=g_string_free(str,false);
 	if(g_utf8_validate(contents,-1,NULL)==false)

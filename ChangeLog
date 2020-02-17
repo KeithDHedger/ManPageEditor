@@ -1,4 +1,5 @@
 0.1.4
+Fixed segfault on importing badly formed man page.
 Fixed some minor compiler warnings.
 Search box now made insensitive when no sections showing.
 Fixed bug doing search with out any sections, thanks to Thoma Paulsen for reporting that.
