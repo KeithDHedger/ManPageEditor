@@ -776,7 +776,7 @@ void openConvertedFile(char* filepath)
 	gtk_widget_show_all((GtkWidget*)notebook);
 }
 
-void doOpenManpage(char* file)
+bool doOpenManpage(char* file,bool warn)
 {
 	char*		command=NULL;
 	FILE*		fp;
@@ -789,13 +789,14 @@ void doOpenManpage(char* file)
 	GtkWidget*	dialog;
 	int			status;
 
-	if(!g_file_test(file,G_FILE_TEST_EXISTS))
+	if(!g_file_test(file,G_FILE_TEST_EXISTS) && (warn==true))
 		{
 			dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"File '%s' doesn't exist :(",file);
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
-			return;
+			return(false);
 		}
+
 	if(manFilename!=NULL)
 		{
 			sprintf((char*)&buffer[0],"rm -r \"%s\"",manFilename);
@@ -812,10 +813,13 @@ void doOpenManpage(char* file)
 	if(status!=0)
 		{
 			g_free(command);
-			dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"File '%s' isn't a ManPage Editor archive\nTry using 'Import' instead",file);
-			gtk_dialog_run(GTK_DIALOG(dialog));
-			gtk_widget_destroy(dialog);
-			return;
+			if(warn==true)
+				{
+					dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"File '%s' isn't a ManPage Editor archive\nTry using 'Import' instead",file);
+					gtk_dialog_run(GTK_DIALOG(dialog));
+					gtk_widget_destroy(dialog);
+				}
+			return(false);
 		}
 
 	asprintf(&command,"%s/manifest",manFilename);
@@ -865,6 +869,7 @@ void doOpenManpage(char* file)
 	gtk_recent_manager_add_item(gtk_recent_manager_get_default(),recenturi);
 	pageOpen=true;
 	gtk_window_set_title((GtkWindow*)window,file);
+	return(true);
 }
 
 void openManpage(GtkWidget* widget,gpointer data)
@@ -1173,7 +1178,7 @@ char* getManpageName(void)
 	return(manpage);
 }
 
-void importManpage(GtkWidget* widget,gpointer data)
+bool importManpage(GtkWidget* widget,gpointer data)
 {
 	GtkWidget*	dialog=NULL;
 	char*		filename=NULL;
@@ -1200,7 +1205,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 		{
 			manname=(char*)data;
 			if(manname==NULL)
-				return;
+				return(false);
 
 			if(widget==NULL)
 				sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
@@ -1214,12 +1219,11 @@ void importManpage(GtkWidget* widget,gpointer data)
 					pclose(fp);
 				}
 			else
-				return;
+				return(false);
 			if(strlen(buffer)==0)
-				return;
+				return(false);
 
 			filename=strndup((char*)&buffer[0],strlen((char*)&buffer[0])-1);
-			
 		}
 	else
 		{
@@ -1227,7 +1231,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 				{
 					manname=getManpageName();
 					if(manname==NULL)
-						return;
+						return(false);
 
 					if(selectedSection==0)
 						sprintf(commandBuffer,"man -w %s 2>/dev/null",manname);
@@ -1241,9 +1245,9 @@ void importManpage(GtkWidget* widget,gpointer data)
 							pclose(fp);
 						}
 					else
-						return;
+						return(false);
 					if(strlen(buffer)==0)
-						return;
+						return(false);
 
 					filename=strndup((char*)&buffer[0],strlen((char*)&buffer[0])-1);
 				}
@@ -1262,7 +1266,7 @@ void importManpage(GtkWidget* widget,gpointer data)
 					else
 						{
 							gtk_widget_destroy (dialog);
-							return;
+							return(false);
 						}
 				}
 		}
@@ -1465,5 +1469,6 @@ void importManpage(GtkWidget* widget,gpointer data)
 
 	if(dialog!=NULL)
 		gtk_widget_destroy (dialog);
+	return(true);
 }
 

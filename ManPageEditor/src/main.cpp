@@ -208,7 +208,16 @@ int main(int argc,char **argv)
 	if(manname==NULL)
 		{
 			if(argc>1)
-				doOpenManpage(argv[1]);
+				if(!doOpenManpage(argv[1],false))
+					{
+						if(importManpage((GtkWidget*)section,(gpointer)argv[1])==false)
+							{
+								GtkWidget	*dialog;
+								dialog=gtk_message_dialog_new((GtkWindow*)window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Can't open/import '%s' ...",argv[1]);
+								gtk_dialog_run(GTK_DIALOG(dialog));
+								gtk_widget_destroy(dialog);
+							}
+					}
 		}
 	else
 		{
