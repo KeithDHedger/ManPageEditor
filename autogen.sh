@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -r autom4te.cache aclocal.m4
+rm -r autom4te.cache aclocal.m4||true
 ./remakesourcelist
 aclocal
 autoheader
