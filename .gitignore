@@ -8,5 +8,7 @@ config.h
 config.log
 config.status
 stamp-h1
-
-
+*.o
+ManPageEditor/app/manpageeditor
+autom4te.cache
+configure

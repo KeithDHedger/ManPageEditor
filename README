@@ -28,7 +28,7 @@ Optional installs<br>
 sudo zypper install aspell-devel aspell aspell-en<br>
 <br>
 To install:<br>
-./configure --prefix=/usr --enable-aspell<br>
+./autogen.sh --prefix=/usr --enable-aspell<br>
 make<br>
 sudo make install<br>
 <br>
