@@ -12,3 +12,4 @@ stamp-h1
 ManPageEditor/app/manpageeditor
 autom4te.cache
 configure
+*~
