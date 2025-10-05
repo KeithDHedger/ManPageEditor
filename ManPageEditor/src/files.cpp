@@ -966,9 +966,10 @@ void importSection(char* line)
 	else
 		isSubsection=false;
 
-	name=strdup(g_strchug((char*)&line[10]));
+	name=strdup(g_strchug((char*)&line[9]));
 	replaceAllSlice(&name,(char*)"\e[1m",(char*)"");
 	replaceAllSlice(&name,(char*)"\e[0m",(char*)"");
+	replaceAllSlice(&name,(char*)"\e[m",(char*)"");
 	replaceAllSlice(&name,(char*)"\n",(char*)"");
 	newSection(NULL,name);
 }
@@ -1014,21 +1015,21 @@ GtkTextTag*	getNamedTag(int tagType)
 
 void replaceTags(void)
 {
-	GtkTextIter				start;
-	GtkTextIter				endtag;
-	GtkTextIter				starttag;
-	GtkTextIter				endtag2;
-	GtkTextIter				starttag2;
-	GtkTextTag*				tag=NULL;
+	GtkTextIter			start;
+	GtkTextIter			endtag;
+	GtkTextIter			starttag;
+	GtkTextIter			endtag2;
+	GtkTextIter			starttag2;
+	GtkTextTag			*tag=NULL;
 	bool					flag=true;
-	const char*				texttags[]= {BOLDESC,ITALICESC};
-	const char*				endtexttags[]= {NORMALESC,"\n"};
+	const char			*texttags[]= {BOLDESC,ITALICESC};
+	const char*			endtexttags[]= {NORMALESC,NORMALESC4,"\n"};
 	bool					noendfound=true;
 	bool					dumpret=false;
 	bool					gotstart=true;
-	int						numstarttags=2;
-	int						numendtags=2;
-	int						nltag=numendtags-1;
+	int					numstarttags=2;
+	int					numendtags=3;
+	int					nltag=numendtags-1;
 
 	GtkTextSearchFlags	flags=GTK_TEXT_SEARCH_TEXT_ONLY;
 	flag=true;
@@ -1105,12 +1106,12 @@ char*	getLineFromString(char* bigStr)
 
 char* cleanText(char* text)
 {
-	char*			data=text;
-	GString*		srcstr=g_string_new(data);
-	GString*		deststr=g_string_new(NULL);
+	char			*data=text;
+	GString		*srcstr=g_string_new(data);
+	GString		*deststr=g_string_new(NULL);
 	unsigned int	charpos=0;
-	char*			line;
-	int				numSpaces=0;
+	char*		line;
+	int			numSpaces=0;
 
 	line=getLineFromString(srcstr->str);
 	while(line[numSpaces]==' ')
@@ -1191,9 +1192,9 @@ bool importManpage(GtkWidget* widget,gpointer data)
 	GtkTextIter	iter;
 	char*		props;
 	FILE*		fp;
-	char		buffer[2048]= {0,};
-	char		commandBuffer[2048]= {0,};
-	char		nameBuffer[2048]= {0,};
+	char			buffer[2048]= {0,};
+	char			commandBuffer[2048]= {0,};
+	char			nameBuffer[2048]= {0,};
 	char*		recenturi;
 	int			numprops;
 	char**		propargs;
@@ -1281,7 +1282,11 @@ bool importManpage(GtkWidget* widget,gpointer data)
 		{
 			sprintf(nameBuffer,"gunzip --stdout %s|sed -n /^.TH/p",filename);
 #ifndef _USENROFF_
+#if _USEUL_ == 1
+			sprintf(commandBuffer,"gunzip --stdout %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|GROFF_SGR=1 MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|ul|head -n -4",filename);
+#else
 			sprintf(commandBuffer,"gunzip --stdout %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|GROFF_SGR=1 MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+#endif
 #else
 			sprintf(commandBuffer,"gunzip --stdout %s|sed '1i\\.ll 100'|sed 's/^\\.S[Hh] \\(.*\\)$/@SECTION@ \\1\\n/g'|sed 's/^@SECTION@ \"\\(.*\\)\"/@SECTION@ \\1/g'|sed 's/^.IR \\(.*\\)/\\\\fI\\1\\\\fR/g;s/^.B \\(.*\\)/\\\\fB\\1\\\\fR/g;s/\\.PP/\\n/g;s/\\.IP/  \\n/g'|nroff|head -n -4",filename);
 #endif
@@ -1290,7 +1295,11 @@ bool importManpage(GtkWidget* widget,gpointer data)
 		{
 			sprintf(nameBuffer,"cat %s|sed -n /^.TH/p",filename);
 #ifndef _USENROFF_
+#if _USEUL_ == 1
+			sprintf(commandBuffer,"cat %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|GROFF_SGR=1 MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|ul|head -n -4",filename);
+#else
 			sprintf(commandBuffer,"cat %s|sed 's/^\\(\\.S[Hh]\\)/\\1 @SECTION@/g;s/^\\(\\.S[Ss]\\)/\\1 @section@/g'|GROFF_SGR=1 MANWIDTH=2000 MAN_KEEP_FORMATTING=\"1\" man -l --no-justification --no-hyphenation -|head -n -4",filename);
+#endif
 #else
 			sprintf(commandBuffer,"cat %s|sed '1i\\.ll 100'|sed 's/^\\.S[Hh] \\(.*\\)$/@SECTION@ \\1\\n/g'|sed 's/^@SECTION@ \"\\(.*\\)\"/@SECTION@ \\1/g'|sed 's/^.IR \\(.*\\)/\\\\fI\\1\\\\fR/g;s/^.B \\(.*\\)/\\\\fB\\1\\\\fR/g;s/\\.PP/\\n/g;s/\\.IP/  \\n/g'|nroff|head -n -4",filename);
 #endif
@@ -1309,7 +1318,7 @@ bool importManpage(GtkWidget* widget,gpointer data)
 	fp=popen(nameBuffer,"r");
 	if(fp!=NULL)
 		{
-			fgets((char*)&buffer[0],65535,fp);
+			fgets((char*)&buffer[0],2048,fp);
 			pclose(fp);
 		}
 

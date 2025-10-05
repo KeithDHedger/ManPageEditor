@@ -68,6 +68,7 @@
 #define NORMALESC1			"\e[4m"
 #define NORMALESC2			"\e[24m"
 #define NORMALESC3			"\e[22m"
+#define NORMALESC4			"\e[m"
 
 enum {NEWVBOX=0,NEWHBOX};
 enum {BOLD=0,ITALIC,NORMAL};
